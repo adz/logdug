@@ -75,17 +75,17 @@ jobs:
       - name: Test
         if: runner.os == 'Linux'
         shell: bash
-        run: dotnet test --project tests/LogsDigger.Tests/LogsDigger.Tests.fsproj --configuration Release
+        run: dotnet test --project tests/LogDug.Tests/LogDug.Tests.fsproj --configuration Release
 
       - name: Publish
         shell: bash
-        run: bash scripts/publish-logs-digger.sh --rid ${{ matrix.rid }} --output artifacts/publish/${{ matrix.rid }} -p:Version=${{ needs.version.outputs.value }}
+        run: bash scripts/publish-logdug.sh --rid ${{ matrix.rid }} --output artifacts/publish/${{ matrix.rid }} -p:Version=${{ needs.version.outputs.value }}
 
       # Unit tests run on the JIT; this runs the shipped NativeAOT binary over the paths that only fail there.
       - name: Self-test published binary
         shell: bash
         run: |
-          exe="artifacts/publish/${{ matrix.rid }}/logs-digger"
+          exe="artifacts/publish/${{ matrix.rid }}/logdug"
           [[ -f "$exe.exe" ]] && exe="$exe.exe"
           "$exe" --self-test
 
@@ -94,7 +94,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p artifacts/release
-          name="logs-digger-${{ needs.version.outputs.value }}-${{ matrix.rid }}"
+          name="logdug-${{ needs.version.outputs.value }}-${{ matrix.rid }}"
           find artifacts/publish/${{ matrix.rid }} -name '*.dbg' -delete
           tar -czf "artifacts/release/$name.tar.gz" -C artifacts/publish/${{ matrix.rid }} .
 
@@ -103,7 +103,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p artifacts/release
-          name="logs-digger-${{ needs.version.outputs.value }}-${{ matrix.rid }}"
+          name="logdug-${{ needs.version.outputs.value }}-${{ matrix.rid }}"
           find artifacts/publish/${{ matrix.rid }} -name '*.dSYM' -prune -exec rm -rf {} +
           tar -czf "artifacts/release/$name.tar.gz" -C artifacts/publish/${{ matrix.rid }} .
 
@@ -115,7 +115,7 @@ jobs:
           $publish = "artifacts/publish/${{ matrix.rid }}"
           New-Item -ItemType Directory -Force artifacts/release | Out-Null
           Get-ChildItem $publish -Filter *.pdb | Remove-Item
-          Compress-Archive -Path "$publish/*" -DestinationPath "artifacts/release/logs-digger-$version-${{ matrix.rid }}.zip"
+          Compress-Archive -Path "$publish/*" -DestinationPath "artifacts/release/logdug-$version-${{ matrix.rid }}.zip"
 
           if (-not (Get-Command makensis -ErrorAction SilentlyContinue)) {
             choco install nsis -y --no-progress
@@ -123,7 +123,7 @@ jobs:
           }
           # NSIS versions are numeric; drop any prerelease suffix for the file version.
           $numeric = ($version -split '-')[0]
-          makensis /V2 "/DVERSION=$version" "/DNUMERIC_VERSION=$numeric.0" "/DSOURCE_DIR=$((Resolve-Path $publish).Path)" "/DOUTPUT_FILE=$((Get-Location).Path)\artifacts\release\logs-digger-$version-setup-x64.exe" installer/logs-digger.nsi
+          makensis /V2 "/DVERSION=$version" "/DNUMERIC_VERSION=$numeric.0" "/DSOURCE_DIR=$((Resolve-Path $publish).Path)" "/DOUTPUT_FILE=$((Get-Location).Path)\artifacts\release\logdug-$version-setup-x64.exe" installer/logdug.nsi
 
       - name: Upload release files
         uses: actions/upload-artifact@v4
@@ -168,7 +168,7 @@ jobs:
           [ -s "../../dev-docs/releases/$version.md" ] && notes=(--notes-file "../../dev-docs/releases/$version.md")
           prerelease=()
           [[ "$version" == *-* ]] && prerelease=(--prerelease)
-          gh release create "$tag" --title "Logs Digger $tag" "${notes[@]}" "${prerelease[@]}" *
+          gh release create "$tag" --title "Log Dug $tag" "${notes[@]}" "${prerelease[@]}" *
 
   # Enabled once the first version is accepted into microsoft/winget-pkgs (see dev-docs/ReleaseProcess.md).
   winget:
@@ -180,7 +180,7 @@ jobs:
       - name: Submit to winget
         uses: vedantmgoyal9/winget-releaser@v2
         with:
-          identifier: AdamDavies.LogsDigger
+          identifier: AdamDavies.LogDug
           version: ${{ needs.version.outputs.value }}
           release-tag: ${{ needs.version.outputs.tag }}
           installers-regex: '-setup-x64\.exe$'

@@ -1,0 +1,505 @@
+namespace LogDug.UI
+
+open System
+open System.Collections.ObjectModel
+open Avalonia
+open Elmish.Glue.Core
+open LogDug
+open LogDug.Files
+
+module Glyph =
+    let folder = ""
+    let folderOpen = ""
+    let archive = ""
+    let text = ""
+    let json = ""
+    let log = ""
+    let chevronRight = ""
+    let chevronDown = ""
+    let spinner = ""
+
+    let ofNode (node: Node) expanded =
+        match node.Kind with
+        | NodeKind.Folder -> if expanded then folderOpen else folder
+        | NodeKind.Archive _ -> archive
+        | NodeKind.File ->
+            let name = node.Name.ToLowerInvariant()
+
+            if name.EndsWith ".json" || name.EndsWith ".jsonl" || name.EndsWith ".ndjson" then json
+            elif name.Contains ".log" || name.EndsWith ".out" || name.EndsWith ".err" || name.EndsWith ".gz" then log
+            else text
+
+    let kindClass (node: Node) =
+        match node.Kind with
+        | NodeKind.Folder -> "kind-folder"
+        | NodeKind.Archive _ -> "kind-archive"
+        | NodeKind.File -> "kind-file"
+
+module LevelClass =
+    let ofLevel level =
+        match level with
+        | Level.Trace -> "level-trace"
+        | Level.Debug -> "level-debug"
+        | Level.Info -> "level-info"
+        | Level.Warn -> "level-warn"
+        | Level.Error -> "level-error"
+        | Level.Fatal -> "level-fatal"
+        | Level.NoLevel -> "level-none"
+
+/// One visible row of the file tree. Rows are keyed by node location, so expanding a folder
+/// inserts rows without recreating the ones around it.
+type TreeRowVm(initial: TreeRow, activate: Node -> unit) =
+    inherit Bindable()
+
+    let mutable row = initial
+    let activateCommand = Command(fun () -> activate row.Node)
+
+    member _.Key = row.Key
+    member _.Name = row.Name
+    member _.Indent = Thickness(float row.Depth * 16.0 + 8.0, 0.0, 10.0, 0.0)
+    member _.Chevron = if row.IsContainer then (if row.IsExpanded then Glyph.chevronDown else Glyph.chevronRight) else ""
+    member _.Icon = Glyph.ofNode row.Node row.IsExpanded
+    member _.KindClass = Glyph.kindClass row.Node
+    member _.IsFolder = row.Node.Kind = NodeKind.Folder
+    member _.IsArchive = row.IsContainer && row.Node.Kind <> NodeKind.Folder
+    member _.IsFile = not row.IsContainer
+    member _.Detail = row.Detail
+    member _.IsSelected = row.IsSelected
+    member _.IsLoading = row.IsLoading
+    member _.Tip = row.Error |> Option.defaultValue row.Key
+    member _.ActivateCommand = activateCommand
+
+    member this.Update(next: TreeRow) =
+        if next <> row then
+            row <- next
+
+            for name in [ "Name"; "Indent"; "Chevron"; "Icon"; "Detail"; "IsSelected"; "IsLoading"; "Tip" ] do
+                this.NotifyPropertyChanged name
+
+/// One log entry as displayed. Immutable: a new set is built when the file, filter, zone, or search changes,
+/// and segments are only computed for rows the list actually realises.
+[<AllowNullLiteral>]
+type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option) =
+    let segments = lazy (Render.body entry |> Render.highlight pattern |> Array.ofList)
+
+    member _.Entry = entry
+    member _.Index = entry.Index
+    member _.LineText = string entry.Line
+    member _.TimeText = entry.Timestamp |> Option.map (Time.format time) |> Option.defaultValue ""
+    member _.LevelText = Level.label entry.Level
+    member _.LevelClass = LevelClass.ofLevel entry.Level
+    member _.IsTrace = entry.Level = Level.Trace
+    member _.IsDebug = entry.Level = Level.Debug
+    member _.IsInfo = entry.Level = Level.Info
+    member _.IsWarn = entry.Level = Level.Warn
+    member _.IsError = entry.Level = Level.Error
+    member _.IsFatal = entry.Level = Level.Fatal
+    member _.IsUnlevelled = entry.Level = Level.NoLevel
+    member _.HasLevel = entry.Level <> Level.NoLevel
+    member _.Segments = segments.Value
+    member _.IsHighlighted = (Render.countMatches pattern entry) > 0
+
+type ResultRowVm(initial: ResultRow, openHit: HitCursor -> unit) =
+    inherit Bindable()
+
+    let mutable row = initial
+
+    let cursor () =
+        match row with
+        | FileHeader(order, _, _) -> { Order = order; Hit = 0 }
+        | HitLine(order, hitIndex, _, _, _, _, _) -> { Order = order; Hit = hitIndex }
+
+    let openCommand = Command(fun () -> openHit (cursor ()))
+
+    static member KeyOf(row: ResultRow) =
+        match row with
+        | FileHeader(order, _, _) -> $"f{order}"
+        | HitLine(order, hitIndex, _, _, _, _, _) -> $"h{order}:{hitIndex}"
+
+    member _.Key = ResultRowVm.KeyOf row
+    member _.IsHeader = match row with FileHeader _ -> true | HitLine _ -> false
+    member _.IsHit = match row with FileHeader _ -> false | HitLine _ -> true
+    member _.Path = match row with FileHeader(_, path, _) -> path | HitLine _ -> ""
+    member _.FileName = match row with FileHeader(_, path, _) -> Location.fileName (path.Replace(" › ", "/")) | HitLine _ -> ""
+    member _.Count = match row with FileHeader(_, _, count) -> count | HitLine _ -> ""
+    member _.LineText = match row with HitLine(_, _, line, _, _, _, _) -> string line | FileHeader _ -> ""
+    member _.Before = match row with HitLine(_, _, _, before, _, _, _) -> before | FileHeader _ -> ""
+    member _.Matched = match row with HitLine(_, _, _, _, matched, _, _) -> matched | FileHeader _ -> ""
+    member _.After = match row with HitLine(_, _, _, _, _, after, _) -> after | FileHeader _ -> ""
+    member _.IsActive = match row with HitLine(_, _, _, _, _, _, active) -> active | FileHeader _ -> false
+    member _.OpenCommand = openCommand
+
+    member this.Update(next: ResultRow) =
+        if next <> row then
+            row <- next
+
+            for name in [ "Path"; "FileName"; "Count"; "LineText"; "Before"; "Matched"; "After"; "IsActive" ] do
+                this.NotifyPropertyChanged name
+
+type LevelChipVm(initial: LevelChip, toggle: Level -> unit) =
+    inherit Bindable()
+
+    let mutable chip = initial
+    let toggleCommand = Command(fun () -> toggle chip.Level)
+
+    member _.Level = chip.Level
+    member _.Label = Level.name chip.Level
+    member _.CountText = chip.Count.ToString("N0")
+    member _.IsOn = chip.IsOn
+    member _.LevelClass = LevelClass.ofLevel chip.Level
+    member _.IsTrace = chip.Level = Level.Trace
+    member _.IsDebug = chip.Level = Level.Debug
+    member _.IsInfo = chip.Level = Level.Info
+    member _.IsWarn = chip.Level = Level.Warn
+    member _.IsError = chip.Level = Level.Error
+    member _.IsFatal = chip.Level = Level.Fatal
+    member _.IsUnlevelled = chip.Level = Level.NoLevel
+    member _.ToggleCommand = toggleCommand
+
+    member this.Update(next: LevelChip) =
+        if next <> chip then
+            chip <- next
+            this.NotifyPropertyChanged "CountText"
+            this.NotifyPropertyChanged "IsOn"
+
+/// The window's viewmodel. Elmish owns the state; `Update` copies each new model into bindable properties,
+/// and setters for editable controls dispatch messages instead of changing state.
+type MainVm(localZone: TimeZoneInfo) =
+    inherit Bindable()
+
+    let mutable dispatch: Msg -> unit = ignore
+    let send msg = dispatch msg
+
+    let treeRows = ObservableCollection<TreeRowVm>()
+    let results = ObservableCollection<ResultRowVm>()
+    let levelChips = ObservableCollection<LevelChipVm>()
+    let revealRequested = Event<int * bool>()
+
+    let mutable entries: EntryVm array = [||]
+    let mutable shownDocument: obj = null
+    let mutable shownLevels: Set<Level> = Set.empty
+    let mutable shownTime: TimeContext option = None
+    let mutable shownPattern: obj = null
+    let mutable keepSelectionInView = false
+    let mutable selectedEntry: EntryVm = null
+    let mutable lastReveal: Reveal option = None
+    let mutable zones: ZoneOption array = [||]
+
+    let mutable searchText = ""
+    let mutable isRegex = false
+    let mutable isMatchCase = false
+    let mutable searchStatus = ""
+    let mutable cursorText = ""
+    let mutable hasSearch = false
+    let mutable isSearching = false
+    let mutable isSearchInvalid = false
+    let mutable timeCaption = ""
+    let mutable isUtc = false
+    let mutable isLocal = false
+    let mutable isZone = false
+    let mutable selectedZone: ZoneOption option = None
+    let mutable viewerTitle = ""
+    let mutable viewerSummary = ""
+    let mutable hasFile = false
+    let mutable isOpening = false
+    let mutable showEmpty = true
+    let mutable showEntries = false
+    let mutable viewerMessage = ""
+    let mutable detailHeader = ""
+    let mutable detailTimes = ""
+    let mutable detailText = ""
+    let mutable hasDetail = false
+    let mutable isDark = true
+    let mutable rootPath = ""
+    let mutable rootName = ""
+    let mutable entryCountText = ""
+    let mutable allLevelsShown = true
+    let mutable isFollowing = false
+
+    let nextHit = Command(fun () -> send NextHit)
+    let previousHit = Command(fun () -> send PreviousHit)
+    let clearSearch = Command(fun () -> send ClearSearch)
+    let toggleRegex = Command(fun () -> send ToggleRegex)
+    let toggleMatchCase = Command(fun () -> send ToggleMatchCase)
+    let showUtc = Command(fun () -> send (SetTimeDisplay Utc))
+    let showLocal = Command(fun () -> send (SetTimeDisplay Local))
+    let mutable zoneId = "UTC"
+    let showZone = Command(fun () -> send (SetTimeDisplay(Zone zoneId)))
+    let toggleTheme = Command(fun () -> send ToggleTheme)
+    let reload = Command(fun () -> send Reload)
+    let showAllLevels = Command(fun () -> send ShowAllLevels)
+    let closeDetail = Command(fun () -> send (SelectEntry None))
+    let toggleFollow = Command(fun () -> send ToggleFollow)
+
+    member _.TreeRows = treeRows
+    member _.Results = results
+    member _.LevelChips = levelChips
+    member _.Zones = zones
+    member _.Entries = entries
+
+    [<CLIEvent>]
+    member _.RevealRequested = revealRequested.Publish
+
+    member _.SelectedEntry
+        with get () = selectedEntry
+        and set (value: EntryVm) =
+            if not (obj.ReferenceEquals(value, selectedEntry)) then
+                selectedEntry <- value
+                send (SelectEntry(if isNull value then None else Some value.Index))
+
+    member this.SearchText
+        with get () = searchText
+        and set (value: string) =
+            let value = if isNull value then "" else value
+
+            if value <> searchText then
+                let hadText = searchText <> ""
+                searchText <- value
+                if hadText <> (value <> "") then this.NotifyPropertyChanged "HasSearchText"
+                send (SearchTextChanged value)
+
+    member _.SelectedZone
+        with get () = match selectedZone with Some zone -> zone | None -> Unchecked.defaultof<ZoneOption>
+        and set (value: ZoneOption) =
+            match box value with
+            | null -> ()
+            | _ when Some value = selectedZone -> ()
+            | _ ->
+                selectedZone <- Some value
+                send (SetZone value.Id)
+
+    member _.HasSearchText = searchText <> ""
+    member _.IsRegex = isRegex
+    member _.IsMatchCase = isMatchCase
+    member _.SearchStatus = searchStatus
+    member _.CursorText = cursorText
+    member _.HasSearch = hasSearch
+    member _.IsSearching = isSearching
+    member _.IsSearchInvalid = isSearchInvalid
+    member _.TimeCaption = timeCaption
+    member _.IsUtc = isUtc
+    member _.IsLocal = isLocal
+    member _.IsZone = isZone
+    member _.ViewerTitle = viewerTitle
+    member _.ViewerSummary = viewerSummary
+    member _.HasFile = hasFile
+    member _.IsOpening = isOpening
+    member _.ShowEmpty = showEmpty
+    member _.ShowEntries = showEntries
+    member _.ViewerMessage = viewerMessage
+    member _.HasViewerMessage = viewerMessage <> ""
+    member _.DetailHeader = detailHeader
+    member _.DetailTimes = detailTimes
+    member _.DetailText = detailText
+    member _.HasDetail = hasDetail
+    member _.IsDark = isDark
+    member _.RootPath = rootPath
+    member _.RootName = rootName
+    member _.EntryCountText = entryCountText
+    member _.AllLevelsShown = allLevelsShown
+    member _.IsFollowing = isFollowing
+    member _.ToggleFollowCommand = toggleFollow
+
+    member _.NextHitCommand = nextHit
+    member _.PreviousHitCommand = previousHit
+    member _.ClearSearchCommand = clearSearch
+    member _.ToggleRegexCommand = toggleRegex
+    member _.ToggleMatchCaseCommand = toggleMatchCase
+    member _.ShowUtcCommand = showUtc
+    member _.ShowLocalCommand = showLocal
+    member _.ShowZoneCommand = showZone
+    member _.ToggleThemeCommand = toggleTheme
+    member _.ReloadCommand = reload
+    member _.ShowAllLevelsCommand = showAllLevels
+    member _.CloseDetailCommand = closeDetail
+
+    member private this.UpdateEntries(model: Model) =
+        match model.Viewer with
+        | Showing file ->
+            let pattern = model.Search.Pattern |> Option.map box |> Option.toObj
+
+            // Reference checks: the document holds every entry, so structural equality would walk them all.
+            let changed =
+                not (obj.ReferenceEquals(file.Document, shownDocument))
+                || model.Levels <> shownLevels
+                || Some model.Time <> shownTime
+                || not (obj.ReferenceEquals(pattern, shownPattern))
+
+            if changed then
+                let displayChanged =
+                    obj.ReferenceEquals(file.Document, shownDocument)
+                    && (model.Levels <> shownLevels || Some model.Time <> shownTime)
+
+                keepSelectionInView <- displayChanged
+                shownDocument <- file.Document
+                shownLevels <- model.Levels
+                shownTime <- Some model.Time
+                shownPattern <- pattern
+
+                entries <-
+                    Shape.visibleEntries model.Levels file.Document
+                    |> Array.map (fun entry -> EntryVm(entry, model.Time, model.Search.Pattern))
+
+                selectedEntry <- null
+                this.NotifyPropertyChanged "Entries"
+        | _ ->
+            if entries.Length > 0 || not (isNull shownDocument) then
+                shownDocument <- null
+                entries <- [||]
+                selectedEntry <- null
+                this.NotifyPropertyChanged "Entries"
+
+        let wanted =
+            model.SelectedEntry
+            |> Option.bind (fun index -> entries |> Array.tryFind (fun row -> row.Index = index))
+            |> Option.toObj
+
+        if not (obj.ReferenceEquals(wanted, selectedEntry)) then
+            selectedEntry <- wanted
+            this.NotifyPropertyChanged "SelectedEntry"
+
+            if keepSelectionInView && not (isNull wanted) then
+                revealRequested.Trigger(Array.IndexOf(entries, wanted), true)
+
+        keepSelectionInView <- false
+
+    member private this.UpdateDetail(model: Model) =
+        let entry =
+            match model.Viewer, model.SelectedEntry with
+            | Showing file, Some index when index < file.Document.Entries.Length -> Some file.Document.Entries[index]
+            | _ -> None
+
+        match entry with
+        | Some entry ->
+            let utc = Time.context localZone model.Now Utc
+            let local = Time.context localZone model.Now Local
+
+            let times =
+                match entry.Timestamp with
+                | Some timestamp ->
+                    let zoneText =
+                        match model.Time.Display with
+                        | Zone _ -> $"   ·   {model.Time.Caption}  {Time.format model.Time timestamp}"
+                        | _ -> ""
+
+                    $"UTC  {Time.format utc timestamp}   ·   Local  {Time.format local timestamp}{zoneText}"
+                | None -> "No timestamp on this entry"
+
+            let text =
+                LogParser.prettyJson entry
+                |> Option.defaultValue (String.Join(Environment.NewLine, entry.Lines))
+
+            this.Change(&detailHeader, $"Line {entry.Line} · {Level.name entry.Level}", "DetailHeader")
+            this.Change(&detailTimes, times, "DetailTimes")
+            this.Change(&detailText, text, "DetailText")
+            this.Change(&hasDetail, true, "HasDetail")
+        | None -> this.Change(&hasDetail, false, "HasDetail")
+
+    member this.Update(model: Model) =
+        this.Change(&rootPath, model.RootPath, "RootPath")
+        this.Change(&rootName, model.Tree.Root.Name, "RootName")
+        this.Change(&isDark, model.Settings.DarkTheme, "IsDark")
+        this.Change(&isFollowing, model.Following, "IsFollowing")
+
+        treeRows.SyncWith(
+            Shape.treeRows model |> Array.ofList,
+            (fun row -> row.Key),
+            (fun vm -> vm.Key),
+            (fun row -> TreeRowVm(row, ActivateNode >> send)),
+            (fun vm row -> vm.Update row)
+        )
+
+        // Search
+        let search = model.Search
+        this.Change(&isRegex, (search.Query.Mode = RegexSearch), "IsRegex")
+        this.Change(&isMatchCase, search.Query.MatchCase, "IsMatchCase")
+
+        if search.Query.Text <> searchText then
+            searchText <- search.Query.Text
+            this.NotifyPropertyChanged "SearchText"
+            this.NotifyPropertyChanged "HasSearchText"
+
+        this.Change(&searchStatus, Shape.searchStatus model, "SearchStatus")
+        this.Change(&cursorText, Shape.cursorText model, "CursorText")
+        this.Change(&hasSearch, (search.Status <> Idle), "HasSearch")
+        this.Change(&isSearching, (match search.Status with Running _ -> true | _ -> false), "IsSearching")
+        this.Change(&isSearchInvalid, (match search.Status with Invalid _ -> true | _ -> false), "IsSearchInvalid")
+
+        results.SyncWith(
+            Shape.resultRows model |> Array.ofList,
+            (fun row -> ResultRowVm.KeyOf row),
+            (fun vm -> vm.Key),
+            (fun row -> ResultRowVm(row, OpenHit >> send)),
+            (fun vm row -> vm.Update row)
+        )
+
+        // Time
+        if zones.Length = 0 then
+            zones <- Array.ofList model.Zones
+            this.NotifyPropertyChanged "Zones"
+
+        zoneId <- model.Settings.Zone
+        this.Change(&timeCaption, model.Time.Caption, "TimeCaption")
+        this.Change(&isUtc, (model.Time.Display = Utc), "IsUtc")
+        this.Change(&isLocal, (model.Time.Display = Local), "IsLocal")
+        this.Change(&isZone, (match model.Time.Display with Zone _ -> true | _ -> false), "IsZone")
+
+        let zone = zones |> Array.tryFind (fun zone -> zone.Id = model.Settings.Zone)
+
+        if zone <> selectedZone then
+            selectedZone <- zone
+            this.NotifyPropertyChanged "SelectedZone"
+
+        // Viewer
+        this.Change(&viewerTitle, Shape.viewerTitle model, "ViewerTitle")
+        this.Change(&viewerSummary, Shape.viewerSummary model, "ViewerSummary")
+        this.Change(&hasFile, (model.Viewer <> NothingOpen), "HasFile")
+        this.Change(&showEmpty, (model.Viewer = NothingOpen), "ShowEmpty")
+        this.Change(&isOpening, (match model.Viewer with Opening _ -> true | _ -> false), "IsOpening")
+
+        let message =
+            match model.Viewer with
+            | Unreadable(_, message) -> message
+            | Showing { Document = { Kind = Binary } } -> "This looks like a binary file, so there is nothing to show as text."
+            | Showing { Document = document } when document.Entries.Length = 0 -> "This file is empty."
+            | _ -> ""
+
+        this.Change(&viewerMessage, message, "ViewerMessage")
+        this.NotifyPropertyChanged "HasViewerMessage"
+        this.Change(&showEntries, (match model.Viewer with Showing _ -> message = "" | _ -> false), "ShowEntries")
+
+        levelChips.SyncWith(
+            Shape.levelChips model |> Array.ofList,
+            (fun chip -> LevelClass.ofLevel chip.Level),
+            (fun vm -> vm.LevelClass),
+            (fun chip -> LevelChipVm(chip, ToggleLevel >> send)),
+            (fun vm chip -> vm.Update chip)
+        )
+
+        this.Change(&allLevelsShown, (model.Levels.Count = Level.all.Length), "AllLevelsShown")
+        this.UpdateEntries model
+
+        let total =
+            match model.Viewer with
+            | Showing file -> file.Document.Entries.Length
+            | _ -> 0
+
+        let countText = if entries.Length = total then $"{total:N0} entries" else $"{entries.Length:N0} of {total:N0} entries"
+        this.Change(&entryCountText, countText, "EntryCountText")
+        this.UpdateDetail model
+
+        if model.Reveal <> lastReveal then
+            lastReveal <- model.Reveal
+
+            match model.Reveal with
+            | Some reveal ->
+                match entries |> Array.tryFindIndex (fun row -> row.Index = reveal.EntryIndex) with
+                | Some rowIndex -> revealRequested.Trigger(rowIndex, reveal.Select)
+                | None -> ()
+            | None -> ()
+
+    interface IProjection<Model> with
+        member this.Update model = this.Update model
+
+    interface IDispatchTarget<Msg> with
+        member _.SetDispatch target = dispatch <- target.Invoke

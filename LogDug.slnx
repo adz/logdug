@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LogDug.Core/LogDug.Core.fsproj" />
+    <Project Path="src/LogDug/LogDug.fsproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LogDug.Tests/LogDug.Tests.fsproj" />
+  </Folder>
+</Solution>

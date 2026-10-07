@@ -33,17 +33,17 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libfontconfig1 clang zlib1g-dev
 
       - name: Restore
-        run: dotnet restore LogsDigger.slnx
+        run: dotnet restore LogDug.slnx
 
       - name: Build
-        run: dotnet build LogsDigger.slnx --configuration Release --no-restore --nologo -v minimal -m:1
+        run: dotnet build LogDug.slnx --configuration Release --no-restore --nologo -v minimal -m:1
 
       # Includes the headless Avalonia scenario, which drives the real window and writes docs/screenshots.
       - name: Test
-        run: dotnet test --project tests/LogsDigger.Tests/LogsDigger.Tests.fsproj --configuration Release --no-build
+        run: dotnet test --project tests/LogDug.Tests/LogDug.Tests.fsproj --configuration Release --no-build
 
       # Unit tests run on the JIT; the self-test runs the NativeAOT binary over paths that only fail there.
       - name: NativeAOT self-test
         run: |
-          bash scripts/publish-logs-digger.sh --rid linux-x64 --output artifacts/publish/linux-x64
-          artifacts/publish/linux-x64/logs-digger --self-test
+          bash scripts/publish-logdug.sh --rid linux-x64 --output artifacts/publish/linux-x64
+          artifacts/publish/linux-x64/logdug --self-test

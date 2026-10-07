@@ -1,6 +1,6 @@
 # Codebase guide
 
-This guide explains how Logs Digger is put together, where each concern lives, and how to change it. Read it top to bottom once; after that, use the file table as a map.
+This guide explains how Log Dug is put together, where each concern lives, and how to change it. Read it top to bottom once; after that, use the file table as a map.
 
 ## The shape of the app
 
@@ -8,9 +8,9 @@ The solution has two application projects and a test project:
 
 | Project | Language | Role |
 | --- | --- | --- |
-| `src/LogsDigger.Core` | F# | Everything that is not UI: the domain types, archive-aware file access, parsing, rendering to coloured segments, search, settings, and the Elmish program (model, messages, update). It has no Avalonia reference. |
-| `src/LogsDigger` | F# + AXAML | The Avalonia app: F# viewmodels, F# code-behind, AXAML views and styles. It contains no C#. |
-| `tests/LogsDigger.Tests` | F# | xUnit v3 tests for Core, plus a headless Avalonia scenario that drives the real window and writes the screenshots in `docs/screenshots`. |
+| `src/LogDug.Core` | F# | Everything that is not UI: the domain types, archive-aware file access, parsing, rendering to coloured segments, search, settings, and the Elmish program (model, messages, update). It has no Avalonia reference. |
+| `src/LogDug` | F# + AXAML | The Avalonia app: F# viewmodels, F# code-behind, AXAML views and styles. It contains no C#. |
+| `tests/LogDug.Tests` | F# | xUnit v3 tests for Core, plus a headless Avalonia scenario that drives the real window and writes the screenshots in `docs/screenshots`. |
 
 Four libraries do the heavy lifting:
 
@@ -25,9 +25,9 @@ The look comes from **ShadUI** (a shadcn-style theme for Avalonia) plus `Views/S
 
 ```text
 user action (click, keystroke)
-  -> viewmodel setter or Command        (src/LogsDigger/ViewModels.fs)
+  -> viewmodel setter or Command        (src/LogDug/ViewModels.fs)
   -> dispatch Msg
-  -> App.update returns Model * Cmd     (src/LogsDigger.Core/App.fs)
+  -> App.update returns Model * Cmd     (src/LogDug.Core/App.fs)
   -> Cmd runs an Axial Flow off the UI thread (FlowCmd.fs)
   -> the result Msg is posted back to the UI thread (AppEnv.Post)
   -> App.update
@@ -110,7 +110,7 @@ Files compile in this order, and each only depends on the files above it.
 
 ## Tests
 
-`dotnet run --project tests/LogsDigger.Tests` runs everything:
+`dotnet run --project tests/LogDug.Tests` runs everything:
 
 - `ParserTests`, `RenderTests`, `SettingsTests`, `AppTests` cover the pure Core logic.
 - `FilesTests` reads the generated `samples` folder through the `Files` service, including a zip nested inside a tar.gz. It checks that `lines` stops early and releases the file, that `walk` is lazy and depth first, that `watch` reports a real change, and that the search pipeline runs only the newest of two quick requests.

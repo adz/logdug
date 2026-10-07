@@ -1,9 +1,0 @@
-<Solution>
-  <Folder Name="/src/">
-    <Project Path="src/LogsDigger.Core/LogsDigger.Core.fsproj" />
-    <Project Path="src/LogsDigger/LogsDigger.fsproj" />
-  </Folder>
-  <Folder Name="/tests/">
-    <Project Path="tests/LogsDigger.Tests/LogsDigger.Tests.fsproj" />
-  </Folder>
-</Solution>
