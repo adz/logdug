@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>LogsDigger</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Files/Model.fs" />
+    <Compile Include="Files/Archive.fs" />
+    <Compile Include="Files/Files.fs" />
+    <Compile Include="Domain.fs" />
+    <Compile Include="LogParser.fs" />
+    <Compile Include="Time.fs" />
+    <Compile Include="Pattern.fs" />
+    <Compile Include="Render.fs" />
+    <Compile Include="Search.fs" />
+    <Compile Include="Settings.fs" />
+    <Compile Include="Env.fs" />
+    <Compile Include="Runtime.fs" />
+    <Compile Include="SelfTest.fs" />
+    <Compile Include="FlowCmd.fs" />
+    <Compile Include="App.fs" />
+    <Compile Include="Shape.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Axial" />
+    <PackageReference Include="Axial.FileSystem" />
+    <PackageReference Include="Axial.PlatformService" />
+    <PackageReference Include="Reified.Schema" />
+    <PackageReference Include="Elmish" />
+  </ItemGroup>
+</Project>
