@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>LogsDigger.UI</RootNamespace>
+    <AssemblyName>LogsDigger</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <IsAotCompatible>true</IsAotCompatible>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bindable.fs" />
+    <Compile Include="ViewModels.fs" />
+    <Compile Include="LogLine.fs" />
+    <Compile Include="Views/MainWindow.axaml.fs" />
+    <Compile Include="Shell.fs" />
+    <Compile Include="App.axaml.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <PackageReference Include="ShadUI" />
+    <PackageReference Include="Elmish.Avalonia.Glue" />
+    <PackageReference Include="Elmish.Avalonia.Glue.Projection" />
+    <PackageReference Include="Axial" />
+    <PackageReference Include="Axial.FileSystem" />
+    <PackageReference Include="Axial.PlatformService" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LogsDigger.Core\LogsDigger.Core.fsproj" />
+  </ItemGroup>
+</Project>
