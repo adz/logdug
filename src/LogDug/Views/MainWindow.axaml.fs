@@ -10,7 +10,35 @@ open Avalonia.Threading
 type MainWindow() as this =
     inherit ShadUI.Window()
 
-    do AvaloniaXamlLoader.Load this
+    let focusSearch () =
+        let search = this.FindControl<TextBox> "SearchBox"
+        search.Focus() |> ignore
+        search.SelectAll()
+
+    let typingInTextBox () =
+        match this.FocusManager with
+        | null -> false
+        | focus -> focus.GetFocusedElement() :? TextBox
+
+    /// Window shortcuts run before any control sees the key (tunnelling), so a focused list or button
+    /// can't swallow them. `/` is left alone while typing, so it still types into a text box.
+    let onKeyDown (args: KeyEventArgs) =
+        let control = args.KeyModifiers.HasFlag KeyModifiers.Control
+        let alt = args.KeyModifiers.HasFlag KeyModifiers.Alt
+
+        if args.Key = Key.F && control then
+            focusSearch ()
+            args.Handled <- true
+        elif args.KeySymbol = "/" && not control && not alt && not (typingInTextBox ()) then
+            focusSearch ()
+            args.Handled <- true
+        elif args.Key = Key.F4 && alt then
+            this.Close()
+            args.Handled <- true
+
+    do
+        AvaloniaXamlLoader.Load this
+        this.AddHandler(InputElement.KeyDownEvent, System.EventHandler<KeyEventArgs>(fun _ args -> onKeyDown args), Avalonia.Interactivity.RoutingStrategies.Tunnel)
 
     member this.Attach(vm: MainVm) =
         this.DataContext <- vm
@@ -47,11 +75,3 @@ type MainWindow() as this =
             | "HasSearch" -> applyResultsColumn ()
             | _ -> ())
 
-    override this.OnKeyDown(args: KeyEventArgs) =
-        if args.Key = Key.F && args.KeyModifiers.HasFlag KeyModifiers.Control then
-            let search = this.FindControl<TextBox> "SearchBox"
-            search.Focus() |> ignore
-            search.SelectAll()
-            args.Handled <- true
-        else
-            base.OnKeyDown args

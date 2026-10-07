@@ -34,7 +34,7 @@ dotnet run --project src/LogDug -- samples
 
 With no argument the app browses the current directory.
 
-Keys: `Ctrl+F` search, `Enter`/`F3` next match, `Shift+Enter`/`Shift+F3` previous, `Esc` clear, `F5` reload the open file.
+Keys: `Ctrl+F` or `/` search, `Enter`/`F3` next match, `Shift+Enter`/`Shift+F3` previous, `Esc` clear, `F5` reload the open file, `Alt+F4` quit.
 
 ## Test
 

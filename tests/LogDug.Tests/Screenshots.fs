@@ -112,7 +112,14 @@ let private scenario () =
     dispatch (SelectEntry None)
     dispatch ToggleRegex
     let search = window.FindControl<TextBox> "SearchBox"
-    search.Focus() |> ignore
+    let entries = window.FindControl<ListBox> "EntriesList"
+    entries.Focus() |> ignore
+    window.KeyPressQwerty(PhysicalKey.Slash, RawInputModifiers.None)
+    pumpUntil "/ to focus search" (fun () -> search.IsFocused)
+    Assert.Equal("", search.Text)
+    entries.Focus() |> ignore
+    window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.Control)
+    pumpUntil "Ctrl+F to focus search" (fun () -> search.IsFocused)
     window.KeyTextInput "timed out|ECONNRESET"
     pumpUntil "search to finish" (fun () -> vm.HasSearch && not vm.IsSearching && vm.SearchStatus.Contains "matches")
     Assert.Equal("timed out|ECONNRESET", vm.SearchText)
@@ -130,8 +137,11 @@ let private scenario () =
     pumpUntil "light theme" (fun () -> not vm.IsDark)
     capture window "06-light.png"
 
+    let mutable closed = false
+    window.Closed.Add(fun _ -> closed <- true)
+    window.KeyPressQwerty(PhysicalKey.F4, RawInputModifiers.Alt)
+    pumpUntil "Alt+F4 to close the window" (fun () -> closed)
     (connection :> IDisposable).Dispose()
-    window.Close()
 
     // Follow mode: a second window over a scratch folder, with a log that grows while it is open.
     let liveFolder = Directory.CreateTempSubdirectory "logdug-follow"

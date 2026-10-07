@@ -43,7 +43,7 @@
                     <TextBox x:Name="SearchBox"
                              Width="560"
                              Height="36"
-                             PlaceholderText="Search every file, including inside archives   (Ctrl+F)"
+                             PlaceholderText="Search every file, including inside archives   (Ctrl+F or /)"
                              Text="{Binding SearchText, Mode=TwoWay}">
                         <TextBox.KeyBindings>
                             <KeyBinding Gesture="Enter" Command="{Binding NextHitCommand}" />
@@ -344,7 +344,7 @@
                     <TextBlock Text="{Binding RootPath}" Classes="muted" FontSize="11.5" />
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
-                    <TextBlock Classes="muted" FontSize="11.5" Text="Ctrl+F search · Enter / F3 next · Shift+F3 previous · Esc clear · F5 reload" />
+                    <TextBlock Classes="muted" FontSize="11.5" Text="Ctrl+F or / search · Enter / F3 next · Shift+F3 previous · Esc clear · F5 reload · Alt+F4 quit" />
                     <TextBlock Classes="muted" FontSize="11.5" Text="{Binding TimeCaption, StringFormat='Times in {0}'}" />
                 </StackPanel>
             </Grid>
