@@ -67,9 +67,10 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Install NativeAOT prerequisites
+      # fontconfig for SkiaSharp in the headless UI tests; clang and zlib for NativeAOT.
+      - name: Install native prerequisites
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1 clang zlib1g-dev
 
       - name: Test
         if: runner.os == 'Linux'

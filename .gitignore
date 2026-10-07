@@ -5,3 +5,6 @@ artifacts/
 .idea/
 *.user
 TestResults/
+
+# Sample logs are test fixtures; keep them even when a global gitignore excludes *.log.
+!samples/**/*.log
