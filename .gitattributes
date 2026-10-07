@@ -1,0 +1,10 @@
+* text=auto
+
+*.sh text eol=lf
+*.yml text eol=lf
+*.nsi text eol=lf
+
+*.png binary
+*.ttf binary
+*.zip binary
+*.gz binary
