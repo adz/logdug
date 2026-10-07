@@ -1,0 +1,900 @@
+{"level":60,"time":1791324314643,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":1,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324318336,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":2,"msg":"processed job 2 for tenant linus"}
+{"level":30,"time":1791324320369,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":3,"msg":"processed job 3 for tenant edsger"}
+{"level":60,"time":1791324323315,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":4,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791324324539,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":5,"msg":"queue depth 3726 above soft limit"}
+{"level":50,"time":1791324326703,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":6,"msg":"job 6 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324328497,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":7,"msg":"polled queue in 34ms"}
+{"level":30,"time":1791324329729,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":8,"msg":"processed job 8 for tenant alan"}
+{"level":30,"time":1791324331890,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":9,"msg":"processed job 9 for tenant barbara"}
+{"level":30,"time":1791324333946,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":10,"msg":"processed job 10 for tenant barbara"}
+{"level":20,"time":1791324335283,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":11,"msg":"polled queue in 14ms"}
+{"level":30,"time":1791324337411,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":12,"msg":"processed job 12 for tenant ada"}
+{"level":50,"time":1791324339185,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":13,"msg":"job 13 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324340188,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":14,"msg":"polled queue in 25ms"}
+{"level":20,"time":1791324342903,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":15,"msg":"polled queue in 9ms"}
+{"level":30,"time":1791324343460,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":16,"msg":"processed job 16 for tenant linus"}
+{"level":20,"time":1791324344521,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":17,"msg":"polled queue in 14ms"}
+{"level":50,"time":1791324347182,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":18,"msg":"job 18 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324349919,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":19,"msg":"polled queue in 33ms"}
+{"level":40,"time":1791324350045,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":20,"msg":"queue depth 3235 above soft limit"}
+{"level":30,"time":1791324350536,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":21,"msg":"processed job 21 for tenant linus"}
+{"level":50,"time":1791324354330,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":22,"msg":"job 22 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324354420,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":23,"msg":"processed job 23 for tenant edsger"}
+{"level":30,"time":1791324355970,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":24,"msg":"processed job 24 for tenant margaret"}
+{"level":30,"time":1791324358805,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":25,"msg":"processed job 25 for tenant edsger"}
+{"level":30,"time":1791324361245,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":26,"msg":"processed job 26 for tenant barbara"}
+{"level":30,"time":1791324362020,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":27,"msg":"processed job 27 for tenant grace"}
+{"level":20,"time":1791324365223,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":28,"msg":"polled queue in 2ms"}
+{"level":30,"time":1791324366234,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":29,"msg":"processed job 29 for tenant ada"}
+{"level":30,"time":1791324369525,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":30,"msg":"processed job 30 for tenant linus"}
+{"level":40,"time":1791324370745,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":31,"msg":"queue depth 3008 above soft limit"}
+{"level":50,"time":1791324372103,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":32,"msg":"job 32 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324374944,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":33,"msg":"job 33 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324377638,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":34,"msg":"queue depth 4123 above soft limit"}
+{"level":60,"time":1791324378002,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":35,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791324380195,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":36,"msg":"polled queue in 38ms"}
+{"level":30,"time":1791324382382,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":37,"msg":"processed job 37 for tenant ada"}
+{"level":30,"time":1791324386201,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":38,"msg":"processed job 38 for tenant linus"}
+{"level":40,"time":1791324388654,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":39,"msg":"queue depth 4243 above soft limit"}
+{"level":50,"time":1791324390385,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":40,"msg":"job 40 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324390441,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":41,"msg":"processed job 41 for tenant grace"}
+{"level":50,"time":1791324392496,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":42,"msg":"job 42 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324393295,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":43,"msg":"queue depth 1693 above soft limit"}
+{"level":40,"time":1791324393635,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":44,"msg":"queue depth 1221 above soft limit"}
+{"level":30,"time":1791324395122,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":45,"msg":"processed job 45 for tenant ada"}
+{"level":40,"time":1791324398545,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":46,"msg":"queue depth 3888 above soft limit"}
+{"level":20,"time":1791324400098,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":47,"msg":"polled queue in 11ms"}
+{"level":20,"time":1791324401118,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":48,"msg":"polled queue in 3ms"}
+{"level":20,"time":1791324403942,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":49,"msg":"polled queue in 1ms"}
+{"level":30,"time":1791324407413,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":50,"msg":"processed job 50 for tenant ada"}
+{"level":20,"time":1791324410180,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":51,"msg":"polled queue in 29ms"}
+{"level":20,"time":1791324413806,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":52,"msg":"polled queue in 28ms"}
+{"level":30,"time":1791324414974,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":53,"msg":"processed job 53 for tenant grace"}
+{"level":60,"time":1791324415016,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":54,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324416273,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":55,"msg":"processed job 55 for tenant alan"}
+{"level":30,"time":1791324417470,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":56,"msg":"processed job 56 for tenant alan"}
+{"level":60,"time":1791324419989,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":57,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324421193,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":58,"msg":"processed job 58 for tenant alan"}
+{"level":40,"time":1791324422189,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":59,"msg":"queue depth 1232 above soft limit"}
+{"level":60,"time":1791324424410,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":60,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324426024,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":61,"msg":"processed job 61 for tenant barbara"}
+{"level":30,"time":1791324429187,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":62,"msg":"processed job 62 for tenant grace"}
+{"level":30,"time":1791324430226,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":63,"msg":"processed job 63 for tenant edsger"}
+{"level":30,"time":1791324431970,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":64,"msg":"processed job 64 for tenant linus"}
+{"level":30,"time":1791324433185,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":65,"msg":"processed job 65 for tenant grace"}
+{"level":30,"time":1791324435526,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":66,"msg":"processed job 66 for tenant grace"}
+{"level":60,"time":1791324439350,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":67,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324439775,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":68,"msg":"job 68 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324441061,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":69,"msg":"polled queue in 15ms"}
+{"level":20,"time":1791324444713,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":70,"msg":"polled queue in 15ms"}
+{"level":50,"time":1791324448041,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":71,"msg":"job 71 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324448060,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":72,"msg":"queue depth 2626 above soft limit"}
+{"level":60,"time":1791324451068,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":73,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791324451329,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":74,"msg":"queue depth 1479 above soft limit"}
+{"level":20,"time":1791324453576,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":75,"msg":"polled queue in 1ms"}
+{"level":40,"time":1791324455858,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":76,"msg":"queue depth 4778 above soft limit"}
+{"level":30,"time":1791324458000,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":77,"msg":"processed job 77 for tenant edsger"}
+{"level":30,"time":1791324460940,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":78,"msg":"processed job 78 for tenant grace"}
+{"level":30,"time":1791324464416,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":79,"msg":"processed job 79 for tenant grace"}
+{"level":50,"time":1791324466753,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":80,"msg":"job 80 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324469310,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":81,"msg":"processed job 81 for tenant linus"}
+{"level":30,"time":1791324470966,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":82,"msg":"processed job 82 for tenant ada"}
+{"level":30,"time":1791324474468,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":83,"msg":"processed job 83 for tenant margaret"}
+{"level":40,"time":1791324476203,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":84,"msg":"queue depth 4733 above soft limit"}
+{"level":40,"time":1791324478410,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":85,"msg":"queue depth 1016 above soft limit"}
+{"level":30,"time":1791324481856,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":86,"msg":"processed job 86 for tenant edsger"}
+{"level":60,"time":1791324485431,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":87,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791324487573,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":88,"msg":"polled queue in 15ms"}
+{"level":30,"time":1791324489714,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":89,"msg":"processed job 89 for tenant grace"}
+{"level":60,"time":1791324491239,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":90,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791324493471,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":91,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324495462,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":92,"msg":"processed job 92 for tenant alan"}
+{"level":30,"time":1791324499099,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":93,"msg":"processed job 93 for tenant alan"}
+{"level":50,"time":1791324500491,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":94,"msg":"job 94 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324501073,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":95,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791324501676,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":96,"msg":"polled queue in 36ms"}
+{"level":50,"time":1791324503753,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":97,"msg":"job 97 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324504859,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":98,"msg":"polled queue in 3ms"}
+{"level":30,"time":1791324506193,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":99,"msg":"processed job 99 for tenant edsger"}
+{"level":30,"time":1791324509590,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":100,"msg":"processed job 100 for tenant edsger"}
+{"level":30,"time":1791324510828,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":101,"msg":"processed job 101 for tenant margaret"}
+{"level":30,"time":1791324514199,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":102,"msg":"processed job 102 for tenant grace"}
+{"level":60,"time":1791324517227,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":103,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324517248,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":104,"msg":"job 104 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324520992,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":105,"msg":"processed job 105 for tenant ada"}
+{"level":30,"time":1791324523562,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":106,"msg":"processed job 106 for tenant grace"}
+{"level":30,"time":1791324525626,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":107,"msg":"processed job 107 for tenant barbara"}
+{"level":50,"time":1791324529496,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":108,"msg":"job 108 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324531599,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":109,"msg":"processed job 109 for tenant margaret"}
+{"level":60,"time":1791324534481,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":110,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324535124,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":111,"msg":"processed job 111 for tenant edsger"}
+{"level":30,"time":1791324535706,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":112,"msg":"processed job 112 for tenant edsger"}
+{"level":30,"time":1791324536608,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":113,"msg":"processed job 113 for tenant edsger"}
+{"level":30,"time":1791324539328,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":114,"msg":"processed job 114 for tenant barbara"}
+{"level":60,"time":1791324541551,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":115,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324542237,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":116,"msg":"processed job 116 for tenant ada"}
+{"level":30,"time":1791324542619,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":117,"msg":"processed job 117 for tenant edsger"}
+{"level":30,"time":1791324543520,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":118,"msg":"processed job 118 for tenant edsger"}
+{"level":60,"time":1791324544120,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":119,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324545533,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":120,"msg":"processed job 120 for tenant linus"}
+{"level":50,"time":1791324548886,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":121,"msg":"job 121 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324550566,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":122,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324551065,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":123,"msg":"processed job 123 for tenant alan"}
+{"level":30,"time":1791324552808,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":124,"msg":"processed job 124 for tenant alan"}
+{"level":30,"time":1791324555117,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":125,"msg":"processed job 125 for tenant alan"}
+{"level":20,"time":1791324558312,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":126,"msg":"polled queue in 30ms"}
+{"level":20,"time":1791324558387,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":127,"msg":"polled queue in 32ms"}
+{"level":50,"time":1791324560497,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":128,"msg":"job 128 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324562857,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":129,"msg":"processed job 129 for tenant ada"}
+{"level":20,"time":1791324563938,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":130,"msg":"polled queue in 26ms"}
+{"level":40,"time":1791324566735,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":131,"msg":"queue depth 2550 above soft limit"}
+{"level":60,"time":1791324567721,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":132,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791324568974,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":133,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324570640,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":134,"msg":"job 134 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324571690,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":135,"msg":"processed job 135 for tenant linus"}
+{"level":60,"time":1791324572465,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":136,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324575408,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":137,"msg":"job 137 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324576006,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":138,"msg":"processed job 138 for tenant linus"}
+{"level":30,"time":1791324578692,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":139,"msg":"processed job 139 for tenant linus"}
+{"level":30,"time":1791324582224,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":140,"msg":"processed job 140 for tenant alan"}
+{"level":50,"time":1791324584430,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":141,"msg":"job 141 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324586626,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":142,"msg":"processed job 142 for tenant grace"}
+{"level":40,"time":1791324588074,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":143,"msg":"queue depth 649 above soft limit"}
+{"level":30,"time":1791324590872,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":144,"msg":"processed job 144 for tenant margaret"}
+{"level":30,"time":1791324594394,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":145,"msg":"processed job 145 for tenant edsger"}
+{"level":20,"time":1791324598301,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":146,"msg":"polled queue in 15ms"}
+{"level":30,"time":1791324599199,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":147,"msg":"processed job 147 for tenant margaret"}
+{"level":30,"time":1791324601720,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":148,"msg":"processed job 148 for tenant barbara"}
+{"level":40,"time":1791324601979,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":149,"msg":"queue depth 2167 above soft limit"}
+{"level":60,"time":1791324604148,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":150,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324605828,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":151,"msg":"processed job 151 for tenant grace"}
+{"level":30,"time":1791324609064,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":152,"msg":"processed job 152 for tenant linus"}
+{"level":30,"time":1791324610451,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":153,"msg":"processed job 153 for tenant linus"}
+{"level":30,"time":1791324611124,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":154,"msg":"processed job 154 for tenant alan"}
+{"level":30,"time":1791324613574,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":155,"msg":"processed job 155 for tenant barbara"}
+{"level":60,"time":1791324616332,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":156,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324620303,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":157,"msg":"processed job 157 for tenant margaret"}
+{"level":30,"time":1791324621577,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":158,"msg":"processed job 158 for tenant ada"}
+{"level":30,"time":1791324622371,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":159,"msg":"processed job 159 for tenant linus"}
+{"level":60,"time":1791324623411,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":160,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324624504,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":161,"msg":"processed job 161 for tenant barbara"}
+{"level":50,"time":1791324628084,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":162,"msg":"job 162 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324630763,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":163,"msg":"processed job 163 for tenant barbara"}
+{"level":60,"time":1791324630854,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":164,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324633084,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":165,"msg":"processed job 165 for tenant linus"}
+{"level":50,"time":1791324634987,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":166,"msg":"job 166 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324635862,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":167,"msg":"queue depth 3140 above soft limit"}
+{"level":30,"time":1791324636467,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":168,"msg":"processed job 168 for tenant ada"}
+{"level":20,"time":1791324639864,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":169,"msg":"polled queue in 29ms"}
+{"level":40,"time":1791324643216,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":170,"msg":"queue depth 3459 above soft limit"}
+{"level":30,"time":1791324646538,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":171,"msg":"processed job 171 for tenant ada"}
+{"level":60,"time":1791324648194,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":172,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324648598,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":173,"msg":"processed job 173 for tenant grace"}
+{"level":40,"time":1791324651977,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":174,"msg":"queue depth 3460 above soft limit"}
+{"level":60,"time":1791324652309,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":175,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791324655245,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":176,"msg":"polled queue in 27ms"}
+{"level":30,"time":1791324655487,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":177,"msg":"processed job 177 for tenant grace"}
+{"level":50,"time":1791324657496,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":178,"msg":"job 178 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324660842,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":179,"msg":"job 179 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324662952,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":180,"msg":"job 180 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324663847,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":181,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324667147,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":182,"msg":"processed job 182 for tenant linus"}
+{"level":20,"time":1791324670388,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":183,"msg":"polled queue in 5ms"}
+{"level":50,"time":1791324670443,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":184,"msg":"job 184 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324671501,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":185,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324673591,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":186,"msg":"processed job 186 for tenant grace"}
+{"level":30,"time":1791324677316,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":187,"msg":"processed job 187 for tenant alan"}
+{"level":20,"time":1791324679653,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":188,"msg":"polled queue in 20ms"}
+{"level":30,"time":1791324680486,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":189,"msg":"processed job 189 for tenant ada"}
+{"level":20,"time":1791324681216,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":190,"msg":"polled queue in 12ms"}
+{"level":30,"time":1791324683469,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":191,"msg":"processed job 191 for tenant margaret"}
+{"level":30,"time":1791324687444,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":192,"msg":"processed job 192 for tenant barbara"}
+{"level":40,"time":1791324689862,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":193,"msg":"queue depth 1049 above soft limit"}
+{"level":50,"time":1791324692183,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":194,"msg":"job 194 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324693905,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":195,"msg":"job 195 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324696311,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":196,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791324700036,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":197,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791324703119,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":198,"msg":"queue depth 2915 above soft limit"}
+{"level":20,"time":1791324706452,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":199,"msg":"polled queue in 23ms"}
+{"level":60,"time":1791324708849,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":200,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324709822,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":201,"msg":"processed job 201 for tenant linus"}
+{"level":30,"time":1791324709893,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":202,"msg":"processed job 202 for tenant margaret"}
+{"level":30,"time":1791324710868,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":203,"msg":"processed job 203 for tenant barbara"}
+{"level":60,"time":1791324712851,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":204,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324713643,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":205,"msg":"job 205 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324717206,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":206,"msg":"processed job 206 for tenant alan"}
+{"level":20,"time":1791324720697,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":207,"msg":"polled queue in 14ms"}
+{"level":30,"time":1791324722445,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":208,"msg":"processed job 208 for tenant margaret"}
+{"level":30,"time":1791324724097,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":209,"msg":"processed job 209 for tenant grace"}
+{"level":30,"time":1791324726497,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":210,"msg":"processed job 210 for tenant barbara"}
+{"level":30,"time":1791324728402,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":211,"msg":"processed job 211 for tenant barbara"}
+{"level":30,"time":1791324730939,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":212,"msg":"processed job 212 for tenant ada"}
+{"level":20,"time":1791324731470,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":213,"msg":"polled queue in 12ms"}
+{"level":40,"time":1791324734335,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":214,"msg":"queue depth 4270 above soft limit"}
+{"level":20,"time":1791324736604,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":215,"msg":"polled queue in 12ms"}
+{"level":20,"time":1791324737037,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":216,"msg":"polled queue in 29ms"}
+{"level":60,"time":1791324737677,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":217,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324739078,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":218,"msg":"processed job 218 for tenant alan"}
+{"level":30,"time":1791324739406,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":219,"msg":"processed job 219 for tenant grace"}
+{"level":30,"time":1791324741209,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":220,"msg":"processed job 220 for tenant ada"}
+{"level":40,"time":1791324744262,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":221,"msg":"queue depth 4233 above soft limit"}
+{"level":50,"time":1791324745981,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":222,"msg":"job 222 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324749694,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":223,"msg":"polled queue in 2ms"}
+{"level":60,"time":1791324750813,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":224,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324753716,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":225,"msg":"job 225 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324755083,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":226,"msg":"processed job 226 for tenant grace"}
+{"level":30,"time":1791324756463,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":227,"msg":"processed job 227 for tenant alan"}
+{"level":30,"time":1791324758279,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":228,"msg":"processed job 228 for tenant linus"}
+{"level":30,"time":1791324760225,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":229,"msg":"processed job 229 for tenant barbara"}
+{"level":20,"time":1791324761964,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":230,"msg":"polled queue in 34ms"}
+{"level":30,"time":1791324763941,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":231,"msg":"processed job 231 for tenant linus"}
+{"level":30,"time":1791324764166,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":232,"msg":"processed job 232 for tenant edsger"}
+{"level":30,"time":1791324767922,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":233,"msg":"processed job 233 for tenant alan"}
+{"level":30,"time":1791324771377,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":234,"msg":"processed job 234 for tenant margaret"}
+{"level":30,"time":1791324771776,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":235,"msg":"processed job 235 for tenant ada"}
+{"level":50,"time":1791324774885,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":236,"msg":"job 236 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324776622,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":237,"msg":"polled queue in 1ms"}
+{"level":50,"time":1791324776640,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":238,"msg":"job 238 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324779588,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":239,"msg":"queue depth 1820 above soft limit"}
+{"level":20,"time":1791324783575,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":240,"msg":"polled queue in 32ms"}
+{"level":30,"time":1791324784691,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":241,"msg":"processed job 241 for tenant linus"}
+{"level":40,"time":1791324788671,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":242,"msg":"queue depth 825 above soft limit"}
+{"level":40,"time":1791324790982,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":243,"msg":"queue depth 4383 above soft limit"}
+{"level":20,"time":1791324794684,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":244,"msg":"polled queue in 5ms"}
+{"level":20,"time":1791324796294,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":245,"msg":"polled queue in 8ms"}
+{"level":20,"time":1791324798218,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":246,"msg":"polled queue in 4ms"}
+{"level":30,"time":1791324799644,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":247,"msg":"processed job 247 for tenant grace"}
+{"level":50,"time":1791324802481,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":248,"msg":"job 248 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324802522,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":249,"msg":"processed job 249 for tenant ada"}
+{"level":40,"time":1791324805938,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":250,"msg":"queue depth 3332 above soft limit"}
+{"level":50,"time":1791324808783,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":251,"msg":"job 251 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324811263,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":252,"msg":"queue depth 1138 above soft limit"}
+{"level":50,"time":1791324812312,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":253,"msg":"job 253 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324814216,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":254,"msg":"processed job 254 for tenant ada"}
+{"level":40,"time":1791324814326,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":255,"msg":"queue depth 2183 above soft limit"}
+{"level":50,"time":1791324817982,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":256,"msg":"job 256 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324819284,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":257,"msg":"polled queue in 24ms"}
+{"level":30,"time":1791324822977,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":258,"msg":"processed job 258 for tenant grace"}
+{"level":30,"time":1791324825381,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":259,"msg":"processed job 259 for tenant edsger"}
+{"level":30,"time":1791324828555,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":260,"msg":"processed job 260 for tenant barbara"}
+{"level":30,"time":1791324830224,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":261,"msg":"processed job 261 for tenant edsger"}
+{"level":30,"time":1791324832622,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":262,"msg":"processed job 262 for tenant alan"}
+{"level":30,"time":1791324832845,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":263,"msg":"processed job 263 for tenant grace"}
+{"level":30,"time":1791324834810,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":264,"msg":"processed job 264 for tenant grace"}
+{"level":30,"time":1791324838085,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":265,"msg":"processed job 265 for tenant ada"}
+{"level":20,"time":1791324840847,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":266,"msg":"polled queue in 13ms"}
+{"level":50,"time":1791324843153,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":267,"msg":"job 267 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324846334,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":268,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324849073,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":269,"msg":"processed job 269 for tenant barbara"}
+{"level":20,"time":1791324852796,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":270,"msg":"polled queue in 15ms"}
+{"level":30,"time":1791324853246,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":271,"msg":"processed job 271 for tenant alan"}
+{"level":30,"time":1791324856581,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":272,"msg":"processed job 272 for tenant edsger"}
+{"level":20,"time":1791324858024,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":273,"msg":"polled queue in 29ms"}
+{"level":50,"time":1791324859967,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":274,"msg":"job 274 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324863035,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":275,"msg":"processed job 275 for tenant margaret"}
+{"level":50,"time":1791324865700,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":276,"msg":"job 276 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324867800,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":277,"msg":"processed job 277 for tenant ada"}
+{"level":30,"time":1791324868671,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":278,"msg":"processed job 278 for tenant alan"}
+{"level":30,"time":1791324869425,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":279,"msg":"processed job 279 for tenant grace"}
+{"level":50,"time":1791324872126,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":280,"msg":"job 280 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324873980,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":281,"msg":"queue depth 2193 above soft limit"}
+{"level":30,"time":1791324874442,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":282,"msg":"processed job 282 for tenant margaret"}
+{"level":20,"time":1791324877168,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":283,"msg":"polled queue in 24ms"}
+{"level":40,"time":1791324879223,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":284,"msg":"queue depth 3498 above soft limit"}
+{"level":20,"time":1791324879738,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":285,"msg":"polled queue in 36ms"}
+{"level":30,"time":1791324883565,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":286,"msg":"processed job 286 for tenant barbara"}
+{"level":30,"time":1791324886802,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":287,"msg":"processed job 287 for tenant ada"}
+{"level":50,"time":1791324887961,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":288,"msg":"job 288 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324891087,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":289,"msg":"processed job 289 for tenant margaret"}
+{"level":20,"time":1791324894495,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":290,"msg":"polled queue in 8ms"}
+{"level":40,"time":1791324896002,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":291,"msg":"queue depth 3271 above soft limit"}
+{"level":60,"time":1791324899676,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":292,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324903264,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":293,"msg":"processed job 293 for tenant linus"}
+{"level":30,"time":1791324904754,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":294,"msg":"processed job 294 for tenant alan"}
+{"level":40,"time":1791324907316,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":295,"msg":"queue depth 782 above soft limit"}
+{"level":50,"time":1791324908607,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":296,"msg":"job 296 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324911337,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":297,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324912020,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":298,"msg":"processed job 298 for tenant alan"}
+{"level":50,"time":1791324914660,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":299,"msg":"job 299 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324916300,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":300,"msg":"polled queue in 29ms"}
+{"level":50,"time":1791324917004,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":301,"msg":"job 301 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324919388,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":302,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791324921242,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":303,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324923483,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":304,"msg":"job 304 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324924400,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":305,"msg":"job 305 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324924551,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":306,"msg":"queue depth 1439 above soft limit"}
+{"level":30,"time":1791324925159,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":307,"msg":"processed job 307 for tenant edsger"}
+{"level":20,"time":1791324925792,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":308,"msg":"polled queue in 34ms"}
+{"level":30,"time":1791324929449,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":309,"msg":"processed job 309 for tenant grace"}
+{"level":60,"time":1791324931569,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":310,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324933395,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":311,"msg":"job 311 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324936130,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":312,"msg":"job 312 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324937122,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":313,"msg":"queue depth 4446 above soft limit"}
+{"level":50,"time":1791324937958,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":314,"msg":"job 314 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791324938675,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":315,"msg":"queue depth 2978 above soft limit"}
+{"level":30,"time":1791324941724,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":316,"msg":"processed job 316 for tenant ada"}
+{"level":20,"time":1791324945643,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":317,"msg":"polled queue in 35ms"}
+{"level":30,"time":1791324948985,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":318,"msg":"processed job 318 for tenant margaret"}
+{"level":50,"time":1791324952721,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":319,"msg":"job 319 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791324952806,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":320,"msg":"job 320 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324954228,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":321,"msg":"processed job 321 for tenant margaret"}
+{"level":30,"time":1791324956419,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":322,"msg":"processed job 322 for tenant linus"}
+{"level":30,"time":1791324960214,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":323,"msg":"processed job 323 for tenant edsger"}
+{"level":30,"time":1791324962302,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":324,"msg":"processed job 324 for tenant grace"}
+{"level":30,"time":1791324965418,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":325,"msg":"processed job 325 for tenant barbara"}
+{"level":50,"time":1791324969298,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":326,"msg":"job 326 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791324973098,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":327,"msg":"polled queue in 17ms"}
+{"level":50,"time":1791324976949,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":328,"msg":"job 328 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791324979996,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":329,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791324983524,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":330,"msg":"job 330 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791324985274,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":331,"msg":"processed job 331 for tenant ada"}
+{"level":30,"time":1791324985568,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":332,"msg":"processed job 332 for tenant ada"}
+{"level":60,"time":1791324988227,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":333,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791324991796,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":334,"msg":"processed job 334 for tenant ada"}
+{"level":30,"time":1791324994441,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":335,"msg":"processed job 335 for tenant margaret"}
+{"level":30,"time":1791324997539,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":336,"msg":"processed job 336 for tenant ada"}
+{"level":30,"time":1791325001036,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":337,"msg":"processed job 337 for tenant edsger"}
+{"level":30,"time":1791325002250,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":338,"msg":"processed job 338 for tenant linus"}
+{"level":20,"time":1791325004271,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":339,"msg":"polled queue in 39ms"}
+{"level":30,"time":1791325007225,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":340,"msg":"processed job 340 for tenant alan"}
+{"level":40,"time":1791325009293,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":341,"msg":"queue depth 4257 above soft limit"}
+{"level":30,"time":1791325011956,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":342,"msg":"processed job 342 for tenant alan"}
+{"level":30,"time":1791325014195,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":343,"msg":"processed job 343 for tenant edsger"}
+{"level":30,"time":1791325018193,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":344,"msg":"processed job 344 for tenant edsger"}
+{"level":40,"time":1791325021492,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":345,"msg":"queue depth 1840 above soft limit"}
+{"level":30,"time":1791325025000,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":346,"msg":"processed job 346 for tenant linus"}
+{"level":40,"time":1791325026129,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":347,"msg":"queue depth 3782 above soft limit"}
+{"level":60,"time":1791325029183,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":348,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325031214,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":349,"msg":"processed job 349 for tenant barbara"}
+{"level":20,"time":1791325031841,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":350,"msg":"polled queue in 22ms"}
+{"level":30,"time":1791325032099,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":351,"msg":"processed job 351 for tenant linus"}
+{"level":20,"time":1791325032397,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":352,"msg":"polled queue in 15ms"}
+{"level":30,"time":1791325034288,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":353,"msg":"processed job 353 for tenant alan"}
+{"level":50,"time":1791325035168,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":354,"msg":"job 354 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325036037,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":355,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791325037881,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":356,"msg":"job 356 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325041508,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":357,"msg":"polled queue in 19ms"}
+{"level":20,"time":1791325043824,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":358,"msg":"polled queue in 25ms"}
+{"level":40,"time":1791325047190,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":359,"msg":"queue depth 2557 above soft limit"}
+{"level":30,"time":1791325050945,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":360,"msg":"processed job 360 for tenant margaret"}
+{"level":30,"time":1791325054364,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":361,"msg":"processed job 361 for tenant barbara"}
+{"level":50,"time":1791325057729,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":362,"msg":"job 362 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325059705,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":363,"msg":"queue depth 2988 above soft limit"}
+{"level":30,"time":1791325061559,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":364,"msg":"processed job 364 for tenant barbara"}
+{"level":30,"time":1791325064500,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":365,"msg":"processed job 365 for tenant margaret"}
+{"level":30,"time":1791325066976,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":366,"msg":"processed job 366 for tenant ada"}
+{"level":30,"time":1791325069062,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":367,"msg":"processed job 367 for tenant margaret"}
+{"level":20,"time":1791325070281,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":368,"msg":"polled queue in 24ms"}
+{"level":20,"time":1791325070735,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":369,"msg":"polled queue in 23ms"}
+{"level":60,"time":1791325070904,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":370,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791325071795,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":371,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325075329,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":372,"msg":"processed job 372 for tenant alan"}
+{"level":30,"time":1791325077826,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":373,"msg":"processed job 373 for tenant alan"}
+{"level":30,"time":1791325079898,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":374,"msg":"processed job 374 for tenant alan"}
+{"level":30,"time":1791325082790,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":375,"msg":"processed job 375 for tenant alan"}
+{"level":40,"time":1791325084444,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":376,"msg":"queue depth 2872 above soft limit"}
+{"level":30,"time":1791325087417,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":377,"msg":"processed job 377 for tenant grace"}
+{"level":40,"time":1791325087463,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":378,"msg":"queue depth 2680 above soft limit"}
+{"level":30,"time":1791325091211,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":379,"msg":"processed job 379 for tenant linus"}
+{"level":50,"time":1791325093015,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":380,"msg":"job 380 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325095931,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":381,"msg":"processed job 381 for tenant margaret"}
+{"level":30,"time":1791325096974,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":382,"msg":"processed job 382 for tenant margaret"}
+{"level":30,"time":1791325098309,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":383,"msg":"processed job 383 for tenant linus"}
+{"level":50,"time":1791325099972,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":384,"msg":"job 384 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325102790,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":385,"msg":"processed job 385 for tenant edsger"}
+{"level":50,"time":1791325105415,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":386,"msg":"job 386 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325107802,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":387,"msg":"queue depth 2759 above soft limit"}
+{"level":30,"time":1791325109393,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":388,"msg":"processed job 388 for tenant alan"}
+{"level":30,"time":1791325111734,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":389,"msg":"processed job 389 for tenant linus"}
+{"level":60,"time":1791325115096,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":390,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325117308,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":391,"msg":"processed job 391 for tenant alan"}
+{"level":30,"time":1791325119842,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":392,"msg":"processed job 392 for tenant grace"}
+{"level":30,"time":1791325122944,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":393,"msg":"processed job 393 for tenant grace"}
+{"level":40,"time":1791325125309,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":394,"msg":"queue depth 1713 above soft limit"}
+{"level":30,"time":1791325127186,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":395,"msg":"processed job 395 for tenant alan"}
+{"level":20,"time":1791325128794,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":396,"msg":"polled queue in 38ms"}
+{"level":60,"time":1791325130985,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":397,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325132275,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":398,"msg":"polled queue in 29ms"}
+{"level":50,"time":1791325133645,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":399,"msg":"job 399 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325137139,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":400,"msg":"polled queue in 10ms"}
+{"level":50,"time":1791325140502,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":401,"msg":"job 401 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325142407,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":402,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791325144861,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":403,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325147983,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":404,"msg":"polled queue in 15ms"}
+{"level":30,"time":1791325151111,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":405,"msg":"processed job 405 for tenant barbara"}
+{"level":30,"time":1791325152853,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":406,"msg":"processed job 406 for tenant barbara"}
+{"level":60,"time":1791325153553,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":407,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325155340,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":408,"msg":"polled queue in 33ms"}
+{"level":30,"time":1791325158296,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":409,"msg":"processed job 409 for tenant barbara"}
+{"level":50,"time":1791325159695,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":410,"msg":"job 410 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325163095,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":411,"msg":"processed job 411 for tenant barbara"}
+{"level":30,"time":1791325165922,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":412,"msg":"processed job 412 for tenant margaret"}
+{"level":20,"time":1791325168751,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":413,"msg":"polled queue in 21ms"}
+{"level":30,"time":1791325170201,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":414,"msg":"processed job 414 for tenant ada"}
+{"level":40,"time":1791325173133,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":415,"msg":"queue depth 3165 above soft limit"}
+{"level":40,"time":1791325176313,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":416,"msg":"queue depth 662 above soft limit"}
+{"level":50,"time":1791325177644,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":417,"msg":"job 417 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325177719,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":418,"msg":"processed job 418 for tenant margaret"}
+{"level":30,"time":1791325179754,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":419,"msg":"processed job 419 for tenant linus"}
+{"level":50,"time":1791325181121,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":420,"msg":"job 420 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325182054,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":421,"msg":"processed job 421 for tenant linus"}
+{"level":30,"time":1791325183306,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":422,"msg":"processed job 422 for tenant grace"}
+{"level":30,"time":1791325186360,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":423,"msg":"processed job 423 for tenant grace"}
+{"level":50,"time":1791325188033,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":424,"msg":"job 424 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325191773,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":425,"msg":"processed job 425 for tenant linus"}
+{"level":30,"time":1791325195377,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":426,"msg":"processed job 426 for tenant ada"}
+{"level":30,"time":1791325195617,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":427,"msg":"processed job 427 for tenant margaret"}
+{"level":20,"time":1791325197389,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":428,"msg":"polled queue in 39ms"}
+{"level":30,"time":1791325199199,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":429,"msg":"processed job 429 for tenant edsger"}
+{"level":30,"time":1791325202252,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":430,"msg":"processed job 430 for tenant margaret"}
+{"level":30,"time":1791325202385,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":431,"msg":"processed job 431 for tenant grace"}
+{"level":50,"time":1791325204415,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":432,"msg":"job 432 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325207971,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":433,"msg":"polled queue in 1ms"}
+{"level":60,"time":1791325208201,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":434,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791325210520,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":435,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325211766,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":436,"msg":"processed job 436 for tenant linus"}
+{"level":30,"time":1791325212881,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":437,"msg":"processed job 437 for tenant grace"}
+{"level":40,"time":1791325215310,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":438,"msg":"queue depth 3688 above soft limit"}
+{"level":30,"time":1791325216791,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":439,"msg":"processed job 439 for tenant grace"}
+{"level":30,"time":1791325219002,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":440,"msg":"processed job 440 for tenant grace"}
+{"level":60,"time":1791325221020,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":441,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325221712,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":442,"msg":"processed job 442 for tenant linus"}
+{"level":30,"time":1791325223594,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":443,"msg":"processed job 443 for tenant grace"}
+{"level":30,"time":1791325224636,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":444,"msg":"processed job 444 for tenant linus"}
+{"level":30,"time":1791325227141,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":445,"msg":"processed job 445 for tenant alan"}
+{"level":20,"time":1791325227621,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":446,"msg":"polled queue in 3ms"}
+{"level":60,"time":1791325230101,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":447,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325230636,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":448,"msg":"processed job 448 for tenant edsger"}
+{"level":40,"time":1791325231341,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":449,"msg":"queue depth 1913 above soft limit"}
+{"level":40,"time":1791325231975,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":450,"msg":"queue depth 727 above soft limit"}
+{"level":40,"time":1791325234627,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":451,"msg":"queue depth 4920 above soft limit"}
+{"level":30,"time":1791325238446,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":452,"msg":"processed job 452 for tenant edsger"}
+{"level":20,"time":1791325240557,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":453,"msg":"polled queue in 35ms"}
+{"level":30,"time":1791325242349,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":454,"msg":"processed job 454 for tenant linus"}
+{"level":30,"time":1791325245497,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":455,"msg":"processed job 455 for tenant ada"}
+{"level":60,"time":1791325248351,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":456,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325250934,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":457,"msg":"polled queue in 31ms"}
+{"level":30,"time":1791325253299,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":458,"msg":"processed job 458 for tenant linus"}
+{"level":40,"time":1791325255676,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":459,"msg":"queue depth 1695 above soft limit"}
+{"level":50,"time":1791325258597,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":460,"msg":"job 460 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325261511,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":461,"msg":"processed job 461 for tenant grace"}
+{"level":50,"time":1791325262456,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":462,"msg":"job 462 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325264353,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":463,"msg":"processed job 463 for tenant edsger"}
+{"level":30,"time":1791325266683,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":464,"msg":"processed job 464 for tenant grace"}
+{"level":30,"time":1791325270029,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":465,"msg":"processed job 465 for tenant ada"}
+{"level":30,"time":1791325270834,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":466,"msg":"processed job 466 for tenant barbara"}
+{"level":30,"time":1791325272720,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":467,"msg":"processed job 467 for tenant ada"}
+{"level":30,"time":1791325275184,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":468,"msg":"processed job 468 for tenant margaret"}
+{"level":20,"time":1791325277863,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":469,"msg":"polled queue in 34ms"}
+{"level":30,"time":1791325279708,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":470,"msg":"processed job 470 for tenant grace"}
+{"level":30,"time":1791325281269,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":471,"msg":"processed job 471 for tenant grace"}
+{"level":40,"time":1791325285089,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":472,"msg":"queue depth 2199 above soft limit"}
+{"level":30,"time":1791325286923,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":473,"msg":"processed job 473 for tenant alan"}
+{"level":30,"time":1791325289301,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":474,"msg":"processed job 474 for tenant margaret"}
+{"level":30,"time":1791325291195,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":475,"msg":"processed job 475 for tenant barbara"}
+{"level":30,"time":1791325293158,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":476,"msg":"processed job 476 for tenant barbara"}
+{"level":20,"time":1791325295474,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":477,"msg":"polled queue in 32ms"}
+{"level":30,"time":1791325296131,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":478,"msg":"processed job 478 for tenant alan"}
+{"level":30,"time":1791325298526,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":479,"msg":"processed job 479 for tenant grace"}
+{"level":30,"time":1791325301131,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":480,"msg":"processed job 480 for tenant grace"}
+{"level":20,"time":1791325305040,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":481,"msg":"polled queue in 7ms"}
+{"level":30,"time":1791325306421,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":482,"msg":"processed job 482 for tenant grace"}
+{"level":60,"time":1791325310226,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":483,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791325312799,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":484,"msg":"queue depth 3839 above soft limit"}
+{"level":30,"time":1791325314418,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":485,"msg":"processed job 485 for tenant alan"}
+{"level":30,"time":1791325314554,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":486,"msg":"processed job 486 for tenant ada"}
+{"level":30,"time":1791325315881,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":487,"msg":"processed job 487 for tenant grace"}
+{"level":30,"time":1791325319172,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":488,"msg":"processed job 488 for tenant alan"}
+{"level":30,"time":1791325320344,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":489,"msg":"processed job 489 for tenant grace"}
+{"level":30,"time":1791325320798,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":490,"msg":"processed job 490 for tenant linus"}
+{"level":20,"time":1791325322767,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":491,"msg":"polled queue in 32ms"}
+{"level":50,"time":1791325325410,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":492,"msg":"job 492 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325327879,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":493,"msg":"processed job 493 for tenant edsger"}
+{"level":60,"time":1791325328401,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":494,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325329680,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":495,"msg":"processed job 495 for tenant linus"}
+{"level":60,"time":1791325332874,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":496,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325334254,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":497,"msg":"processed job 497 for tenant edsger"}
+{"level":60,"time":1791325335500,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":498,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325336548,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":499,"msg":"polled queue in 37ms"}
+{"level":30,"time":1791325338026,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":500,"msg":"processed job 500 for tenant linus"}
+{"level":30,"time":1791325340286,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":501,"msg":"processed job 501 for tenant alan"}
+{"level":60,"time":1791325343871,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":502,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791325344138,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":503,"msg":"queue depth 2858 above soft limit"}
+{"level":30,"time":1791325344751,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":504,"msg":"processed job 504 for tenant alan"}
+{"level":40,"time":1791325347726,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":505,"msg":"queue depth 1672 above soft limit"}
+{"level":40,"time":1791325350653,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":506,"msg":"queue depth 563 above soft limit"}
+{"level":60,"time":1791325352226,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":507,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325354793,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":508,"msg":"processed job 508 for tenant edsger"}
+{"level":60,"time":1791325358547,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":509,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325358764,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":510,"msg":"processed job 510 for tenant margaret"}
+{"level":20,"time":1791325360350,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":511,"msg":"polled queue in 17ms"}
+{"level":30,"time":1791325361056,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":512,"msg":"processed job 512 for tenant grace"}
+{"level":20,"time":1791325362860,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":513,"msg":"polled queue in 7ms"}
+{"level":30,"time":1791325365834,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":514,"msg":"processed job 514 for tenant alan"}
+{"level":50,"time":1791325366856,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":515,"msg":"job 515 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325370231,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":516,"msg":"queue depth 2388 above soft limit"}
+{"level":40,"time":1791325371869,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":517,"msg":"queue depth 4987 above soft limit"}
+{"level":30,"time":1791325372075,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":518,"msg":"processed job 518 for tenant barbara"}
+{"level":30,"time":1791325372297,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":519,"msg":"processed job 519 for tenant linus"}
+{"level":60,"time":1791325375253,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":520,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325379049,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":521,"msg":"processed job 521 for tenant alan"}
+{"level":30,"time":1791325382427,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":522,"msg":"processed job 522 for tenant grace"}
+{"level":30,"time":1791325383523,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":523,"msg":"processed job 523 for tenant margaret"}
+{"level":30,"time":1791325384925,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":524,"msg":"processed job 524 for tenant barbara"}
+{"level":30,"time":1791325385882,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":525,"msg":"processed job 525 for tenant barbara"}
+{"level":50,"time":1791325389769,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":526,"msg":"job 526 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325391452,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":527,"msg":"queue depth 3964 above soft limit"}
+{"level":60,"time":1791325393900,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":528,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325395980,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":529,"msg":"processed job 529 for tenant linus"}
+{"level":50,"time":1791325398164,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":530,"msg":"job 530 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325399121,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":531,"msg":"processed job 531 for tenant linus"}
+{"level":20,"time":1791325401644,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":532,"msg":"polled queue in 22ms"}
+{"level":20,"time":1791325403902,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":533,"msg":"polled queue in 39ms"}
+{"level":30,"time":1791325407147,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":534,"msg":"processed job 534 for tenant barbara"}
+{"level":30,"time":1791325411110,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":535,"msg":"processed job 535 for tenant linus"}
+{"level":20,"time":1791325414787,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":536,"msg":"polled queue in 36ms"}
+{"level":50,"time":1791325415554,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":537,"msg":"job 537 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325418920,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":538,"msg":"processed job 538 for tenant edsger"}
+{"level":30,"time":1791325420013,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":539,"msg":"processed job 539 for tenant edsger"}
+{"level":30,"time":1791325423887,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":540,"msg":"processed job 540 for tenant alan"}
+{"level":30,"time":1791325426584,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":541,"msg":"processed job 541 for tenant barbara"}
+{"level":30,"time":1791325430101,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":542,"msg":"processed job 542 for tenant ada"}
+{"level":30,"time":1791325433607,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":543,"msg":"processed job 543 for tenant margaret"}
+{"level":60,"time":1791325435458,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":544,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325438156,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":545,"msg":"polled queue in 23ms"}
+{"level":30,"time":1791325438807,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":546,"msg":"processed job 546 for tenant alan"}
+{"level":30,"time":1791325441687,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":547,"msg":"processed job 547 for tenant grace"}
+{"level":30,"time":1791325441893,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":548,"msg":"processed job 548 for tenant edsger"}
+{"level":50,"time":1791325442738,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":549,"msg":"job 549 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325446383,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":550,"msg":"queue depth 4897 above soft limit"}
+{"level":30,"time":1791325446786,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":551,"msg":"processed job 551 for tenant linus"}
+{"level":30,"time":1791325449084,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":552,"msg":"processed job 552 for tenant ada"}
+{"level":30,"time":1791325450305,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":553,"msg":"processed job 553 for tenant alan"}
+{"level":30,"time":1791325452986,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":554,"msg":"processed job 554 for tenant barbara"}
+{"level":30,"time":1791325455150,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":555,"msg":"processed job 555 for tenant linus"}
+{"level":30,"time":1791325456955,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":556,"msg":"processed job 556 for tenant ada"}
+{"level":20,"time":1791325459902,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":557,"msg":"polled queue in 17ms"}
+{"level":30,"time":1791325463415,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":558,"msg":"processed job 558 for tenant alan"}
+{"level":20,"time":1791325466607,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":559,"msg":"polled queue in 37ms"}
+{"level":50,"time":1791325467516,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":560,"msg":"job 560 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325468464,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":561,"msg":"polled queue in 24ms"}
+{"level":60,"time":1791325470042,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":562,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325471083,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":563,"msg":"processed job 563 for tenant ada"}
+{"level":30,"time":1791325472476,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":564,"msg":"processed job 564 for tenant alan"}
+{"level":40,"time":1791325473606,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":565,"msg":"queue depth 2525 above soft limit"}
+{"level":30,"time":1791325474419,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":566,"msg":"processed job 566 for tenant edsger"}
+{"level":30,"time":1791325477042,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":567,"msg":"processed job 567 for tenant ada"}
+{"level":60,"time":1791325477761,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":568,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325480560,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":569,"msg":"processed job 569 for tenant edsger"}
+{"level":30,"time":1791325482820,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":570,"msg":"processed job 570 for tenant grace"}
+{"level":50,"time":1791325484296,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":571,"msg":"job 571 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325485139,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":572,"msg":"processed job 572 for tenant ada"}
+{"level":40,"time":1791325487758,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":573,"msg":"queue depth 3090 above soft limit"}
+{"level":30,"time":1791325491281,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":574,"msg":"processed job 574 for tenant edsger"}
+{"level":30,"time":1791325492501,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":575,"msg":"processed job 575 for tenant linus"}
+{"level":40,"time":1791325496192,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":576,"msg":"queue depth 3892 above soft limit"}
+{"level":40,"time":1791325499118,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":577,"msg":"queue depth 2426 above soft limit"}
+{"level":40,"time":1791325499339,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":578,"msg":"queue depth 1359 above soft limit"}
+{"level":30,"time":1791325501043,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":579,"msg":"processed job 579 for tenant ada"}
+{"level":30,"time":1791325503393,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":580,"msg":"processed job 580 for tenant linus"}
+{"level":50,"time":1791325505097,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":581,"msg":"job 581 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325506443,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":582,"msg":"polled queue in 38ms"}
+{"level":30,"time":1791325509455,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":583,"msg":"processed job 583 for tenant grace"}
+{"level":30,"time":1791325512621,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":584,"msg":"processed job 584 for tenant ada"}
+{"level":40,"time":1791325515591,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":585,"msg":"queue depth 2113 above soft limit"}
+{"level":20,"time":1791325517338,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":586,"msg":"polled queue in 8ms"}
+{"level":50,"time":1791325521178,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":587,"msg":"job 587 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325521256,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":588,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791325522946,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":589,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791325526519,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":590,"msg":"job 590 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325527315,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":591,"msg":"queue depth 3132 above soft limit"}
+{"level":40,"time":1791325530453,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":592,"msg":"queue depth 4773 above soft limit"}
+{"level":30,"time":1791325530731,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":593,"msg":"processed job 593 for tenant grace"}
+{"level":30,"time":1791325532560,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":594,"msg":"processed job 594 for tenant linus"}
+{"level":30,"time":1791325533629,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":595,"msg":"processed job 595 for tenant edsger"}
+{"level":30,"time":1791325535043,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":596,"msg":"processed job 596 for tenant alan"}
+{"level":30,"time":1791325537161,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":597,"msg":"processed job 597 for tenant edsger"}
+{"level":30,"time":1791325538875,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":598,"msg":"processed job 598 for tenant margaret"}
+{"level":30,"time":1791325540523,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":599,"msg":"processed job 599 for tenant grace"}
+{"level":30,"time":1791325543480,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":600,"msg":"processed job 600 for tenant linus"}
+{"level":50,"time":1791325543504,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":601,"msg":"job 601 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325545277,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":602,"msg":"processed job 602 for tenant margaret"}
+{"level":60,"time":1791325545764,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":603,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325547338,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":604,"msg":"polled queue in 10ms"}
+{"level":30,"time":1791325547431,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":605,"msg":"processed job 605 for tenant barbara"}
+{"level":20,"time":1791325551041,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":606,"msg":"polled queue in 28ms"}
+{"level":50,"time":1791325554715,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":607,"msg":"job 607 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325555803,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":608,"msg":"queue depth 2632 above soft limit"}
+{"level":30,"time":1791325557642,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":609,"msg":"processed job 609 for tenant linus"}
+{"level":50,"time":1791325558076,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":610,"msg":"job 610 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791325559110,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":611,"msg":"job 611 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325560610,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":612,"msg":"processed job 612 for tenant margaret"}
+{"level":30,"time":1791325561931,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":613,"msg":"processed job 613 for tenant margaret"}
+{"level":30,"time":1791325563746,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":614,"msg":"processed job 614 for tenant alan"}
+{"level":30,"time":1791325563836,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":615,"msg":"processed job 615 for tenant barbara"}
+{"level":30,"time":1791325565307,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":616,"msg":"processed job 616 for tenant alan"}
+{"level":30,"time":1791325566415,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":617,"msg":"processed job 617 for tenant linus"}
+{"level":30,"time":1791325570344,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":618,"msg":"processed job 618 for tenant margaret"}
+{"level":30,"time":1791325573156,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":619,"msg":"processed job 619 for tenant linus"}
+{"level":30,"time":1791325575034,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":620,"msg":"processed job 620 for tenant alan"}
+{"level":30,"time":1791325577218,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":621,"msg":"processed job 621 for tenant ada"}
+{"level":60,"time":1791325577782,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":622,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325581234,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":623,"msg":"processed job 623 for tenant ada"}
+{"level":30,"time":1791325583467,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":624,"msg":"processed job 624 for tenant edsger"}
+{"level":40,"time":1791325584254,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":625,"msg":"queue depth 2524 above soft limit"}
+{"level":50,"time":1791325586194,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":626,"msg":"job 626 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325589788,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":627,"msg":"processed job 627 for tenant margaret"}
+{"level":30,"time":1791325590990,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":628,"msg":"processed job 628 for tenant barbara"}
+{"level":40,"time":1791325591379,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":629,"msg":"queue depth 3873 above soft limit"}
+{"level":50,"time":1791325594532,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":630,"msg":"job 630 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325594946,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":631,"msg":"queue depth 1153 above soft limit"}
+{"level":50,"time":1791325596555,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":632,"msg":"job 632 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791325598644,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":633,"msg":"job 633 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325602274,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":634,"msg":"polled queue in 29ms"}
+{"level":30,"time":1791325605800,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":635,"msg":"processed job 635 for tenant edsger"}
+{"level":20,"time":1791325606647,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":636,"msg":"polled queue in 15ms"}
+{"level":50,"time":1791325609862,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":637,"msg":"job 637 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325610518,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":638,"msg":"processed job 638 for tenant ada"}
+{"level":50,"time":1791325611502,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":639,"msg":"job 639 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325613280,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":640,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325615907,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":641,"msg":"processed job 641 for tenant edsger"}
+{"level":30,"time":1791325615937,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":642,"msg":"processed job 642 for tenant linus"}
+{"level":30,"time":1791325617499,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":643,"msg":"processed job 643 for tenant ada"}
+{"level":30,"time":1791325617728,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":644,"msg":"processed job 644 for tenant linus"}
+{"level":50,"time":1791325618021,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":645,"msg":"job 645 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791325620718,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":646,"msg":"job 646 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325622892,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":647,"msg":"processed job 647 for tenant ada"}
+{"level":60,"time":1791325622970,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":648,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325623846,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":649,"msg":"polled queue in 9ms"}
+{"level":30,"time":1791325624569,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":650,"msg":"processed job 650 for tenant alan"}
+{"level":30,"time":1791325626924,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":651,"msg":"processed job 651 for tenant margaret"}
+{"level":50,"time":1791325630354,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":652,"msg":"job 652 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325633165,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":653,"msg":"processed job 653 for tenant grace"}
+{"level":30,"time":1791325634000,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":654,"msg":"processed job 654 for tenant alan"}
+{"level":30,"time":1791325636607,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":655,"msg":"processed job 655 for tenant barbara"}
+{"level":30,"time":1791325637402,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":656,"msg":"processed job 656 for tenant grace"}
+{"level":60,"time":1791325640470,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":657,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325643402,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":658,"msg":"polled queue in 20ms"}
+{"level":30,"time":1791325645505,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":659,"msg":"processed job 659 for tenant margaret"}
+{"level":30,"time":1791325648493,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":660,"msg":"processed job 660 for tenant ada"}
+{"level":30,"time":1791325650253,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":661,"msg":"processed job 661 for tenant linus"}
+{"level":20,"time":1791325653560,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":662,"msg":"polled queue in 20ms"}
+{"level":40,"time":1791325656767,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":663,"msg":"queue depth 1944 above soft limit"}
+{"level":30,"time":1791325657566,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":664,"msg":"processed job 664 for tenant edsger"}
+{"level":40,"time":1791325660236,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":665,"msg":"queue depth 2599 above soft limit"}
+{"level":40,"time":1791325662303,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":666,"msg":"queue depth 4024 above soft limit"}
+{"level":30,"time":1791325665355,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":667,"msg":"processed job 667 for tenant margaret"}
+{"level":60,"time":1791325668166,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":668,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325670014,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":669,"msg":"processed job 669 for tenant barbara"}
+{"level":20,"time":1791325673379,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":670,"msg":"polled queue in 37ms"}
+{"level":20,"time":1791325674496,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":671,"msg":"polled queue in 3ms"}
+{"level":30,"time":1791325675607,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":672,"msg":"processed job 672 for tenant margaret"}
+{"level":60,"time":1791325679532,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":673,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325679844,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":674,"msg":"processed job 674 for tenant margaret"}
+{"level":30,"time":1791325682610,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":675,"msg":"processed job 675 for tenant grace"}
+{"level":30,"time":1791325686438,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":676,"msg":"processed job 676 for tenant grace"}
+{"level":30,"time":1791325686709,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":677,"msg":"processed job 677 for tenant ada"}
+{"level":50,"time":1791325686754,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":678,"msg":"job 678 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325686870,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":679,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325690474,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":680,"msg":"processed job 680 for tenant margaret"}
+{"level":60,"time":1791325691646,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":681,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325694037,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":682,"msg":"processed job 682 for tenant edsger"}
+{"level":50,"time":1791325696847,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":683,"msg":"job 683 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325697030,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":684,"msg":"processed job 684 for tenant barbara"}
+{"level":30,"time":1791325698770,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":685,"msg":"processed job 685 for tenant alan"}
+{"level":30,"time":1791325700715,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":686,"msg":"processed job 686 for tenant barbara"}
+{"level":60,"time":1791325701679,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":687,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325705017,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":688,"msg":"processed job 688 for tenant barbara"}
+{"level":30,"time":1791325708925,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":689,"msg":"processed job 689 for tenant alan"}
+{"level":30,"time":1791325710904,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":690,"msg":"processed job 690 for tenant ada"}
+{"level":30,"time":1791325714631,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":691,"msg":"processed job 691 for tenant ada"}
+{"level":30,"time":1791325714970,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":692,"msg":"processed job 692 for tenant grace"}
+{"level":40,"time":1791325715095,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":693,"msg":"queue depth 659 above soft limit"}
+{"level":60,"time":1791325717015,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":694,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791325717748,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":695,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325720348,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":696,"msg":"processed job 696 for tenant margaret"}
+{"level":50,"time":1791325723408,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":697,"msg":"job 697 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325726545,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":698,"msg":"processed job 698 for tenant barbara"}
+{"level":30,"time":1791325728236,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":699,"msg":"processed job 699 for tenant margaret"}
+{"level":20,"time":1791325728509,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":700,"msg":"polled queue in 36ms"}
+{"level":30,"time":1791325729432,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":701,"msg":"processed job 701 for tenant edsger"}
+{"level":20,"time":1791325731862,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":702,"msg":"polled queue in 10ms"}
+{"level":50,"time":1791325734361,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":703,"msg":"job 703 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325736793,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":704,"msg":"processed job 704 for tenant linus"}
+{"level":30,"time":1791325737036,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":705,"msg":"processed job 705 for tenant margaret"}
+{"level":30,"time":1791325740218,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":706,"msg":"processed job 706 for tenant ada"}
+{"level":40,"time":1791325741197,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":707,"msg":"queue depth 4303 above soft limit"}
+{"level":30,"time":1791325743913,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":708,"msg":"processed job 708 for tenant grace"}
+{"level":30,"time":1791325745774,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":709,"msg":"processed job 709 for tenant edsger"}
+{"level":30,"time":1791325749303,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":710,"msg":"processed job 710 for tenant barbara"}
+{"level":30,"time":1791325749948,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":711,"msg":"processed job 711 for tenant ada"}
+{"level":30,"time":1791325751189,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":712,"msg":"processed job 712 for tenant margaret"}
+{"level":30,"time":1791325752697,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":713,"msg":"processed job 713 for tenant alan"}
+{"level":60,"time":1791325756465,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":714,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791325757931,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":715,"msg":"job 715 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325760110,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":716,"msg":"queue depth 2206 above soft limit"}
+{"level":40,"time":1791325763101,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":717,"msg":"queue depth 3720 above soft limit"}
+{"level":50,"time":1791325766068,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":718,"msg":"job 718 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325766842,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":719,"msg":"processed job 719 for tenant linus"}
+{"level":30,"time":1791325767736,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":720,"msg":"processed job 720 for tenant alan"}
+{"level":30,"time":1791325768319,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":721,"msg":"processed job 721 for tenant linus"}
+{"level":30,"time":1791325769702,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":722,"msg":"processed job 722 for tenant ada"}
+{"level":30,"time":1791325771153,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":723,"msg":"processed job 723 for tenant alan"}
+{"level":40,"time":1791325772633,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":724,"msg":"queue depth 4559 above soft limit"}
+{"level":30,"time":1791325772773,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":725,"msg":"processed job 725 for tenant grace"}
+{"level":30,"time":1791325773634,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":726,"msg":"processed job 726 for tenant margaret"}
+{"level":60,"time":1791325775559,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":727,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325778813,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":728,"msg":"processed job 728 for tenant ada"}
+{"level":20,"time":1791325780568,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":729,"msg":"polled queue in 7ms"}
+{"level":40,"time":1791325783769,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":730,"msg":"queue depth 4854 above soft limit"}
+{"level":40,"time":1791325786525,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":731,"msg":"queue depth 891 above soft limit"}
+{"level":60,"time":1791325786536,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":732,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325787470,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":733,"msg":"processed job 733 for tenant barbara"}
+{"level":30,"time":1791325789865,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":734,"msg":"processed job 734 for tenant grace"}
+{"level":20,"time":1791325791534,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":735,"msg":"polled queue in 31ms"}
+{"level":60,"time":1791325791586,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":736,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791325794570,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":737,"msg":"queue depth 1947 above soft limit"}
+{"level":60,"time":1791325797328,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":738,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325798309,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":739,"msg":"processed job 739 for tenant margaret"}
+{"level":20,"time":1791325799645,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":740,"msg":"polled queue in 26ms"}
+{"level":60,"time":1791325800114,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":741,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325801248,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":742,"msg":"processed job 742 for tenant grace"}
+{"level":30,"time":1791325804132,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":743,"msg":"processed job 743 for tenant grace"}
+{"level":40,"time":1791325806861,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":744,"msg":"queue depth 4557 above soft limit"}
+{"level":30,"time":1791325807288,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":745,"msg":"processed job 745 for tenant ada"}
+{"level":40,"time":1791325810343,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":746,"msg":"queue depth 1360 above soft limit"}
+{"level":30,"time":1791325811142,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":747,"msg":"processed job 747 for tenant margaret"}
+{"level":20,"time":1791325814007,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":748,"msg":"polled queue in 18ms"}
+{"level":30,"time":1791325815280,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":749,"msg":"processed job 749 for tenant barbara"}
+{"level":60,"time":1791325819089,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":750,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325820873,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":751,"msg":"processed job 751 for tenant linus"}
+{"level":50,"time":1791325823547,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":752,"msg":"job 752 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325825881,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":753,"msg":"polled queue in 19ms"}
+{"level":30,"time":1791325827152,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":754,"msg":"processed job 754 for tenant alan"}
+{"level":30,"time":1791325829937,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":755,"msg":"processed job 755 for tenant barbara"}
+{"level":30,"time":1791325831260,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":756,"msg":"processed job 756 for tenant margaret"}
+{"level":30,"time":1791325833576,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":757,"msg":"processed job 757 for tenant edsger"}
+{"level":30,"time":1791325834443,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":758,"msg":"processed job 758 for tenant linus"}
+{"level":50,"time":1791325836621,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":759,"msg":"job 759 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325837993,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":760,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325838167,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":761,"msg":"processed job 761 for tenant alan"}
+{"level":50,"time":1791325840974,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":762,"msg":"job 762 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325844049,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":763,"msg":"processed job 763 for tenant margaret"}
+{"level":30,"time":1791325846197,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":764,"msg":"processed job 764 for tenant grace"}
+{"level":30,"time":1791325847146,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":765,"msg":"processed job 765 for tenant alan"}
+{"level":30,"time":1791325848343,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":766,"msg":"processed job 766 for tenant margaret"}
+{"level":50,"time":1791325849146,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":767,"msg":"job 767 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325849561,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":768,"msg":"processed job 768 for tenant margaret"}
+{"level":30,"time":1791325849993,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":769,"msg":"processed job 769 for tenant alan"}
+{"level":30,"time":1791325851376,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":770,"msg":"processed job 770 for tenant margaret"}
+{"level":50,"time":1791325854993,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":771,"msg":"job 771 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791325858202,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":772,"msg":"job 772 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791325860317,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":773,"msg":"queue depth 566 above soft limit"}
+{"level":30,"time":1791325864003,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":774,"msg":"processed job 774 for tenant edsger"}
+{"level":60,"time":1791325864787,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":775,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791325865295,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":776,"msg":"job 776 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":20,"time":1791325868469,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":777,"msg":"polled queue in 24ms"}
+{"level":30,"time":1791325869845,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":778,"msg":"processed job 778 for tenant margaret"}
+{"level":30,"time":1791325873514,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":779,"msg":"processed job 779 for tenant barbara"}
+{"level":20,"time":1791325874899,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":780,"msg":"polled queue in 10ms"}
+{"level":30,"time":1791325878053,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":781,"msg":"processed job 781 for tenant barbara"}
+{"level":50,"time":1791325880027,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":782,"msg":"job 782 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325881874,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":783,"msg":"processed job 783 for tenant margaret"}
+{"level":40,"time":1791325885315,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":784,"msg":"queue depth 2818 above soft limit"}
+{"level":40,"time":1791325886975,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":785,"msg":"queue depth 4803 above soft limit"}
+{"level":30,"time":1791325890729,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":786,"msg":"processed job 786 for tenant ada"}
+{"level":20,"time":1791325891008,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":787,"msg":"polled queue in 34ms"}
+{"level":30,"time":1791325894915,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":788,"msg":"processed job 788 for tenant alan"}
+{"level":50,"time":1791325895278,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":789,"msg":"job 789 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791325897534,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":790,"msg":"job 790 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":50,"time":1791325899724,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":791,"msg":"job 791 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325902728,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":792,"msg":"processed job 792 for tenant barbara"}
+{"level":30,"time":1791325905777,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":793,"msg":"processed job 793 for tenant alan"}
+{"level":30,"time":1791325908653,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":794,"msg":"processed job 794 for tenant alan"}
+{"level":40,"time":1791325912316,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":795,"msg":"queue depth 2442 above soft limit"}
+{"level":60,"time":1791325913958,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":796,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325914177,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":797,"msg":"processed job 797 for tenant grace"}
+{"level":30,"time":1791325916720,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":798,"msg":"processed job 798 for tenant margaret"}
+{"level":20,"time":1791325918887,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":799,"msg":"polled queue in 20ms"}
+{"level":30,"time":1791325920253,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":800,"msg":"processed job 800 for tenant grace"}
+{"level":30,"time":1791325922051,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":801,"msg":"processed job 801 for tenant linus"}
+{"level":30,"time":1791325924573,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":802,"msg":"processed job 802 for tenant edsger"}
+{"level":50,"time":1791325928370,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":803,"msg":"job 803 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791325928817,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":804,"msg":"processed job 804 for tenant ada"}
+{"level":30,"time":1791325931427,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":805,"msg":"processed job 805 for tenant ada"}
+{"level":60,"time":1791325932314,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":806,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325933033,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":807,"msg":"processed job 807 for tenant grace"}
+{"level":30,"time":1791325934759,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":808,"msg":"processed job 808 for tenant linus"}
+{"level":30,"time":1791325938357,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":809,"msg":"processed job 809 for tenant edsger"}
+{"level":30,"time":1791325942069,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":810,"msg":"processed job 810 for tenant margaret"}
+{"level":40,"time":1791325943342,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":811,"msg":"queue depth 3741 above soft limit"}
+{"level":30,"time":1791325943820,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":812,"msg":"processed job 812 for tenant ada"}
+{"level":30,"time":1791325945476,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":813,"msg":"processed job 813 for tenant ada"}
+{"level":40,"time":1791325946397,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":814,"msg":"queue depth 898 above soft limit"}
+{"level":30,"time":1791325948332,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":815,"msg":"processed job 815 for tenant margaret"}
+{"level":30,"time":1791325950480,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":816,"msg":"processed job 816 for tenant barbara"}
+{"level":30,"time":1791325951349,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":817,"msg":"processed job 817 for tenant barbara"}
+{"level":60,"time":1791325953941,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":818,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791325955355,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":819,"msg":"polled queue in 30ms"}
+{"level":20,"time":1791325958139,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":820,"msg":"polled queue in 18ms"}
+{"level":60,"time":1791325961194,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":821,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325962419,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":822,"msg":"processed job 822 for tenant grace"}
+{"level":30,"time":1791325964590,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":823,"msg":"processed job 823 for tenant margaret"}
+{"level":20,"time":1791325968353,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":824,"msg":"polled queue in 16ms"}
+{"level":50,"time":1791325971087,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":825,"msg":"job 825 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791325974131,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":826,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791325976011,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":827,"msg":"processed job 827 for tenant alan"}
+{"level":30,"time":1791325976089,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":828,"msg":"processed job 828 for tenant linus"}
+{"level":20,"time":1791325976668,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":829,"msg":"polled queue in 28ms"}
+{"level":30,"time":1791325979736,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":830,"msg":"processed job 830 for tenant edsger"}
+{"level":30,"time":1791325982512,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":831,"msg":"processed job 831 for tenant ada"}
+{"level":30,"time":1791325985709,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":832,"msg":"processed job 832 for tenant linus"}
+{"level":30,"time":1791325989423,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":833,"msg":"processed job 833 for tenant grace"}
+{"level":40,"time":1791325990943,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":834,"msg":"queue depth 1813 above soft limit"}
+{"level":30,"time":1791325990988,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":835,"msg":"processed job 835 for tenant margaret"}
+{"level":30,"time":1791325993005,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":836,"msg":"processed job 836 for tenant margaret"}
+{"level":40,"time":1791325996183,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":837,"msg":"queue depth 4490 above soft limit"}
+{"level":60,"time":1791326000145,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":838,"msg":"worker crashed: heap out of memory"}
+{"level":50,"time":1791326003690,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":839,"msg":"job 839 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791326006405,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":840,"msg":"processed job 840 for tenant ada"}
+{"level":50,"time":1791326008890,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":841,"msg":"job 841 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":40,"time":1791326011261,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":842,"msg":"queue depth 500 above soft limit"}
+{"level":50,"time":1791326014752,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":843,"msg":"job 843 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791326016470,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":844,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791326017627,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":845,"msg":"polled queue in 13ms"}
+{"level":30,"time":1791326021298,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":846,"msg":"processed job 846 for tenant edsger"}
+{"level":30,"time":1791326021668,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":847,"msg":"processed job 847 for tenant edsger"}
+{"level":30,"time":1791326021711,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":848,"msg":"processed job 848 for tenant edsger"}
+{"level":40,"time":1791326024273,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":849,"msg":"queue depth 4514 above soft limit"}
+{"level":30,"time":1791326028162,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":850,"msg":"processed job 850 for tenant margaret"}
+{"level":30,"time":1791326030975,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":851,"msg":"processed job 851 for tenant grace"}
+{"level":40,"time":1791326034896,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":852,"msg":"queue depth 4375 above soft limit"}
+{"level":40,"time":1791326038283,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":853,"msg":"queue depth 2400 above soft limit"}
+{"level":20,"time":1791326041431,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":854,"msg":"polled queue in 12ms"}
+{"level":30,"time":1791326041985,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":855,"msg":"processed job 855 for tenant linus"}
+{"level":30,"time":1791326044433,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":856,"msg":"processed job 856 for tenant margaret"}
+{"level":50,"time":1791326046315,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":857,"msg":"job 857 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791326048304,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":858,"msg":"processed job 858 for tenant margaret"}
+{"level":30,"time":1791326049872,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":859,"msg":"processed job 859 for tenant edsger"}
+{"level":30,"time":1791326051074,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":860,"msg":"processed job 860 for tenant alan"}
+{"level":40,"time":1791326051800,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":861,"msg":"queue depth 3482 above soft limit"}
+{"level":20,"time":1791326053929,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":862,"msg":"polled queue in 4ms"}
+{"level":40,"time":1791326057701,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":863,"msg":"queue depth 1882 above soft limit"}
+{"level":30,"time":1791326059359,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":864,"msg":"processed job 864 for tenant ada"}
+{"level":30,"time":1791326061927,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":865,"msg":"processed job 865 for tenant linus"}
+{"level":30,"time":1791326063705,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":866,"msg":"processed job 866 for tenant alan"}
+{"level":30,"time":1791326066194,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":867,"msg":"processed job 867 for tenant ada"}
+{"level":30,"time":1791326068166,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":868,"msg":"processed job 868 for tenant barbara"}
+{"level":30,"time":1791326070829,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":869,"msg":"processed job 869 for tenant linus"}
+{"level":50,"time":1791326073600,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":870,"msg":"job 870 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791326076870,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":871,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791326079123,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":872,"msg":"processed job 872 for tenant margaret"}
+{"level":20,"time":1791326080101,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":873,"msg":"polled queue in 16ms"}
+{"level":20,"time":1791326083146,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":874,"msg":"polled queue in 20ms"}
+{"level":60,"time":1791326084625,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":875,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791326088080,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":876,"msg":"processed job 876 for tenant ada"}
+{"level":50,"time":1791326091013,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":877,"msg":"job 877 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791326091198,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":878,"msg":"processed job 878 for tenant alan"}
+{"level":50,"time":1791326094396,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":879,"msg":"job 879 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791326097109,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":880,"msg":"processed job 880 for tenant alan"}
+{"level":30,"time":1791326099862,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":881,"msg":"processed job 881 for tenant grace"}
+{"level":50,"time":1791326103327,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":882,"msg":"job 882 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791326106065,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":883,"msg":"processed job 883 for tenant alan"}
+{"level":30,"time":1791326108030,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":884,"msg":"processed job 884 for tenant alan"}
+{"level":50,"time":1791326110764,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":885,"msg":"job 885 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":30,"time":1791326110851,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":886,"msg":"processed job 886 for tenant ada"}
+{"level":50,"time":1791326113267,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":887,"msg":"job 887 failed: ECONNRESET talking to redis://cache.internal:6379"}
+{"level":60,"time":1791326113777,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":888,"msg":"worker crashed: heap out of memory"}
+{"level":40,"time":1791326114371,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":889,"msg":"queue depth 4070 above soft limit"}
+{"level":60,"time":1791326116364,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":890,"msg":"worker crashed: heap out of memory"}
+{"level":30,"time":1791326118097,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":891,"msg":"processed job 891 for tenant grace"}
+{"level":20,"time":1791326121396,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":892,"msg":"polled queue in 8ms"}
+{"level":30,"time":1791326124936,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":893,"msg":"processed job 893 for tenant margaret"}
+{"level":30,"time":1791326127160,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":894,"msg":"processed job 894 for tenant grace"}
+{"level":30,"time":1791326130739,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":895,"msg":"processed job 895 for tenant margaret"}
+{"level":60,"time":1791326131217,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":896,"msg":"worker crashed: heap out of memory"}
+{"level":60,"time":1791326132717,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":897,"msg":"worker crashed: heap out of memory"}
+{"level":20,"time":1791326133144,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":898,"msg":"polled queue in 39ms"}
+{"level":30,"time":1791326133251,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":899,"msg":"processed job 899 for tenant alan"}
+{"level":60,"time":1791326134043,"pid":4242,"hostname":"worker-7f9c","queue":"emails","jobId":900,"msg":"worker crashed: heap out of memory"}
