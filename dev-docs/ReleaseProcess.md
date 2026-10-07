@@ -2,7 +2,7 @@
 
 A `vX.Y.Z` tag builds Logs Digger with NativeAOT on Windows, Linux and macOS, runs each shipped binary's `--self-test`, and publishes a GitHub release with:
 
-- `logs-digger-X.Y.Z-setup-x64.exe`: per-user NSIS installer (Start menu shortcut, `LogsDigger` on PATH, uninstaller; `/S` for silent)
+- `logs-digger-X.Y.Z-setup-x64.exe`: per-user NSIS installer (Start menu shortcut, `logs-digger` on PATH, uninstaller; `/S` for silent)
 - `logs-digger-X.Y.Z-win-x64.zip`: portable Windows build
 - `logs-digger-X.Y.Z-linux-x64.tar.gz`
 - `logs-digger-X.Y.Z-osx-x64.tar.gz`
@@ -17,14 +17,14 @@ A `vX.Y.Z` tag builds Logs Digger with NativeAOT on Windows, Linux and macOS, ru
 2. Check locally:
    - `dotnet build LogsDigger.slnx -c Release -m:1`
    - `dotnet test --project tests/LogsDigger.Tests -c Release`
-   - `bash scripts/publish-logs-digger.sh && artifacts/publish/logs-digger/LogsDigger --self-test`
+   - `bash scripts/publish-logs-digger.sh && artifacts/publish/logs-digger/logs-digger --self-test`
 3. Commit and push `main`, then `git tag vX.Y.Z && git push origin vX.Y.Z`.
 
 To retry a failed release, use **Actions → Release → Run workflow** with the version. An existing GitHub release is kept as it is.
 
 ## What the self-test covers
 
-`LogsDigger --self-test` runs without a window and reports through its exit code. It writes a small fixture tree (plain and JSON-lines logs, and a zip inside a tar.gz) to a temp folder, starts the Axial runtime, and checks the paths that unit tests on the JIT cannot prove for a NativeAOT binary:
+`logs-digger --self-test` runs without a window and reports through its exit code. It writes a small fixture tree (plain and JSON-lines logs, and a zip inside a tar.gz) to a temp folder, starts the Axial runtime, and checks the paths that unit tests on the JIT cannot prove for a NativeAOT binary:
 
 - archive decoding and the lazy walk;
 - streamed lines;

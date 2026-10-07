@@ -1,6 +1,6 @@
 ; Logs Digger per-user installer. Built by .github/workflows/release.yml:
 ;   makensis /DVERSION=0.1.0 /DNUMERIC_VERSION=0.1.0.0 /DSOURCE_DIR=<publish dir> /DOUTPUT_FILE=<setup.exe> installer/logs-digger.nsi
-; Installs to %LOCALAPPDATA%\Programs\LogsDigger without elevation, adds a Start menu shortcut, puts LogsDigger on the
+; Installs to %LOCALAPPDATA%\Programs\LogsDigger without elevation, adds a Start menu shortcut, puts logs-digger on the
 ; user PATH and registers an uninstaller. Silent install/uninstall with /S (used by winget).
 
 Unicode true
@@ -34,7 +34,7 @@ VIAddVersionKey "FileVersion" "${VERSION}"
 VIAddVersionKey "ProductVersion" "${VERSION}"
 VIAddVersionKey "LegalCopyright" "Apache-2.0"
 
-!define MUI_FINISHPAGE_RUN "$INSTDIR\LogsDigger.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\logs-digger.exe"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -58,13 +58,13 @@ Section "Install"
   File /r "${SOURCE_DIR}\*.*"
   WriteUninstaller "$INSTDIR\uninstall.exe"
 
-  CreateShortcut "$SMPROGRAMS\Logs Digger.lnk" "$INSTDIR\LogsDigger.exe"
+  CreateShortcut "$SMPROGRAMS\Logs Digger.lnk" "$INSTDIR\logs-digger.exe"
   !insertmacro UserPath add
 
   WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayName" "${APP_NAME}"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayVersion" "${VERSION}"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "Publisher" "${PUBLISHER}"
-  WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\LogsDigger.exe"
+  WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayIcon" "$INSTDIR\logs-digger.exe"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "URLInfoAbout" "https://github.com/adz/logs-digger"
   WriteRegStr HKCU "${UNINSTALL_KEY}" "UninstallString" '"$INSTDIR\uninstall.exe"'

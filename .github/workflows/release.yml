@@ -84,7 +84,7 @@ jobs:
       - name: Self-test published binary
         shell: bash
         run: |
-          exe="artifacts/publish/${{ matrix.rid }}/LogsDigger"
+          exe="artifacts/publish/${{ matrix.rid }}/logs-digger"
           [[ -f "$exe.exe" ]] && exe="$exe.exe"
           "$exe" --self-test
 

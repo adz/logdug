@@ -19,11 +19,11 @@ A desktop log browser written in F#. Point it at a folder and it shows a file tr
 
 Download a build from [Releases](https://github.com/adz/logs-digger/releases):
 
-- `logs-digger-X.Y.Z-setup-x64.exe`: Windows installer (per user, adds `LogsDigger` to PATH)
+- `logs-digger-X.Y.Z-setup-x64.exe`: Windows installer (per user, adds `logs-digger` to PATH)
 - `logs-digger-X.Y.Z-win-x64.zip`: portable Windows build
 - `logs-digger-X.Y.Z-linux-x64.tar.gz`, `-osx-x64.tar.gz`, `-osx-arm64.tar.gz`
 
-Each is a single NativeAOT executable plus its native graphics libraries. Run `LogsDigger [folder]`. See [dev-docs/ReleaseProcess.md](dev-docs/ReleaseProcess.md) for how releases are built.
+Each is a single NativeAOT executable plus its native graphics libraries. Run `logs-digger [folder]`. See [dev-docs/ReleaseProcess.md](dev-docs/ReleaseProcess.md) for how releases are built.
 
 ## Run from source
 
@@ -48,8 +48,8 @@ The suite includes a headless Avalonia scenario that drives the real window and 
 
 ```sh
 bash scripts/publish-logs-digger.sh            # host platform, into artifacts/publish/logs-digger
-artifacts/publish/logs-digger/LogsDigger --self-test
-artifacts/publish/logs-digger/LogsDigger samples --search "heap out of memory" --snapshot shot.png
+artifacts/publish/logs-digger/logs-digger --self-test
+artifacts/publish/logs-digger/logs-digger samples --search "heap out of memory" --snapshot shot.png
 ```
 
 `--self-test` runs end-to-end checks without a window and reports through its exit code; CI and the release workflow run it on every shipped binary.

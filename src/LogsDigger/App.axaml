@@ -6,8 +6,8 @@
     RequestedThemeVariant="Dark">
     <Application.Resources>
         <ResourceDictionary>
-            <FontFamily x:Key="MonoFont">avares://LogsDigger/Assets/Fonts#JetBrains Mono</FontFamily>
-            <FontFamily x:Key="IconFont">avares://LogsDigger/Assets/Fonts#lucide</FontFamily>
+            <FontFamily x:Key="MonoFont">avares://logs-digger/Assets/Fonts#JetBrains Mono</FontFamily>
+            <FontFamily x:Key="IconFont">avares://logs-digger/Assets/Fonts#lucide</FontFamily>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Dark">
                     <SolidColorBrush x:Key="PanelBrush" Color="#0E1116" />
@@ -102,6 +102,6 @@
     </Application.Resources>
     <Application.Styles>
         <shadui:ShadTheme />
-        <StyleInclude Source="avares://LogsDigger/Views/Styles.axaml" />
+        <StyleInclude Source="avares://logs-digger/Views/Styles.axaml" />
     </Application.Styles>
 </Application>

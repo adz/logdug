@@ -45,4 +45,4 @@ jobs:
       - name: NativeAOT self-test
         run: |
           bash scripts/publish-logs-digger.sh --rid linux-x64 --output artifacts/publish/linux-x64
-          artifacts/publish/linux-x64/LogsDigger --self-test
+          artifacts/publish/linux-x64/logs-digger --self-test
