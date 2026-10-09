@@ -158,3 +158,59 @@ let ``archive entries with leading or doubled slashes can be listed and read`` (
     let file = index.Children log.Path |> List.exactlyOne
     Assert.Equal("var/log/app.log", file.Path)
     Assert.Equal<byte array>("hello"B, (index.TryRead file.Path).Value)
+
+let private gzip (text: string) =
+    use output = new MemoryStream()
+
+    do
+        use stream = new Compression.GZipStream(output, Compression.CompressionLevel.Fastest)
+        let bytes = Text.Encoding.UTF8.GetBytes text
+        stream.Write(bytes, 0, bytes.Length)
+
+    output.ToArray()
+
+[<Fact>]
+let ``gzipped files inside a zip, and a zip inside a tar.gz, are decompressed`` () =
+    let folder = Directory.CreateTempSubdirectory "logdug-gz-in-zip"
+    let zipPath = Path.Combine(folder.FullName, "bundle.zip")
+
+    do
+        use zip = Compression.ZipFile.Open(zipPath, Compression.ZipArchiveMode.Create)
+
+        for name, text in [ "logs/app.log.gz", "one\ntwo\n"; "plain.gz", "three\n"; "UPPER.LOG.GZ", "four\n" ] do
+            use entry = zip.CreateEntry(name).Open()
+            let bytes = gzip text
+            entry.Write(bytes, 0, bytes.Length)
+
+    use runtime = runtime ()
+    let bundle = diskNode zipPath
+    let logs = runIn runtime (Files.children bundle) |> child "logs"
+    let nested = runIn runtime (Files.children logs) |> child "app.log.gz"
+    Assert.Equal(NodeKind.File, nested.Kind)
+    Assert.Equal(Some "one\ntwo\n", runIn runtime (Files.readText nested))
+    Assert.Equal<string list>([ "one"; "two" ], runIn runtime (FlowStream.runCollect (Files.lines nested)))
+
+    for name, expected in [ "plain.gz", "three\n"; "UPPER.LOG.GZ", "four\n" ] do
+        let node = runIn runtime (Files.children bundle) |> child name
+        Assert.Equal(Some expected, runIn runtime (Files.readText node))
+
+[<Fact>]
+let ``a tar.gz inside a zip opens, down to a log inside the zip nested in it`` () =
+    let folder = Directory.CreateTempSubdirectory "logdug-targz-in-zip"
+    let zipPath = Path.Combine(folder.FullName, "outer.zip")
+    let sample = Path.Combine(samples (), "archives", "incident-4711.tar.gz")
+
+    do
+        use zip = Compression.ZipFile.Open(zipPath, Compression.ZipArchiveMode.Create)
+        Compression.ZipFileExtensions.CreateEntryFromFile(zip, sample, "inner/incident-4711.tar.gz") |> ignore
+
+    use runtime = runtime ()
+    let inner = runIn runtime (Files.children (diskNode zipPath)) |> child "inner"
+    let tarball = runIn runtime (Files.children inner) |> child "incident-4711.tar.gz"
+    Assert.Equal(NodeKind.Archive TarGz, tarball.Kind)
+    let incident = runIn runtime (Files.children tarball) |> child "incident-4711"
+    let attachments = runIn runtime (Files.children incident) |> child "attachments"
+    let nested = runIn runtime (Files.children attachments) |> child "previous-nightly.zip"
+    let logs = runIn runtime (Files.children nested) |> child "logs"
+    let file = runIn runtime (Files.children logs) |> child "orders-api.log"
+    Assert.Contains("[INF]", (runIn runtime (Files.readText file)).Value)

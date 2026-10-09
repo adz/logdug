@@ -302,7 +302,27 @@ module LogParser =
 
     /// Recognises comma, tab, semicolon or pipe separated tables: at least three non-empty lines whose rows
     /// nearly all have the same number of cells, and more than one.
-    let private tryTable (lines: string array) : LogEntry array option =
+    /// Whether the first row reads as column names rather than data: text in every cell, no repeats, and either
+    /// numbers further down that column or names that look like identifiers.
+    let private looksLikeHeader (rows: Row array) =
+        let isNumber (cell: string) =
+            Double.TryParse(cell.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture) |> fst
+
+        let first = rows[0].Cells
+        let identifier = Regex(@"^[A-Za-z_][A-Za-z0-9_.\-]*$", options)
+
+        if rows.Length < 2 then false
+        elif first |> Array.exists (fun cell -> cell.Trim() = "" || isNumber cell) then false
+        elif (first |> Array.map (fun cell -> cell.Trim().ToLowerInvariant()) |> Array.distinct).Length <> first.Length then false
+        else
+            let below = rows |> Array.skip 1 |> Array.truncate 50
+            let numericBelow =
+                first |> Array.mapi (fun column _ -> below |> Array.exists (fun row -> column < row.Cells.Length && isNumber row.Cells[column]))
+
+            Array.exists id numericBelow || first |> Array.forall (fun cell -> identifier.IsMatch(cell.Trim()))
+
+    /// The table's entries and whether its first row is a header. `header` overrides the guess.
+    let private tryTable (header: bool option) (lines: string array) : (LogEntry array * bool) option =
         let sample = lines |> Array.filter (fun line -> line.Trim() <> "") |> Array.truncate 200
 
         // "2026-10-06 21:58:14,093 INFO ..." has a comma too, so lines that start like a log entry (and JSON
@@ -339,10 +359,12 @@ module LogParser =
                     |> Array.max
                     |> min maxColumnWidth)
 
-            let header = rows[0].Cells
+            let hasHeader = match header with Some chosen -> chosen | None -> looksLikeHeader rows
+            let names = if hasHeader then rows[0].Cells else Array.init columns (fun column -> string (column + 1))
 
-            rows
-            |> Array.mapi (fun index row ->
+            let entries =
+              rows
+              |> Array.mapi (fun index row ->
                 { Index = index
                   Line = row.Line
                   Lines = row.Raw
@@ -353,11 +375,13 @@ module LogParser =
                   Fields =
                     row.Cells
                     |> Array.mapi (fun column value ->
-                        { Key = if column < header.Length then header[column] else ""
+                        { Key = if column < names.Length then names[column] else ""
                           Value = value
                           Kind = TextValue })
                     |> List.ofArray
-                  Format = TableEntry(widths, (index = 0)) }))
+                  Format = TableEntry(widths, hasHeader && index = 0) })
+
+            entries, hasHeader)
 
     // ---- documents -----------------------------------------------------------------------------------------
 
@@ -409,21 +433,25 @@ module LogParser =
     let private countLevels (entries: LogEntry array) =
         entries |> Array.countBy _.Level |> Map.ofArray
 
-    let rec parse (options: Options) (text: string) : LogDocument =
+    let rec parseWith (options: Options) (csvHeader: bool option) (text: string) : LogDocument =
         let lines = splitLines text
 
-        match tryTable lines with
-        | Some entries ->
+        match tryTable csvHeader lines with
+        | Some(entries, hasHeader) ->
             { Entries = entries
               LineCount = lines.Length
-              Kind = Delimited
+              Kind = Delimited hasHeader
               LevelCounts = countLevels entries
               Folds = Map.empty }
         | None -> parseLog options lines None
 
     /// How a file's own name and content change how it is read: JSON, XML and YAML files show as lines whose
     /// indentation can be folded, and a minified JSON file is first spread over several lines.
-    and parseFile (options: Options) (name: string) (text: string) : LogDocument =
+    and parse (options: Options) (text: string) : LogDocument = parseWith options None text
+
+    and parseFile (options: Options) (name: string) (text: string) : LogDocument = parseFileWith options None name text
+
+    and parseFileWith (options: Options) (csvHeader: bool option) (name: string) (text: string) : LogDocument =
         let lower = name.ToLowerInvariant()
         let lower = if lower.EndsWith ".gz" then lower.Substring(0, lower.Length - 3) else lower
         let extension = (let dot = lower.LastIndexOf '.' in if dot < 0 then "" else lower.Substring dot)
@@ -443,7 +471,7 @@ module LogParser =
         elif extension = ".yaml" || extension = ".yml" then
             structured "YAML" lines
         else
-            parse options text
+            parseWith options csvHeader text
 
     and private parseLog (options: Options) (lines: string array) (structuredAs: string option) : LogDocument =
         let sample = lines |> Array.truncate 400

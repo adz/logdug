@@ -78,6 +78,8 @@ type Model =
       FileModes: Map<string, FileSearchMode>
       /// Per-file entries whose foldable region is currently collapsed.
       Collapsed: Map<string, Set<int>>
+      /// Per-file choice of whether a CSV's first row is column names; files not listed are guessed.
+      CsvHeaders: Map<string, bool>
       QuickOpen: QuickOpenState option
       /// Every file under the root, loaded the first time quick open is used.
       FileIndex: QuickOpenEntry array option
@@ -135,6 +137,7 @@ type Msg =
     | ToggleFold of entryIndex: int
     | CollapseAll
     | ExpandAll
+    | ToggleCsvHeader
 
 module App =
     let private followThrottle = TimeSpan.FromMilliseconds 300.0
@@ -202,6 +205,7 @@ module App =
               Tabs = []
               FileModes = Map.empty
               Collapsed = Map.empty
+              CsvHeaders = Map.empty
               QuickOpen = None
               FileIndex = None
               IndexLoading = false
@@ -262,7 +266,7 @@ module App =
         let work =
             flow {
                 let! text = Files.readText node
-                return! Flow.fromBlocking (fun _ -> text |> Option.map (LogParser.parseFile options node.Name) |> Option.defaultValue LogParser.binary)
+                return! Flow.fromBlocking (fun _ -> text |> Option.map (LogParser.parseFileWith options (model.CsvHeaders.TryFind key) node.Name) |> Option.defaultValue LogParser.binary)
             }
 
         { model with
@@ -635,6 +639,12 @@ module App =
                 let all = headers |> List.map fst |> Set.ofList
                 let collapsed = match wrapper with Some(header, _) -> all.Remove header | None -> all
                 { model with Collapsed = model.Collapsed.Add(Node.key file.Node, collapsed) }, Cmd.none
+            | _ -> model, Cmd.none
+
+        | ToggleCsvHeader ->
+            match model.Viewer with
+            | Showing({ Document = { Kind = Delimited hasHeader } } as file) ->
+                openNode env { model with CsvHeaders = model.CsvHeaders.Add(Node.key file.Node, not hasHeader) } file.Node
             | _ -> model, Cmd.none
 
         | ExpandAll ->

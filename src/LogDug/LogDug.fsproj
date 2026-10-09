@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bindable.fs" />
+    <Compile Include="Desktop.fs" />
     <Compile Include="ViewModels.fs" />
     <Compile Include="LogLine.fs" />
     <Compile Include="Views/MainWindow.axaml.fs" />

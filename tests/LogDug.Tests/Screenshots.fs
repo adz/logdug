@@ -183,6 +183,26 @@ let private scenario () =
     dispatch (ChangeRoot(Path.Combine(samples (), "app")))
     pumpUntil "new root" (fun () -> vm.RootPath.EndsWith "app" && vm.Tabs.Count = 0 && vm.TreeRows.Count >= 4)
 
+    // A CSV's first row is guessed to be a header, and the guess can be flipped.
+    openFile vm "inventory.csv"
+    pumpUntil "csv shown with a header" (fun () -> vm.IsCsv && vm.CsvHasHeader)
+    dispatch ToggleCsvHeader
+    pumpUntil "csv header off" (fun () -> vm.IsCsv && not vm.CsvHasHeader)
+    Assert.Equal<string list>([ "sku"; "product" ], vm.Entries[0].Entry.Fields |> List.truncate 2 |> List.map _.Value)
+    dispatch ToggleCsvHeader
+    pumpUntil "csv header on again" (fun () -> vm.CsvHasHeader)
+
+    // Right-clicking a file offers editor, file manager and copy-path actions (a headless run can't open the popup itself).
+    let row =
+        window.GetVisualDescendants()
+        |> Seq.choose (function :? Button as button when (button.DataContext :? TreeRowVm) && not (isNull button.ContextMenu) -> Some button | _ -> None)
+        |> Seq.head
+
+    let labels = [ for item in row.ContextMenu.Items -> (item :?> MenuItem) ]
+    Assert.Equal(3, labels.Length)
+    Assert.Equal("Open in VS Code", string labels[0].Header)
+    Assert.Equal("Copy path", string labels[2].Header)
+
     // JSON, YAML and XML files fold by indentation.
     openFile vm "service-config.json"
     pumpUntil "folds in the json file" (fun () -> vm.HasFolds)

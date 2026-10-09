@@ -132,6 +132,13 @@
                             <DataTemplate x:DataType="ui:TreeRowVm">
                                 <Button Classes="row" Classes.selected="{Binding IsSelected}" Height="28"
                                         Command="{Binding ActivateCommand}" ToolTip.Tip="{Binding Tip}">
+                                    <Button.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Open in VS Code" Command="{Binding OpenInCodeCommand}" />
+                                                <MenuItem Header="{Binding RevealLabel}" Command="{Binding RevealCommand}" />
+                                                <MenuItem Header="Copy path" Command="{Binding CopyPathCommand}" />
+                                            </ContextMenu>
+                                        </Button.ContextMenu>
                                     <Grid ColumnDefinitions="Auto,16,22,*,Auto" Margin="{Binding Indent}">
                                         <TextBlock Grid.Column="1" Classes="icon muted" FontSize="13" Text="{Binding Chevron}" />
                                         <TextBlock Grid.Column="2" Classes="icon" Classes.kind-folder="{Binding IsFolder}" Classes.kind-archive="{Binding IsArchive}" Classes.kind-file="{Binding IsFile}"
@@ -180,6 +187,13 @@
                                         <Grid Margin="0,0,4,0">
                                             <Button Classes="row" Classes.selected="{Binding IsActive}" Height="28" Margin="0" Padding="10,0,30,0"
                                                     Command="{Binding ActivateCommand}" ToolTip.Tip="{Binding Tip}">
+                                                <Button.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Open in VS Code" Command="{Binding OpenInCodeCommand}" />
+                                                <MenuItem Header="{Binding RevealLabel}" Command="{Binding RevealCommand}" />
+                                                <MenuItem Header="Copy path" Command="{Binding CopyPathCommand}" />
+                                            </ContextMenu>
+                                        </Button.ContextMenu>
                                                 <TextBlock Classes="name" Text="{Binding Name}" FontSize="12.5" VerticalAlignment="Center" />
                                             </Button>
                                             <Button Classes="Ghost" Width="20" Height="20" Padding="0" HorizontalAlignment="Right" Margin="0,0,4,0"
@@ -201,6 +215,11 @@
                                         <ToggleButton Content="Ignore" IsChecked="{Binding IsIgnoreMode, Mode=OneWay}" Command="{Binding IgnoreModeCommand}" />
                                     </StackPanel>
                                 </Border>
+                                <ToggleButton Classes="option" Height="30" Padding="10,0" IsVisible="{Binding IsCsv}"
+                                              ToolTip.Tip="Treat the first row as column names"
+                                              IsChecked="{Binding CsvHasHeader, Mode=OneWay}" Command="{Binding ToggleCsvHeaderCommand}">
+                                    <TextBlock Text="Header row" FontSize="12" VerticalAlignment="Center" />
+                                </ToggleButton>
                                 <StackPanel Orientation="Horizontal" Spacing="2" IsVisible="{Binding HasFolds}">
                                     <Button Classes="Ghost" Height="30" Padding="8,0" FontSize="12" Content="Fold all" ToolTip.Tip="Collapse every block" Command="{Binding CollapseAllCommand}" />
                                     <Button Classes="Ghost" Height="30" Padding="8,0" FontSize="12" Content="Unfold all" ToolTip.Tip="Expand every block" Command="{Binding ExpandAllCommand}" />
@@ -336,10 +355,16 @@
                 <StackPanel DockPanel.Dock="Top" Margin="16,14,12,8" Spacing="4">
                     <Grid ColumnDefinitions="*,Auto">
                         <TextBlock Classes="caption" Text="RESULTS" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Classes="icon spin" Text="&#xe10a;" FontSize="13" Foreground="{DynamicResource AccentBrush}"
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                        <TextBlock Classes="icon spin" Text="&#xe10a;" FontSize="13" Foreground="{DynamicResource AccentBrush}"
                                    IsVisible="{Binding IsSearching}">
                             <TextBlock.RenderTransform><RotateTransform /></TextBlock.RenderTransform>
                         </TextBlock>
+                        <Button Classes="Ghost" Width="26" Height="26" Padding="0" Margin="0,-4,0,-4"
+                                ToolTip.Tip="Close results (Esc)" Command="{Binding ClearSearchCommand}">
+                            <TextBlock Classes="icon muted" Text="&#xe1b2;" FontSize="13" />
+                        </Button>
+                        </StackPanel>
                     </Grid>
                     <TextBlock Text="{Binding SearchStatus}" FontSize="12" TextWrapping="Wrap"
                                Classes="status" Classes.error="{Binding IsSearchInvalid}" />

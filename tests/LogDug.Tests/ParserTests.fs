@@ -104,7 +104,7 @@ let ``an empty file has no entries`` () =
 [<Fact>]
 let ``csv files become an aligned table with the header first`` () =
     let document = parse "name,qty,note\nwidget,12,\"has, comma\"\ngadget,3,plain"
-    Assert.Equal(Delimited, document.Kind)
+    Assert.Equal(Delimited true, document.Kind)
     Assert.Equal(3, document.Entries.Length)
     Assert.Equal<string list>([ "widget"; "12"; "has, comma" ], document.Entries[1].Fields |> List.map _.Value)
 
@@ -122,7 +122,8 @@ let ``quoted csv cells can span lines`` () =
 [<Fact>]
 let ``log4j timestamps with a comma are not mistaken for csv`` () =
     let document = parse "2026-10-06 21:58:14,093 INFO a\n2026-10-06 21:58:15,000 WARN b\n2026-10-06 21:58:16,000 INFO c"
-    Assert.NotEqual(Delimited, document.Kind)
+    Assert.NotEqual(Delimited false, document.Kind)
+    Assert.NotEqual(Delimited true, document.Kind)
     Assert.Equal(Level.Warn, document.Entries[1].Level)
 
 [<Fact>]
@@ -147,3 +148,22 @@ let ``yaml and xml are structured by extension`` () =
     Assert.Equal(Structured "YAML", (LogParser.parseFile (options ()) "a.yml" "a:\n  b: 1").Kind)
     Assert.Equal(Structured "XML", (LogParser.parseFile (options ()) "a.csproj" "<a>\n  <b/>\n</a>").Kind)
     Assert.Equal(PlainText, (LogParser.parseFile (options ()) "a.log" "hello").Kind)
+
+[<Fact>]
+let ``a csv of only data has no header row`` () =
+    let document = parse "1,2,3\n4,5,6\n7,8,9"
+    Assert.Equal(Delimited false, document.Kind)
+    Assert.Equal<string list>([ "1"; "2"; "3" ], document.Entries[0].Fields |> List.map _.Key)
+    Assert.Equal(TableEntry([| 1; 1; 1 |], false), document.Entries[0].Format)
+
+[<Fact>]
+let ``a text row above numbers is a header, and the choice can be overridden`` () =
+    let text = "name,qty\nwidget,12\ngadget,3"
+    Assert.Equal(Delimited true, (parse text).Kind)
+    Assert.Equal(Delimited false, (LogParser.parseWith (options ()) (Some false) text).Kind)
+    Assert.Equal(Delimited true, (LogParser.parseWith (options ()) (Some true) "1,2\n3,4\n5,6").Kind)
+
+[<Fact>]
+let ``a table of names with no numbers is only a header when the first row looks like column names`` () =
+    Assert.Equal(Delimited true, (parse "first_name,last_name\nAda Lovelace,Byron\nAlan Turing,Mathison").Kind)
+    Assert.Equal(Delimited false, (parse "Ada Lovelace,Byron\nAlan Turing,Mathison\nGrace Hopper,Murray").Kind)

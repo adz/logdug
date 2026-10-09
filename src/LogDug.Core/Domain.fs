@@ -90,7 +90,8 @@ type LogEntry =
 type DocumentKind =
     | PlainText
     | JsonLines
-    | Delimited
+    /// A CSV/TSV table; `hasHeader` says whether its first row is column names.
+    | Delimited of hasHeader: bool
     /// A JSON, XML or YAML file, shown line by line with collapsible regions.
     | Structured of label: string
     | Binary

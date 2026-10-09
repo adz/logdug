@@ -9,12 +9,13 @@ A desktop log browser written in F#. Point it at a folder and it shows a file tr
 - **File tree** of the current directory (or a folder passed on the command line). Zip and tar.gz archives expand like folders, and gzipped files open as text.
 - **Log viewer** with colour-coded levels, a level filter, syntax colouring for strings, numbers, keys, exceptions, links and stack frames, and line wrapping. Stack traces and other unmarked lines stay with the entry above them.
 - **JSON lines** (Serilog compact `@t/@mt/@l/@x`, pino/bunyan numeric levels, and common `timestamp/level/message` keys) render as a message plus `key=value` properties. The detail pane shows the pretty-printed JSON.
-- **CSV and TSV** files (also `;` and `|` separated) show as an aligned table with a highlighted header row. Quoted cells, doubled quotes and newlines inside quotes are handled.
+- **CSV and TSV** files (also `;` and `|` separated) show as an aligned table. The first row is treated as a header only when it looks like column names, and a *Header row* toggle overrides the guess. Quoted cells, doubled quotes and newlines inside quotes are handled.
 - **Search everything** in plain text or regex mode, with optional match case. Combine terms with `AND` and `NOT` (`timeout AND retry NOT healthcheck`). Select text in the log, right-click, and choose *Include in search* or *Exclude from search* to add it to the query. A *Highlight / Filter / Ignore* toggle on each open file chooses whether the search colours its matches, shows only the matching entries, or leaves the file alone.
 - **Tabs and quick open.** Files stay open as tabs (Ctrl+W closes one). Ctrl+P jumps to any file under the root, archives included, by typing part of its path. Click the folder in the bottom left (or press Ctrl+O) to browse a different root.
 - **Fold JSON, XML and YAML.** Files with those extensions (and `.gz` of them) show as lines with chevrons that collapse indented blocks, plus *Fold all* / *Unfold all*. A minified `.json` file is spread over lines first.
+- **Right-click a file, folder or tab** for *Open in VS Code*, *Show in Explorer / Reveal in Finder / Show in file manager*, and *Copy path*. For something inside an archive, the first two act on the archive file.
 - **Select and copy** text in the log with the mouse or Ctrl+C.
-- **Search results**: Results stream in per file and are grouped by file. Click a result, or press Enter/F3, to open the file, expand the tree to it, and select the matching entry.
+- **Search results** (close the panel with its × or Esc): Results stream in per file and are grouped by file. Click a result, or press Enter/F3, to open the file, expand the tree to it, and select the matching entry.
 - **Time display** in UTC, the OS local zone, or a target zone chosen from a list. The active zone is always shown above the log, and the detail pane shows UTC, local and target times for the selected entry. Timestamps without an offset are treated as UTC.
 - **Follow** reloads the open file when it changes on disk and keeps the newest entries in view, like `tail -f`.
 - Light and dark themes. Settings persist in `%APPDATA%\LogDug\settings.json`.

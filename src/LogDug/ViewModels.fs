@@ -68,6 +68,10 @@ type TreeRowVm(initial: TreeRow, activate: Node -> unit) =
     member _.IsLoading = row.IsLoading
     member _.Tip = row.Error |> Option.defaultValue row.Key
     member _.ActivateCommand = activateCommand
+    member _.RevealLabel = Desktop.revealLabel
+    member _.OpenInCodeCommand = Command(fun () -> Desktop.openInVsCode (Desktop.diskPathOf row.Node))
+    member _.RevealCommand = Command(fun () -> Desktop.reveal row.Node)
+    member _.CopyPathCommand = Command(fun () -> Desktop.copy (Desktop.copyablePath row.Node))
 
     member this.Update(next: TreeRow) =
         if next <> row then
@@ -196,6 +200,10 @@ type TabVm(initial: Node, isActive: bool, activate: Node -> unit, close: string 
     member _.IsActive = active
     member _.ActivateCommand = Command(fun () -> activate initial)
     member _.CloseCommand = Command(fun () -> close key)
+    member _.RevealLabel = Desktop.revealLabel
+    member _.OpenInCodeCommand = Command(fun () -> Desktop.openInVsCode (Desktop.diskPathOf initial))
+    member _.RevealCommand = Command(fun () -> Desktop.reveal initial)
+    member _.CopyPathCommand = Command(fun () -> Desktop.copy (Desktop.copyablePath initial))
 
     member this.SetActive(value: bool) =
         if value <> active then
@@ -289,6 +297,9 @@ type MainVm(localZone: TimeZoneInfo) =
     let collapseAll = Command(fun () -> send CollapseAll)
     let expandAll = Command(fun () -> send ExpandAll)
     let mutable hasFolds = false
+    let mutable isCsv = false
+    let mutable csvHasHeader = false
+    let toggleCsvHeader = Command(fun () -> send ToggleCsvHeader)
     let closeTab = Command(fun () -> if activeTabKey <> "" then send (CloseTab activeTabKey))
     let showQuickOpen = Command(fun () -> send ShowQuickOpen)
     let hideQuickOpen = Command(fun () -> send HideQuickOpen)
@@ -347,6 +358,9 @@ type MainVm(localZone: TimeZoneInfo) =
                 quickOpenQuery <- value
                 send (QuickOpenQueryChanged value)
 
+    member _.IsCsv = isCsv
+    member _.CsvHasHeader = csvHasHeader
+    member _.ToggleCsvHeaderCommand = toggleCsvHeader
     member _.HasFolds = hasFolds
     member _.CollapseAllCommand = collapseAll
     member _.ExpandAllCommand = expandAll
@@ -560,6 +574,9 @@ type MainVm(localZone: TimeZoneInfo) =
         this.Change(&rootName, model.Tree.Root.Name, "RootName")
         this.Change(&isDark, model.Settings.DarkTheme, "IsDark")
         this.Change(&isFollowing, model.Following, "IsFollowing")
+        let csv = match model.Viewer with Showing { Document = { Kind = Delimited hasHeader } } -> Some hasHeader | _ -> None
+        this.Change(&isCsv, csv.IsSome, "IsCsv")
+        this.Change(&csvHasHeader, (csv = Some true), "CsvHasHeader")
         this.Change(&hasFolds, (match model.Viewer with Showing file -> not file.Document.Folds.IsEmpty | _ -> false), "HasFolds")
         this.UpdateTabsAndQuickOpen model
 

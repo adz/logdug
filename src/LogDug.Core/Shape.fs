@@ -164,7 +164,7 @@ module Shape =
             let kind =
                 match document.Kind with
                 | JsonLines -> "JSON lines"
-                | Delimited -> "CSV"
+                | Delimited _ -> "CSV"
                 | Structured label -> label
                 | PlainText -> "Text"
                 | Binary -> "Binary"
