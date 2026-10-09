@@ -21,6 +21,12 @@ module Shell =
 
         env.FileSystem.TrimEndingDirectorySeparator(env.FileSystem.GetFullPath chosen)
 
+    /// The file named on the command line, if the first argument is one.
+    let fileArgument (env: AppEnv) (args: string array) =
+        match args |> Array.tryHead with
+        | Some path when env.FileSystem.FileExists path -> Some(env.FileSystem.GetFullPath path)
+        | _ -> None
+
     /// Runs updates inline when already on the UI thread. A keystroke then dispatches, updates, and refreshes
     /// the viewmodel in one pass, so a two-way TextBox never sees a stale echo of its own text.
     let private postToUi =

@@ -18,6 +18,7 @@
                     <SolidColorBrush x:Key="RowSelectedBrush" Color="#1F2B3D" />
                     <SolidColorBrush x:Key="AccentBrush" Color="#7AA2F7" />
                     <SolidColorBrush x:Key="AccentSoftBrush" Color="#267AA2F7" />
+                    <SolidColorBrush x:Key="TextSelectionBrush" Color="#807AA2F7" />
                     <SolidColorBrush x:Key="GutterBrush" Color="#4B5363" />
                     <SolidColorBrush x:Key="TimeBrush" Color="#8B95A7" />
                     <SolidColorBrush x:Key="FolderBrush" Color="#E0AF68" />
@@ -62,6 +63,7 @@
                     <SolidColorBrush x:Key="RowSelectedBrush" Color="#E3ECFD" />
                     <SolidColorBrush x:Key="AccentBrush" Color="#2E5BDA" />
                     <SolidColorBrush x:Key="AccentSoftBrush" Color="#1F2E5BDA" />
+                    <SolidColorBrush x:Key="TextSelectionBrush" Color="#662E5BDA" />
                     <SolidColorBrush x:Key="GutterBrush" Color="#A3AAB6" />
                     <SolidColorBrush x:Key="TimeBrush" Color="#5C6577" />
                     <SolidColorBrush x:Key="FolderBrush" Color="#C28414" />

@@ -124,3 +124,26 @@ let ``log4j timestamps with a comma are not mistaken for csv`` () =
     let document = parse "2026-10-06 21:58:14,093 INFO a\n2026-10-06 21:58:15,000 WARN b\n2026-10-06 21:58:16,000 INFO c"
     Assert.NotEqual(Delimited, document.Kind)
     Assert.Equal(Level.Warn, document.Entries[1].Level)
+
+[<Fact>]
+let ``indented json folds by indentation and keeps the closing brace visible`` () =
+    let text = "{\n  \"a\": {\n    \"b\": 1\n  },\n  \"c\": [\n    1,\n    2\n  ]\n}"
+    let document = LogParser.parseFile (options ()) "x.json" text
+    Assert.Equal(Structured "JSON", document.Kind)
+    Assert.Equal(9, document.Entries.Length)
+    Assert.Equal(Some 7, document.Folds.TryFind 0)
+    Assert.Equal(Some 2, document.Folds.TryFind 1)
+    Assert.Equal(Some 6, document.Folds.TryFind 4)
+    Assert.Equal<int list>([ 0; 1; 3; 4; 7; 8 ], [ for e in document.Entries do if not (LogDocument.hiddenBy document (set [ 1; 4 ]) e.Index) then e.Index ] |> List.filter (fun i -> i <> 2 && i <> 5 && i <> 6) |> List.sort |> fun l -> l)
+
+[<Fact>]
+let ``a minified json file is spread over lines`` () =
+    let document = LogParser.parseFile (options ()) "data.json.gz" "{\"a\":{\"b\":1},\"c\":[1,2]}"
+    Assert.True(document.Entries.Length > 3)
+    Assert.False(document.Folds.IsEmpty)
+
+[<Fact>]
+let ``yaml and xml are structured by extension`` () =
+    Assert.Equal(Structured "YAML", (LogParser.parseFile (options ()) "a.yml" "a:\n  b: 1").Kind)
+    Assert.Equal(Structured "XML", (LogParser.parseFile (options ()) "a.csproj" "<a>\n  <b/>\n</a>").Kind)
+    Assert.Equal(PlainText, (LogParser.parseFile (options ()) "a.log" "hello").Kind)

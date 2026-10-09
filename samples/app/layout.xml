@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <add key="Environment" value="Production" />
+    <add key="RetryCount" value="3" />
+  </appSettings>
+  <connectionStrings>
+    <add name="Orders" connectionString="Host=db.internal;Database=orders" />
+  </connectionStrings>
+  <system.web>
+    <compilation debug="false" targetFramework="4.8" />
+    <httpRuntime maxRequestLength="4096" />
+  </system.web>
+</configuration>

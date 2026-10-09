@@ -367,6 +367,45 @@ module LogParser =
         // A trailing newline is a terminator, not an extra empty line.
         if lines.Length > 1 && lines[lines.Length - 1] = "" then Array.take (lines.Length - 1) lines else lines
 
+    /// Width of a line's leading whitespace (a tab counts as four), or -1 for a blank line.
+    let private indentOf (line: string) =
+        if String.IsNullOrWhiteSpace line then
+            -1
+        else
+            let mutable width = 0
+            let mutable index = 0
+
+            while index < line.Length && (line[index] = ' ' || line[index] = '\t') do
+                width <- width + (if line[index] = '\t' then 4 else 1)
+                index <- index + 1
+
+            width
+
+    /// Foldable regions by indentation: a line followed by more deeply indented lines folds those lines away.
+    /// The closing line of a block (`}` or `</a>`) is not indented further, so it stays visible when folded.
+    /// Line i is entry i, because a structured file shows each line as its own entry.
+    let foldRegions (lines: string array) : Map<int, int> =
+        let regions = Collections.Generic.Dictionary<int, int>()
+        let open' = Collections.Generic.Stack<struct (int * int)>()
+        let mutable lastContent = -1
+
+        let close (belowIndent: int) =
+            while open'.Count > 0 && (let struct (_, indent) = open'.Peek() in indent >= belowIndent) do
+                let struct (header, _) = open'.Pop()
+                if lastContent > header then regions[header] <- lastContent
+
+        lines
+        |> Array.iteri (fun index line ->
+            let indent = indentOf line
+
+            if indent >= 0 then
+                close indent
+                open'.Push(struct (index, indent))
+                lastContent <- index)
+
+        close 0
+        regions |> Seq.map (fun pair -> pair.Key, pair.Value) |> Map.ofSeq
+
     let private countLevels (entries: LogEntry array) =
         entries |> Array.countBy _.Level |> Map.ofArray
 
@@ -378,16 +417,44 @@ module LogParser =
             { Entries = entries
               LineCount = lines.Length
               Kind = Delimited
-              LevelCounts = countLevels entries }
-        | None -> parseLog options lines
+              LevelCounts = countLevels entries
+              Folds = Map.empty }
+        | None -> parseLog options lines None
 
-    and private parseLog (options: Options) (lines: string array) : LogDocument =
+    /// How a file's own name and content change how it is read: JSON, XML and YAML files show as lines whose
+    /// indentation can be folded, and a minified JSON file is first spread over several lines.
+    and parseFile (options: Options) (name: string) (text: string) : LogDocument =
+        let lower = name.ToLowerInvariant()
+        let lower = if lower.EndsWith ".gz" then lower.Substring(0, lower.Length - 3) else lower
+        let extension = (let dot = lower.LastIndexOf '.' in if dot < 0 then "" else lower.Substring dot)
+
+        let xml = set [ ".xml"; ".csproj"; ".fsproj"; ".vbproj"; ".props"; ".targets"; ".config"; ".xaml"; ".axaml"; ".svg"; ".nuspec"; ".resx"; ".xsd"; ".plist" ]
+        let lines = splitLines text
+
+        let structured label (lines: string array) = parseLog options lines (Some label)
+
+        if extension = ".json" && lines.Length = 1 && (lines[0].TrimStart().StartsWith "{" || lines[0].TrimStart().StartsWith "[") then
+            let pretty = try Json.reindent lines[0] with _ -> lines[0]
+            structured "JSON" (splitLines pretty)
+        elif extension = ".json" && lines.Length > 1 && (tryJsonEntry lines[0]).IsNone then
+            structured "JSON" lines
+        elif xml.Contains extension then
+            structured "XML" lines
+        elif extension = ".yaml" || extension = ".yml" then
+            structured "YAML" lines
+        else
+            parse options text
+
+    and private parseLog (options: Options) (lines: string array) (structuredAs: string option) : LogDocument =
         let sample = lines |> Array.truncate 400
 
         // A file whose lines carry timestamps or levels groups unmarked lines (stack traces, wrapped output)
         // under the preceding entry. A file without any such markers shows each line as its own entry.
+        let forceLines = structuredAs.IsSome
+
         let structured =
-            sample |> Array.exists (fun line -> (tryHeader options line).IsSome || (tryJsonEntry line).IsSome)
+            not forceLines
+            && sample |> Array.exists (fun line -> (tryHeader options line).IsSome || (tryJsonEntry line).IsSome)
 
         let entries = ResizeArray<LogEntry>()
         let mutable pending: (int * string * Header * ResizeArray<string>) option = None
@@ -419,7 +486,7 @@ module LogParser =
         |> Array.iteri (fun i line ->
             let lineNumber = i + 1
 
-            match tryJsonEntry line with
+            match (if forceLines then None else tryJsonEntry line) with
             | Some fields ->
                 flush ()
                 jsonCount <- jsonCount + 1
@@ -441,14 +508,19 @@ module LogParser =
 
         { Entries = entries
           LineCount = lines.Length
-          Kind = if jsonCount > 0 && jsonCount * 2 >= entries.Length then JsonLines else PlainText
-          LevelCounts = countLevels entries }
+          Kind =
+            match structuredAs with
+            | Some label -> Structured label
+            | None -> if jsonCount > 0 && jsonCount * 2 >= entries.Length then JsonLines else PlainText
+          LevelCounts = countLevels entries
+          Folds = if forceLines then foldRegions lines else Map.empty }
 
     let binary =
         { Entries = [||]
           LineCount = 0
           Kind = Binary
-          LevelCounts = Map.empty }
+          LevelCounts = Map.empty
+          Folds = Map.empty }
 
     /// The entry's JSON, indented for reading, or None for plain-text entries.
     let prettyJson (entry: LogEntry) =

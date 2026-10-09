@@ -76,11 +76,25 @@ type TreeRowVm(initial: TreeRow, activate: Node -> unit) =
             for name in [ "Name"; "Indent"; "Chevron"; "Icon"; "Detail"; "IsSelected"; "IsLoading"; "Tip" ] do
                 this.NotifyPropertyChanged name
 
+/// Whether an entry opens a foldable region, and if so whether it is folded.
+type FoldState =
+    | NotFoldable
+    | FoldOpen
+    | FoldCollapsed
+
 /// One log entry as displayed. Immutable: a new set is built when the file, filter, zone, or search changes,
 /// and segments are only computed for rows the list actually realises.
 [<AllowNullLiteral>]
-type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option, showTime: bool, showLevel: bool) =
-    let segments = lazy (Render.body entry |> Render.highlight pattern |> Array.ofList)
+type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option, showTime: bool, showLevel: bool, fold: FoldState, hasFolds: bool, toggleFold: int -> unit) =
+    let segments =
+        lazy (
+            let body = Render.body entry |> Render.highlight pattern
+
+            // A folded region is marked on its opening line.
+            Array.ofList (if fold = FoldCollapsed then body @ [ Segment.make Muted "  …" ] else body)
+        )
+
+    let toggleCommand = Command(fun () -> toggleFold entry.Index)
 
     member _.Entry = entry
     member _.Index = entry.Index
@@ -97,6 +111,10 @@ type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option, 
     member _.IsUnlevelled = entry.Level = Level.NoLevel
     member _.HasLevel = entry.Level <> Level.NoLevel
     /// Document-wide: a file with no timestamps (or levels) gets no gap where the column would be.
+    member _.HasFolds = hasFolds
+    member _.IsFoldable = fold <> NotFoldable
+    member _.FoldGlyph = if fold = FoldCollapsed then Glyph.chevronRight else Glyph.chevronDown
+    member _.ToggleFoldCommand = toggleCommand
     member _.ShowTime = showTime
     member _.ShowLevel = showLevel
     member _.Segments = segments.Value
@@ -212,6 +230,7 @@ type MainVm(localZone: TimeZoneInfo) =
     let mutable shownTime: TimeContext option = None
     let mutable shownPattern: obj = null
     let mutable shownMode = HighlightMatches
+    let mutable shownCollapsed: obj = null
     let mutable fileMode = HighlightMatches
     let mutable activeTabKey = ""
     let mutable quickOpenVisible = false
@@ -267,6 +286,9 @@ type MainVm(localZone: TimeZoneInfo) =
     let showAllLevels = Command(fun () -> send ShowAllLevels)
     let closeDetail = Command(fun () -> send (SelectEntry None))
     let toggleFollow = Command(fun () -> send ToggleFollow)
+    let collapseAll = Command(fun () -> send CollapseAll)
+    let expandAll = Command(fun () -> send ExpandAll)
+    let mutable hasFolds = false
     let closeTab = Command(fun () -> if activeTabKey <> "" then send (CloseTab activeTabKey))
     let showQuickOpen = Command(fun () -> send ShowQuickOpen)
     let hideQuickOpen = Command(fun () -> send HideQuickOpen)
@@ -325,6 +347,9 @@ type MainVm(localZone: TimeZoneInfo) =
                 quickOpenQuery <- value
                 send (QuickOpenQueryChanged value)
 
+    member _.HasFolds = hasFolds
+    member _.CollapseAllCommand = collapseAll
+    member _.ExpandAllCommand = expandAll
     member _.HasSearchText = searchText <> ""
     member _.QuickOpenVisible = quickOpenVisible
     member _.QuickOpenSelectedIndex = quickOpenItems |> Seq.tryFindIndex _.IsSelected |> Option.defaultValue -1
@@ -392,6 +417,8 @@ type MainVm(localZone: TimeZoneInfo) =
         match model.Viewer with
         | Showing file ->
             let mode = App.fileMode model
+            let collapsed = App.collapsedIn model
+            let collapsedSet = box collapsed
             let pattern = model.Search.Pattern |> Option.map box |> Option.toObj
 
             // Reference checks: the document holds every entry, so structural equality would walk them all.
@@ -401,6 +428,7 @@ type MainVm(localZone: TimeZoneInfo) =
                 || Some model.Time <> shownTime
                 || not (obj.ReferenceEquals(pattern, shownPattern))
                 || mode <> shownMode
+                || not (obj.ReferenceEquals(collapsedSet, shownCollapsed))
 
             if changed then
                 let displayChanged =
@@ -413,17 +441,26 @@ type MainVm(localZone: TimeZoneInfo) =
                 shownTime <- Some model.Time
                 shownPattern <- pattern
                 shownMode <- mode
+                shownCollapsed <- collapsedSet
 
                 // Ignoring the search leaves the file as if nothing were searched for; filtering narrows it to the matches.
                 let highlight = if mode = IgnoreSearch then None else model.Search.Pattern
                 let filter = if mode = FilterToMatches then model.Search.Pattern else None
 
+                let hasDocumentFolds = not file.Document.Folds.IsEmpty
                 let showTime = LogDocument.hasTimestamps file.Document
                 let showLevel = LogDocument.hasLevels file.Document
 
                 entries <-
-                    Shape.visibleEntries model.Levels filter file.Document
-                    |> Array.map (fun entry -> EntryVm(entry, model.Time, highlight, showTime, showLevel))
+                    Shape.visibleEntries model.Levels filter collapsed file.Document
+                    |> Array.map (fun entry ->
+                        let fold =
+                            if file.Document.Folds.ContainsKey entry.Index then
+                                (if collapsed.Contains entry.Index then FoldCollapsed else FoldOpen)
+                            else
+                                NotFoldable
+
+                        EntryVm(entry, model.Time, highlight, showTime, showLevel, fold, hasDocumentFolds, ToggleFold >> send))
 
                 selectedEntry <- null
                 this.NotifyPropertyChanged "Entries"
@@ -523,6 +560,7 @@ type MainVm(localZone: TimeZoneInfo) =
         this.Change(&rootName, model.Tree.Root.Name, "RootName")
         this.Change(&isDark, model.Settings.DarkTheme, "IsDark")
         this.Change(&isFollowing, model.Following, "IsFollowing")
+        this.Change(&hasFolds, (match model.Viewer with Showing file -> not file.Document.Folds.IsEmpty | _ -> false), "HasFolds")
         this.UpdateTabsAndQuickOpen model
 
         treeRows.SyncWith(

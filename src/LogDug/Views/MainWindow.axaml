@@ -201,6 +201,10 @@
                                         <ToggleButton Content="Ignore" IsChecked="{Binding IsIgnoreMode, Mode=OneWay}" Command="{Binding IgnoreModeCommand}" />
                                     </StackPanel>
                                 </Border>
+                                <StackPanel Orientation="Horizontal" Spacing="2" IsVisible="{Binding HasFolds}">
+                                    <Button Classes="Ghost" Height="30" Padding="8,0" FontSize="12" Content="Fold all" ToolTip.Tip="Collapse every block" Command="{Binding CollapseAllCommand}" />
+                                    <Button Classes="Ghost" Height="30" Padding="8,0" FontSize="12" Content="Unfold all" ToolTip.Tip="Expand every block" Command="{Binding ExpandAllCommand}" />
+                                </StackPanel>
                                 <ToggleButton Classes="option" Height="30" Padding="10,0" ToolTip.Tip="Follow: reload when the file changes and keep the newest entries in view"
                                               IsChecked="{Binding IsFollowing, Mode=OneWay}" Command="{Binding ToggleFollowCommand}">
                                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -267,16 +271,22 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="ui:EntryVm">
                                 <Border Classes="entry" Classes.level-trace="{Binding IsTrace}" Classes.level-debug="{Binding IsDebug}" Classes.level-info="{Binding IsInfo}" Classes.level-warn="{Binding IsWarn}" Classes.level-error="{Binding IsError}" Classes.level-fatal="{Binding IsFatal}" Classes.level-none="{Binding IsUnlevelled}">
-                                    <Grid ColumnDefinitions="64,Auto,Auto,*">
+                                    <Grid ColumnDefinitions="64,Auto,Auto,Auto,*">
                                         <TextBlock Grid.Column="0" Classes="mono" Text="{Binding LineText}" Foreground="{DynamicResource GutterBrush}"
                                                    HorizontalAlignment="Right" Margin="0,0,14,0" />
-                                        <TextBlock Grid.Column="1" Classes="mono" Width="186" Text="{Binding TimeText}" Foreground="{DynamicResource TimeBrush}" IsVisible="{Binding ShowTime}" />
-                                        <Panel Grid.Column="2" Width="60" IsVisible="{Binding ShowLevel}">
+                                        <Panel Grid.Column="1" Width="20" IsVisible="{Binding HasFolds}">
+                                            <Button Classes="Ghost" Width="18" Height="18" Padding="0" VerticalAlignment="Top" Margin="0,1,0,0"
+                                                    IsVisible="{Binding IsFoldable}" Command="{Binding ToggleFoldCommand}" ToolTip.Tip="Fold / unfold">
+                                                <TextBlock Classes="icon muted" Text="{Binding FoldGlyph}" FontSize="12" />
+                                            </Button>
+                                        </Panel>
+                                        <TextBlock Grid.Column="2" Classes="mono" Width="186" Text="{Binding TimeText}" Foreground="{DynamicResource TimeBrush}" IsVisible="{Binding ShowTime}" />
+                                        <Panel Grid.Column="3" Width="60" IsVisible="{Binding ShowLevel}">
                                             <Border Classes="badge" Classes.level-trace="{Binding IsTrace}" Classes.level-debug="{Binding IsDebug}" Classes.level-info="{Binding IsInfo}" Classes.level-warn="{Binding IsWarn}" Classes.level-error="{Binding IsError}" Classes.level-fatal="{Binding IsFatal}" Classes.level-none="{Binding IsUnlevelled}" IsVisible="{Binding HasLevel}">
                                             <TextBlock Text="{Binding LevelText}" />
                                         </Border>
                                         </Panel>
-                                        <ui:LogLine Grid.Column="3" Classes="mono" TextWrapping="Wrap" Margin="10,0,0,0" />
+                                        <ui:LogLine Grid.Column="4" Classes="mono" TextWrapping="Wrap" Margin="10,0,0,0" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>

@@ -8,6 +8,10 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
 
+    <Style Selector="SelectableTextBlock">
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextSelectionBrush}" />
+    </Style>
+
     <Style Selector="TextBlock.mono, SelectableTextBlock.mono">
         <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
         <Setter Property="FontSize" Value="12.5" />

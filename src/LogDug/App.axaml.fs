@@ -42,6 +42,7 @@ type App() =
             let env = runtime.Env
             let window, connection = Shell.create env (Shell.rootPath env options.Folder)
             desktop.MainWindow <- window
+            Shell.fileArgument env options.Folder |> Option.iter (fun path -> connection.Dispatch.Invoke(OpenPath path))
 
             desktop.Exit.Add(fun _ ->
                 (connection :> IDisposable).Dispose()

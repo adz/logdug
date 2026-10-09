@@ -82,7 +82,11 @@ type LogLine() =
 
     override this.OnAttachedToVisualTree(args) =
         base.OnAttachedToVisualTree args
-        if isNull this.ContextFlyout then this.BuildMenu()
+
+        if isNull this.ContextFlyout then
+            this.BuildMenu()
+            // Selection is drawn behind the text; the brush follows the theme.
+            this.Bind(SelectableTextBlock.SelectionBrushProperty, this.GetResourceObservable "TextSelectionBrush") |> ignore
 
     /// A selectable text block takes the press for itself, so a plain click selects the row here instead.
     override this.OnTapped(args: TappedEventArgs) =

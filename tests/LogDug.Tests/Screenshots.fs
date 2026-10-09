@@ -9,6 +9,7 @@ open Avalonia.Controls
 open Avalonia.Headless
 open Avalonia.Input
 open Avalonia.Threading
+open Avalonia.VisualTree
 open Axial.PlatformService
 open Xunit
 open LogDug
@@ -182,6 +183,29 @@ let private scenario () =
     dispatch (ChangeRoot(Path.Combine(samples (), "app")))
     pumpUntil "new root" (fun () -> vm.RootPath.EndsWith "app" && vm.Tabs.Count = 0 && vm.TreeRows.Count >= 4)
 
+    // JSON, YAML and XML files fold by indentation.
+    openFile vm "service-config.json"
+    pumpUntil "folds in the json file" (fun () -> vm.HasFolds)
+    let expanded = vm.Entries.Length
+    dispatch CollapseAll
+    pumpUntil "json folded" (fun () -> vm.Entries.Length < expanded)
+    capture window "12-folds.png"
+    dispatch (ToggleFold 1)
+    dispatch ExpandAll
+    pumpUntil "json unfolded" (fun () -> vm.Entries.Length = expanded)
+    openFile vm "deploy.yaml"
+    pumpUntil "folds in the yaml file" (fun () -> vm.HasFolds)
+    openFile vm "layout.xml"
+    pumpUntil "folds in the xml file" (fun () -> vm.HasFolds)
+
+    // Dragging over log text shows what is selected.
+    openFile vm "orders-api.log"
+    settle ()
+    let line = window.GetVisualDescendants() |> Seq.choose (function :? LogLine as line -> Some line | _ -> None) |> Seq.head
+    line.SelectionStart <- 0
+    line.SelectionEnd <- 24
+    capture window "13-selection.png"
+
     dispatch ToggleTheme
     pumpUntil "light theme" (fun () -> not vm.IsDark)
     capture window "06-light.png"
@@ -200,7 +224,9 @@ let private scenario () =
     let liveWindow, liveConnection = Shell.create env liveFolder.FullName
     let liveVm = liveWindow.DataContext :?> MainVm
     liveWindow.Show()
-    openFile liveVm "live.log"
+    // A file named on the command line opens itself once its folder has loaded.
+    liveConnection.Dispatch.Invoke(OpenPath livePath)
+    pumpUntil "file named on the command line" (fun () -> liveVm.ShowEntries && liveVm.ViewerTitle.EndsWith "live.log")
     liveConnection.Dispatch.Invoke ToggleFollow
     pumpUntil "following" (fun () -> liveVm.IsFollowing)
     settle ()

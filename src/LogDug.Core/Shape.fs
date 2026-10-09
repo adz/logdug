@@ -65,12 +65,14 @@ module Shape =
         tree.Children.TryFind(Node.key tree.Root) |> Option.map (rows 0) |> Option.defaultValue []
 
     /// The entries to list: those at a shown level and, when `filter` is set, those the search matches.
-    let visibleEntries (levels: Set<Level>) (filter: SearchPattern option) (document: LogDocument) =
+    let visibleEntries (levels: Set<Level>) (filter: SearchPattern option) (collapsed: Set<int>) (document: LogDocument) =
+        let hidden = LogDocument.hiddenBy document collapsed
+
         let atLevel =
-            if levels.Count = Level.all.Length then
+            if levels.Count = Level.all.Length && collapsed.IsEmpty then
                 document.Entries
             else
-                document.Entries |> Array.filter (fun entry -> levels.Contains entry.Level)
+                document.Entries |> Array.filter (fun entry -> levels.Contains entry.Level && not (hidden entry.Index))
 
         match filter with
         | Some pattern -> atLevel |> Array.filter (fun entry -> Render.countMatches (Some pattern) entry > 0)
@@ -79,11 +81,15 @@ module Shape =
     let levelChips (model: Model) =
         match model.Viewer with
         | Showing file ->
-            Level.all
-            |> List.choose (fun level ->
-                match file.Document.LevelCounts.TryFind level with
-                | Some count when count > 0 -> Some { Level = level; Count = count; IsOn = model.Levels.Contains level }
-                | _ -> None)
+            let chips =
+                Level.all
+                |> List.choose (fun level ->
+                    match file.Document.LevelCounts.TryFind level with
+                    | Some count when count > 0 -> Some { Level = level; Count = count; IsOn = model.Levels.Contains level }
+                    | _ -> None)
+
+            // A file with no levels at all (CSV, JSON, YAML) has nothing to filter by.
+            if chips |> List.forall (fun chip -> chip.Level = Level.NoLevel) then [] else chips
         | _ -> []
 
     let resultRows (model: Model) : ResultRow list =
@@ -159,6 +165,7 @@ module Shape =
                 match document.Kind with
                 | JsonLines -> "JSON lines"
                 | Delimited -> "CSV"
+                | Structured label -> label
                 | PlainText -> "Text"
                 | Binary -> "Binary"
 

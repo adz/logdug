@@ -91,13 +91,17 @@ type DocumentKind =
     | PlainText
     | JsonLines
     | Delimited
+    /// A JSON, XML or YAML file, shown line by line with collapsible regions.
+    | Structured of label: string
     | Binary
 
 type LogDocument =
     { Entries: LogEntry array
       LineCount: int
       Kind: DocumentKind
-      LevelCounts: Map<Level, int> }
+      LevelCounts: Map<Level, int>
+      /// Collapsible regions: the entry that opens one, to the last entry it hides.
+      Folds: Map<int, int> }
 
 type TimeDisplay =
     | Utc
@@ -127,6 +131,20 @@ type FileHits =
       Truncated: bool }
 
 module LogDocument =
+    /// The entries a set of collapsed regions hides, as a predicate on entry index.
+    let hiddenBy (document: LogDocument) (collapsed: Set<int>) : (int -> bool) =
+        if collapsed.IsEmpty then
+            fun _ -> false
+        else
+            // Outermost collapsed regions first; anything inside one is hidden whether or not it is collapsed itself.
+            let ranges =
+                collapsed
+                |> Seq.choose (fun header -> document.Folds.TryFind header |> Option.map (fun last -> header + 1, last))
+                |> Seq.sort
+                |> Array.ofSeq
+
+            fun index -> ranges |> Array.exists (fun (first, last) -> index >= first && index <= last)
+
     /// Whether any entry has a timestamp, so the viewer can leave out an always-empty time column.
     let hasTimestamps (document: LogDocument) =
         document.Entries |> Array.exists (fun entry -> entry.Timestamp.IsSome)

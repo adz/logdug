@@ -76,10 +76,14 @@ type Model =
       Tabs: Node list
       /// Per-file choice of how the main search applies to it; files not listed highlight.
       FileModes: Map<string, FileSearchMode>
+      /// Per-file entries whose foldable region is currently collapsed.
+      Collapsed: Map<string, Set<int>>
       QuickOpen: QuickOpenState option
       /// Every file under the root, loaded the first time quick open is used.
       FileIndex: QuickOpenEntry array option
       IndexLoading: bool
+      /// A file named on the command line, opened as soon as its folder has been read.
+      OpenOnLoad: string option
       Viewer: ViewerState
       Search: SearchState
       Time: TimeContext
@@ -127,6 +131,10 @@ type Msg =
     | QuickOpenMove of delta: int
     | QuickOpenAccept of index: int option
     | FileIndexLoaded of root: string * Result<Node list, string>
+    | OpenPath of path: string
+    | ToggleFold of entryIndex: int
+    | CollapseAll
+    | ExpandAll
 
 module App =
     let private followThrottle = TimeSpan.FromMilliseconds 300.0
@@ -193,9 +201,11 @@ module App =
               SelectedNode = None
               Tabs = []
               FileModes = Map.empty
+              Collapsed = Map.empty
               QuickOpen = None
               FileIndex = None
               IndexLoading = false
+              OpenOnLoad = None
               Viewer = NothingOpen
               Search = emptySearch
               Time = Time.context env.LocalZone now Local
@@ -252,7 +262,7 @@ module App =
         let work =
             flow {
                 let! text = Files.readText node
-                return! Flow.fromBlocking (fun _ -> text |> Option.map (LogParser.parse options) |> Option.defaultValue LogParser.binary)
+                return! Flow.fromBlocking (fun _ -> text |> Option.map (LogParser.parseFile options node.Name) |> Option.defaultValue LogParser.binary)
             }
 
         { model with
@@ -296,6 +306,23 @@ module App =
                             Cursor = None } },
                 send env (StartSearch { Id = requestId; Pattern = pattern; Root = model.Tree.Root })
 
+    /// Unfolds any collapsed region that hides `entryIndex`, so a revealed entry can actually be seen.
+    let private unfoldAround model (entryIndex: int) =
+        match model.Viewer with
+        | Showing file ->
+            let key = Node.key file.Node
+
+            match model.Collapsed.TryFind key with
+            | Some collapsed ->
+                let stillHidden header =
+                    match file.Document.Folds.TryFind header with
+                    | Some last -> entryIndex > header && entryIndex <= last
+                    | None -> false
+
+                { model with Collapsed = model.Collapsed.Add(key, collapsed |> Set.filter (stillHidden >> not)) }
+            | None -> model
+        | _ -> model
+
     let private reveal model (entryIndex: int) select =
         let entryIndex =
             match model.Viewer with
@@ -312,7 +339,7 @@ module App =
         if entryIndex < 0 then
             { model with PendingReveal = None }
         else
-            { model with
+            { unfoldAround model entryIndex with
                 SelectedEntry = if select then Some entryIndex else model.SelectedEntry
                 Reveal = Some { EntryIndex = entryIndex; Select = select; Nonce = nonce }
                 PendingReveal = None
@@ -412,6 +439,11 @@ module App =
         | Unreadable(node, _) -> Some node
         | NothingOpen -> None
 
+    let collapsedIn model =
+        viewerNode model
+        |> Option.bind (fun node -> model.Collapsed.TryFind(Node.key node))
+        |> Option.defaultValue Set.empty
+
     let fileMode model =
         viewerNode model
         |> Option.bind (fun node -> model.FileModes.TryFind(Node.key node))
@@ -487,7 +519,19 @@ module App =
                 | Ok children -> { tree with Children = tree.Children.Add(key, children); Failed = tree.Failed.Remove key }
                 | Error message -> { tree with Expanded = tree.Expanded.Remove key; Failed = tree.Failed.Add(key, message) }
 
-            { model with Tree = tree }, Cmd.none
+            match model.OpenOnLoad with
+            | Some path when key = Node.key model.Tree.Root -> update env (OpenPath path) { model with Tree = tree }
+            | _ -> { model with Tree = tree }, Cmd.none
+
+        | OpenPath path ->
+            match model.Tree.Children.TryFind(Node.key model.Tree.Root) with
+            | None -> { model with OpenOnLoad = Some path }, Cmd.none
+            | Some children ->
+                let model = { model with OpenOnLoad = None }
+
+                match children |> List.tryFind (fun node -> String.Equals(Node.key node, path, StringComparison.OrdinalIgnoreCase)) with
+                | Some node -> update env (ActivateNode node) model
+                | None -> model, Cmd.none
 
         | ActivateNode node when Node.isContainer node -> update env (ToggleNode(Node.key node)) { model with SelectedNode = Some(Node.key node) }
 
@@ -572,6 +616,31 @@ module App =
         | ToggleTheme ->
             let settings = { model.Settings with DarkTheme = not model.Settings.DarkTheme }
             { model with Settings = settings }, saveSettings env settings
+
+        | ToggleFold entryIndex ->
+            match viewerNode model with
+            | Some node ->
+                let collapsed = collapsedIn model
+                let next = if collapsed.Contains entryIndex then collapsed.Remove entryIndex else collapsed.Add entryIndex
+                { model with Collapsed = model.Collapsed.Add(Node.key node, next) }, Cmd.none
+            | None -> model, Cmd.none
+
+        | CollapseAll ->
+            match model.Viewer with
+            | Showing file ->
+                // A file that is one big block (a JSON object, an XML root) keeps that block open.
+                let headers = file.Document.Folds |> Map.toList
+                let total = file.Document.Entries.Length
+                let wrapper = headers |> List.tryFind (fun (header, last) -> (last - header + 1) * 10 >= total * 9)
+                let all = headers |> List.map fst |> Set.ofList
+                let collapsed = match wrapper with Some(header, _) -> all.Remove header | None -> all
+                { model with Collapsed = model.Collapsed.Add(Node.key file.Node, collapsed) }, Cmd.none
+            | _ -> model, Cmd.none
+
+        | ExpandAll ->
+            match viewerNode model with
+            | Some node -> { model with Collapsed = model.Collapsed.Add(Node.key node, Set.empty) }, Cmd.none
+            | None -> model, Cmd.none
 
         | CloseTab key ->
             let tabs = model.Tabs |> List.filter (fun tab -> Node.key tab <> key)
