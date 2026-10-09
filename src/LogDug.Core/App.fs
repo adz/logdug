@@ -201,6 +201,14 @@ module App =
 
         go location
 
+    /// The target zone is only a real choice once Zone mode has been picked. Until then it follows the OS zone,
+    /// instead of showing the fixed placeholder it was saved with.
+    let withLocalZoneDefault (local: TimeZoneInfo) (settings: Settings) =
+        if settings.TimeMode <> "zone" && settings.Zone = Settings.defaults.Zone then
+            { settings with Zone = Time.zoneId local }
+        else
+            settings
+
     let init (env: AppEnv) (rootPath: string) () : Model * Cmd<Msg> =
         let now = env.Clock.UtcNow()
 
@@ -236,7 +244,7 @@ module App =
               Search = emptySearch
               Time = Time.context env.LocalZone now Local
               Zones = Time.zones now
-              Settings = Settings.defaults
+              Settings = withLocalZoneDefault env.LocalZone Settings.defaults
               Levels = Set.ofList Level.all
               SelectedEntry = None
               Reveal = None
@@ -555,6 +563,8 @@ module App =
     let rec update (env: AppEnv) (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         match msg with
         | SettingsLoaded settings ->
+            let settings = withLocalZoneDefault env.LocalZone settings
+
             let query =
                 { model.Search.Query with
                     Mode = if settings.Regex then RegexSearch else PlainSearch

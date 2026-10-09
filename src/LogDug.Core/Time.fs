@@ -15,7 +15,8 @@ type TimeContext =
       Caption: string }
 
 module Time =
-    let private ianaId (zone: TimeZoneInfo) =
+    /// The zone's IANA id, converting a Windows id where there is a mapping.
+    let zoneId (zone: TimeZoneInfo) =
         if zone.HasIanaId then
             zone.Id
         else
@@ -29,7 +30,7 @@ module Time =
         $"UTC{sign}{magnitude.Hours:D2}:{magnitude.Minutes:D2}"
 
     let private option (now: DateTimeOffset) (zone: TimeZoneInfo) =
-        let id = ianaId zone
+        let id = zoneId zone
 
         { Id = id
           Label = $"{id}  ({offsetText (zone.GetUtcOffset now)})"
@@ -53,10 +54,10 @@ module Time =
         let zone, name =
             match display with
             | Utc -> TimeZoneInfo.Utc, "UTC"
-            | Local -> local, $"Local · {ianaId local}"
+            | Local -> local, $"Local · {zoneId local}"
             | Zone id ->
                 match tryFindZone id with
-                | Some zone -> zone, ianaId zone
+                | Some zone -> zone, zoneId zone
                 | None -> TimeZoneInfo.Utc, $"{id} (unknown, showing UTC)"
 
         { Display = display

@@ -1,5 +1,6 @@
 module LogDug.Tests.SettingsTests
 
+open System
 open Xunit
 open LogDug
 
@@ -26,3 +27,16 @@ let ``an unknown time mode is rejected with its path`` () =
 let ``time display maps both ways`` () =
     for display in [ Utc; Local; Zone "Europe/Paris" ] do
         Assert.Equal(display, Settings.timeDisplay (Settings.withTimeDisplay display Settings.defaults))
+
+[<Fact>]
+let ``the target zone follows the OS zone until zone mode is chosen`` () =
+    let local = TimeZoneInfo.CreateCustomTimeZone("Test/Adelaide", TimeSpan.FromHours 10.5, "Test", "Test")
+    let defaults = Settings.defaults
+    Assert.Equal("Test/Adelaide", (App.withLocalZoneDefault local defaults).Zone)
+
+    // A zone the user picked stays, even when it is the placeholder's value.
+    let chosen = Settings.withTimeDisplay (Zone defaults.Zone) defaults
+    Assert.Equal(defaults.Zone, (App.withLocalZoneDefault local chosen).Zone)
+
+    let other = { defaults with Zone = "Asia/Tokyo" }
+    Assert.Equal("Asia/Tokyo", (App.withLocalZoneDefault local other).Zone)
