@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <!-- Local/dev default only; the release workflow stamps the real version via -p:Version from the release tag. -->
-    <VersionPrefix>0.3.0</VersionPrefix>
+    <VersionPrefix>0.3.1</VersionPrefix>
     <Authors>Adam Davies</Authors>
     <Product>Log Dug</Product>
     <TargetFramework>net10.0</TargetFramework>
