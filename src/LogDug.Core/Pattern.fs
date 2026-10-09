@@ -16,6 +16,25 @@ module SearchPattern =
         RegexOptions.CultureInvariant
         ||| (if query.MatchCase then RegexOptions.None else RegexOptions.IgnoreCase)
 
+    /// A query is one or more terms joined by ` AND ` (the line must also match) or ` NOT ` (the line must not).
+    /// A query without either is a single term, so ordinary searches behave as before.
+    let private operator = Regex(@"\s+(AND|NOT)\s+", RegexOptions.CultureInvariant)
+
+    let terms (text: string) : (bool * string) list =
+        if not (operator.IsMatch(" " + text)) then [ true, text ] else
+        let parts = operator.Split(" " + text.Trim())
+
+        [ yield true, parts[0].Trim()
+          for index in 1..2 .. parts.Length - 2 -> parts[index] = "AND", parts[index + 1].Trim() ]
+        |> List.filter (fun (isInclude, term) -> not (isInclude && term = ""))
+
+    /// Appends a term to a query text, with the operator that includes or excludes it.
+    let addTerm (isInclude: bool) (text: string) (term: string) =
+        let existing = text.Trim()
+
+        if existing = "" then (if isInclude then term else "NOT " + term)
+        else existing + (if isInclude then " AND " else " NOT ") + term
+
     let private plainFinder (query: SearchQuery) =
         let comparison =
             if query.MatchCase then StringComparison.Ordinal else StringComparison.OrdinalIgnoreCase
@@ -42,26 +61,59 @@ module SearchPattern =
         match query.Mode with
         | PlainSearch -> None
         | RegexSearch ->
-            try
-                Regex(query.Text, regexOptions query, regexTimeout) |> ignore
-                None
-            with :? ArgumentException as error ->
-                Some error.Message
+            terms query.Text
+            |> List.tryPick (fun (_, term) ->
+                try
+                    Regex(term, regexOptions query, regexTimeout) |> ignore
+                    None
+                with :? ArgumentException as error ->
+                    Some error.Message)
 
     let private usable =
         Constraint.customWith "a non-blank query that compiles in its search mode" (fun (query: SearchQuery) ->
             if String.IsNullOrWhiteSpace query.Text then
                 Error(Violation.Atomic(AtomicViolation.Described("Type something to search for.", None)))
+            elif terms query.Text |> List.forall (fun (isInclude, _) -> not isInclude) then
+                Error(Violation.Atomic(AtomicViolation.Described("Add a term to search for; NOT only removes matches.", None)))
             else
                 match regexError query with
                 | Some message -> Error(Violation.Atomic(AtomicViolation.Described($"Invalid regex: {message}", None)))
                 | None -> Ok())
 
+    let private termFinder (query: SearchQuery) (term: string) =
+        match query.Mode with
+        | PlainSearch -> plainFinder { query with Text = term }
+        | RegexSearch -> regexFinder (Regex(term, regexOptions query ||| RegexOptions.Compiled, regexTimeout))
+
     let private construct (query: SearchQuery) =
-        let find =
-            match query.Mode with
-            | PlainSearch -> plainFinder query
-            | RegexSearch -> regexFinder (Regex(query.Text, regexOptions query ||| RegexOptions.Compiled, regexTimeout))
+        let all = terms query.Text
+        let includes = all |> List.filter fst |> List.map (snd >> termFinder query)
+        let excludes = all |> List.filter (fst >> not) |> List.map (snd >> termFinder query)
+
+        let find (text: string) =
+            match includes, excludes with
+            | [ only ], [] -> only text
+            | _ ->
+                if excludes |> List.exists (fun exclude -> not (exclude text).IsEmpty) then
+                    []
+                else
+                    let found = includes |> List.map (fun include' -> include' text)
+
+                    if found |> List.exists List.isEmpty then
+                        []
+                    else
+                        // Highlights from every included term, in order and without overlap.
+                        let mutable last = 0
+
+                        found
+                        |> List.concat
+                        |> List.sortBy (fun struct (start, _) -> start)
+                        |> List.filter (fun struct (start, length) ->
+                            if start >= last then
+                                last <- start + length
+                                true
+                            else
+                                false)
 
         SearchPattern(query, find)
 

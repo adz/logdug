@@ -55,10 +55,31 @@ type RevealTarget =
     | AtLine of int
     | AtEnd
 
+/// What the main search does to the file being viewed: colour the matches, show only the matching entries,
+/// or leave the file alone.
+type FileSearchMode =
+    | HighlightMatches
+    | FilterToMatches
+    | IgnoreSearch
+
+/// The Ctrl+P box: what was typed, the ranked files, and which one Enter would open.
+type QuickOpenState =
+    { Query: string
+      Selected: int
+      Results: QuickOpenEntry list }
+
 type Model =
     { RootPath: string
       Tree: TreeState
       SelectedNode: string option
+      /// Files opened so far, in the order they were opened. The viewer shows one of them.
+      Tabs: Node list
+      /// Per-file choice of how the main search applies to it; files not listed highlight.
+      FileModes: Map<string, FileSearchMode>
+      QuickOpen: QuickOpenState option
+      /// Every file under the root, loaded the first time quick open is used.
+      FileIndex: QuickOpenEntry array option
+      IndexLoading: bool
       Viewer: ViewerState
       Search: SearchState
       Time: TimeContext
@@ -95,6 +116,17 @@ type Msg =
     | SetTimeDisplay of TimeDisplay
     | SetZone of zoneId: string
     | ToggleTheme
+    | CloseTab of key: string
+    | SetFileSearchMode of FileSearchMode
+    | ChangeRoot of path: string
+    | IncludeInSearch of text: string
+    | ExcludeFromSearch of text: string
+    | ShowQuickOpen
+    | HideQuickOpen
+    | QuickOpenQueryChanged of string
+    | QuickOpenMove of delta: int
+    | QuickOpenAccept of index: int option
+    | FileIndexLoaded of root: string * Result<Node list, string>
 
 module App =
     let private followThrottle = TimeSpan.FromMilliseconds 300.0
@@ -159,6 +191,11 @@ module App =
                   Loading = Set.singleton rootKey
                   Failed = Map.empty }
               SelectedNode = None
+              Tabs = []
+              FileModes = Map.empty
+              QuickOpen = None
+              FileIndex = None
+              IndexLoading = false
               Viewer = NothingOpen
               Search = emptySearch
               Time = Time.context env.LocalZone now Local
@@ -219,6 +256,7 @@ module App =
             }
 
         { model with
+            Tabs = if model.Tabs |> List.exists (fun tab -> Node.key tab = key) then model.Tabs else model.Tabs @ [ node ]
             Viewer = Opening node
             SelectedNode = Some key
             SelectedEntry = None
@@ -366,6 +404,49 @@ module App =
         | Showing { Node = node } when model.Following -> Some node
         | _ -> None
 
+    /// The file the viewer is on, whether it is still loading, shown, or unreadable.
+    let viewerNode model =
+        match model.Viewer with
+        | Opening node
+        | Showing { Node = node }
+        | Unreadable(node, _) -> Some node
+        | NothingOpen -> None
+
+    let fileMode model =
+        viewerNode model
+        |> Option.bind (fun node -> model.FileModes.TryFind(Node.key node))
+        |> Option.defaultValue HighlightMatches
+
+    let private loadIndex env model =
+        let root = model.RootPath
+
+        Files.walk Search.descend model.Tree.Root
+        |> FlowStream.filter Search.isSearchable
+        |> FlowStream.take 50_000
+        |> FlowStream.runCollect
+        |> FlowCmd.attempt env.Post env string (fun result -> FileIndexLoaded(root, result))
+
+    let private quickOpenState model query selected =
+        let results =
+            match model.FileIndex with
+            | Some index -> QuickOpen.matches index (model.Tabs |> List.rev |> List.map Node.key) query
+            | None -> []
+
+        { Query = query; Selected = max 0 (min selected (results.Length - 1)); Results = results }
+
+    /// The same model rooted at another folder: a fresh tree and no open files, keeping settings and the search text.
+    let private rootedAt env model (path: string) =
+        let fresh, loadRoot = init env (env.FileSystem.TrimEndingDirectorySeparator(env.FileSystem.GetFullPath path)) ()
+
+        let rooted =
+            { fresh with
+                Settings = model.Settings
+                Time = model.Time
+                Levels = model.Levels
+                Search = { emptySearch with Query = model.Search.Query; RequestId = model.Search.RequestId + 1 } }
+
+        rooted, loadRoot
+
     let rec update (env: AppEnv) (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         match msg with
         | SettingsLoaded settings ->
@@ -491,6 +572,101 @@ module App =
         | ToggleTheme ->
             let settings = { model.Settings with DarkTheme = not model.Settings.DarkTheme }
             { model with Settings = settings }, saveSettings env settings
+
+        | CloseTab key ->
+            let tabs = model.Tabs |> List.filter (fun tab -> Node.key tab <> key)
+
+            match viewerNode model with
+            | Some shown when Node.key shown = key ->
+                let index = model.Tabs |> List.findIndex (fun tab -> Node.key tab = key)
+
+                match tabs with
+                | [] ->
+                    { model with
+                        Tabs = []
+                        Viewer = NothingOpen
+                        SelectedNode = None
+                        SelectedEntry = None
+                        PendingReveal = None
+                        Following = false },
+                    Cmd.none
+                | _ -> openNode env { model with Tabs = tabs } tabs[min index (tabs.Length - 1)]
+            | _ -> { model with Tabs = tabs }, Cmd.none
+
+        | SetFileSearchMode mode ->
+            match viewerNode model with
+            | Some node -> { model with FileModes = model.FileModes.Add(Node.key node, mode) }, Cmd.none
+            | None -> model, Cmd.none
+
+        | ChangeRoot path when env.FileSystem.DirectoryExists path ->
+            let rooted, loadRoot = rootedAt env model path
+            let searched, searchCmd = requestSearch env rooted
+            searched, Cmd.batch [ loadRoot; searchCmd ]
+
+        | ChangeRoot _ -> model, Cmd.none
+
+        | IncludeInSearch text
+        | ExcludeFromSearch text ->
+            let selected = (text.Split('\n', StringSplitOptions.RemoveEmptyEntries) |> Array.tryHead |> Option.defaultValue "").Trim()
+            let term = if model.Search.Query.Mode = RegexSearch then Text.RegularExpressions.Regex.Escape selected else selected
+
+            if term = "" then
+                model, Cmd.none
+            else
+                let isInclude = (match msg with IncludeInSearch _ -> true | _ -> false)
+                update env (SearchTextChanged(SearchPattern.addTerm isInclude model.Search.Query.Text term)) model
+
+        | ShowQuickOpen ->
+            let model = { model with QuickOpen = Some(quickOpenState model "" 0) }
+
+            if model.FileIndex.IsNone && not model.IndexLoading then
+                { model with IndexLoading = true }, loadIndex env model
+            else
+                model, Cmd.none
+
+        | HideQuickOpen -> { model with QuickOpen = None }, Cmd.none
+
+        | QuickOpenQueryChanged query ->
+            match model.QuickOpen with
+            | Some _ -> { model with QuickOpen = Some(quickOpenState model query 0) }, Cmd.none
+            | None -> model, Cmd.none
+
+        | QuickOpenMove delta ->
+            match model.QuickOpen with
+            | Some state when not state.Results.IsEmpty ->
+                let count = state.Results.Length
+                { model with QuickOpen = Some { state with Selected = (state.Selected + delta + count) % count } }, Cmd.none
+            | _ -> model, Cmd.none
+
+        | QuickOpenAccept index ->
+            match model.QuickOpen with
+            | Some state ->
+                match state.Results |> List.tryItem (defaultArg index state.Selected) with
+                | Some entry ->
+                    let opened, openCmd = openNode env { model with QuickOpen = None } entry.Node
+                    let expanded, expandCmd = expandTo env opened entry.Node.Location
+                    expanded, Cmd.batch [ openCmd; expandCmd ]
+                | None -> model, Cmd.none
+            | None -> model, Cmd.none
+
+        | FileIndexLoaded(root, result) when root = model.RootPath ->
+            let model = { model with IndexLoading = false }
+
+            match result with
+            | Ok nodes ->
+                let index =
+                    nodes
+                    |> List.map (fun node -> { Node = node; Display = Location.display model.RootPath node.Location })
+                    |> Array.ofList
+
+                let model = { model with FileIndex = Some index }
+
+                match model.QuickOpen with
+                | Some state -> { model with QuickOpen = Some(quickOpenState model state.Query state.Selected) }, Cmd.none
+                | None -> model, Cmd.none
+            | Error _ -> model, Cmd.none
+
+        | FileIndexLoaded _ -> model, Cmd.none
 
     /// Long-running inputs, as Elmish subscriptions over Axial streams: search events from the runtime's hub,
     /// and, while following a file, its changes on disk (throttled so a busy log reloads a few times a second).

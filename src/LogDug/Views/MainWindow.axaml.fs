@@ -3,7 +3,9 @@ namespace LogDug.UI
 open Avalonia
 open Avalonia.Controls
 open Avalonia.Input
+open Avalonia.Interactivity
 open Avalonia.Markup.Xaml
+open Avalonia.Platform.Storage
 open Avalonia.Styling
 open Avalonia.Threading
 
@@ -31,6 +33,9 @@ type MainWindow() as this =
             args.Handled <- true
         elif args.KeySymbol = "/" && not control && not alt && not (typingInTextBox ()) then
             focusSearch ()
+            args.Handled <- true
+        elif args.Key = Key.O && control then
+            this.RootPicker |> Option.iter (fun pick -> pick ())
             args.Handled <- true
         elif args.Key = Key.F4 && alt then
             this.Close()
@@ -69,9 +74,81 @@ type MainWindow() as this =
         applyTheme ()
         applyResultsColumn ()
 
+        let quickOpenBox = this.FindControl<TextBox> "QuickOpenBox"
+        let quickOpenList = this.FindControl<ItemsControl> "QuickOpenList"
+
+        // The Ctrl+P box takes focus when it opens, and keeps the highlighted file in view as it moves.
+        let revealQuickOpenSelection () =
+            Dispatcher.UIThread.Post(
+                (fun () ->
+                    match quickOpenList.ContainerFromIndex vm.QuickOpenSelectedIndex with
+                    | null -> ()
+                    | container -> container.BringIntoView()),
+                DispatcherPriority.Loaded
+            )
+
+        vm.QuickOpenItems.CollectionChanged.Add(fun _ -> revealQuickOpenSelection ())
+
         vm.PropertyChanged.Add(fun args ->
             match args.PropertyName with
             | "IsDark" -> applyTheme ()
             | "HasSearch" -> applyResultsColumn ()
+            | "QuickOpenVisible" when vm.QuickOpenVisible ->
+                Dispatcher.UIThread.Post(
+                    (fun () ->
+                        quickOpenBox.Focus() |> ignore
+                        quickOpenBox.SelectAll()),
+                    DispatcherPriority.Input
+                )
             | _ -> ())
 
+        this.FindControl<Border>("QuickOpenBackdrop").PointerPressed.Add(fun _ -> (vm.HideQuickOpenCommand :> System.Windows.Input.ICommand).Execute null)
+
+        quickOpenList.Tapped.Add(fun args ->
+            match args.Source with
+            | :? Control as source ->
+                match source.DataContext with
+                | :? QuickOpenItemVm as item -> vm.AcceptQuickOpenAt(vm.QuickOpenItems.IndexOf item)
+                | _ -> ()
+            | _ -> ())
+
+        // Arrow keys, Enter and Escape drive the list while the box is open, before the text box can claim them.
+        this.AddHandler(
+            InputElement.KeyDownEvent,
+            (fun _ (args: KeyEventArgs) ->
+                if vm.QuickOpenVisible then
+                    let run (command: LogDug.UI.Command) =
+                        (command :> System.Windows.Input.ICommand).Execute null
+                        args.Handled <- true
+
+                    match args.Key with
+                    | Key.Down -> run vm.QuickOpenDownCommand
+                    | Key.Up -> run vm.QuickOpenUpCommand
+                    | Key.Enter -> run vm.AcceptQuickOpenCommand
+                    | Key.Escape -> run vm.HideQuickOpenCommand
+                    | _ -> ()),
+            RoutingStrategies.Tunnel
+        )
+
+        this.FindControl<Button>("RootButton").Click.Add(fun _ -> this.PickRoot vm)
+        this.RootPicker <- Some(fun () -> this.PickRoot vm)
+
+
+    member val private RootPicker: (unit -> unit) option = None with get, set
+
+    /// Asks for a folder and browses it instead.
+    member private this.PickRoot(vm: MainVm) =
+        task {
+            let! start = this.StorageProvider.TryGetFolderFromPathAsync vm.RootPath
+
+            let! folders =
+                this.StorageProvider.OpenFolderPickerAsync(
+                    FolderPickerOpenOptions(Title = "Browse folder", AllowMultiple = false, SuggestedStartLocation = start)
+                )
+
+            if folders.Count > 0 then
+                match folders[0].TryGetLocalPath() with
+                | null -> ()
+                | path -> vm.ChangeRoot path
+        }
+        |> ignore

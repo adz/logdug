@@ -139,6 +139,12 @@
         <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
+    <Style Selector="Border.qo.selected"><Setter Property="Background" Value="{DynamicResource RowSelectedBrush}" /></Style>
+
+    <!-- Scrollbars stay visible rather than fading out until the pointer is near -->
+    <Style Selector="ScrollViewer"><Setter Property="AllowAutoHide" Value="False" /></Style>
+    <Style Selector="ScrollBar"><Setter Property="AllowAutoHide" Value="False" /></Style>
+
     <Style Selector="TextBlock.kind-folder"><Setter Property="Foreground" Value="{DynamicResource FolderBrush}" /></Style>
     <Style Selector="TextBlock.kind-archive"><Setter Property="Foreground" Value="{DynamicResource ArchiveBrush}" /></Style>
     <Style Selector="TextBlock.kind-file"><Setter Property="Foreground" Value="{DynamicResource FileBrush}" /></Style>

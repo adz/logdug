@@ -140,6 +140,48 @@ let private scenario () =
     pumpUntil "zone caption" (fun () -> vm.TimeCaption.StartsWith "Australia/Adelaide")
     capture window "05-target-zone.png"
 
+    // Per-file search mode: filtering narrows the open file to the entries the search matches.
+    let allEntries = vm.Entries.Length
+    dispatch (SetFileSearchMode FilterToMatches)
+    pumpUntil "filtered entries" (fun () -> vm.IsFilterMode && vm.Entries.Length < allEntries)
+    Assert.True(vm.Entries |> Array.forall (fun entry -> entry.IsHighlighted))
+    capture window "09-filter.png"
+    dispatch (SetFileSearchMode IgnoreSearch)
+    pumpUntil "ignored search" (fun () -> vm.IsIgnoreMode && vm.Entries.Length = allEntries)
+    Assert.True(vm.Entries |> Array.forall (fun entry -> not entry.IsHighlighted))
+    dispatch (SetFileSearchMode HighlightMatches)
+    pumpUntil "highlighting again" (fun () -> vm.IsHighlightMode)
+
+    // Include / exclude add terms to the search additively.
+    dispatch ClearSearch
+    dispatch (SearchTextChanged "ECONNRESET")
+    dispatch (ExcludeFromSearch "worker-2")
+    pumpUntil "exclusion in the search box" (fun () -> vm.SearchText = "ECONNRESET NOT worker-2")
+    dispatch (IncludeInSearch "email")
+    pumpUntil "inclusion in the search box" (fun () -> vm.SearchText = "ECONNRESET NOT worker-2 AND email")
+    dispatch ClearSearch
+
+    // Several files stay open as tabs, and Ctrl+P jumps to a file.
+    Assert.True(vm.Tabs.Count >= 3)
+    dispatch ShowQuickOpen
+    pumpUntil "quick open box" (fun () -> vm.QuickOpenVisible)
+    vm.QuickOpenQuery <- "orders api"
+    pumpUntil "quick open ranking" (fun () -> vm.QuickOpenItems.Count > 0 && vm.QuickOpenItems[0].Name.StartsWith "orders-api")
+    capture window "10-quick-open.png"
+    let tabsBefore = vm.Tabs.Count
+    dispatch (QuickOpenAccept None)
+    pumpUntil "quick open to close" (fun () -> not vm.QuickOpenVisible)
+    pumpUntil "file opened from quick open" (fun () -> vm.ShowEntries && vm.ViewerTitle.Contains "orders-api")
+    Assert.True(vm.Tabs.Count >= tabsBefore)
+    capture window "11-tabs.png"
+    let closing = vm.Tabs.Count
+    dispatch (CloseTab(vm.Tabs[vm.Tabs.Count - 1].Key))
+    pumpUntil "tab closed" (fun () -> vm.Tabs.Count = closing - 1)
+
+    // Changing the root folder starts over from there.
+    dispatch (ChangeRoot(Path.Combine(samples (), "app")))
+    pumpUntil "new root" (fun () -> vm.RootPath.EndsWith "app" && vm.Tabs.Count = 0 && vm.TreeRows.Count >= 4)
+
     dispatch ToggleTheme
     pumpUntil "light theme" (fun () -> not vm.IsDark)
     capture window "06-light.png"

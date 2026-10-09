@@ -165,6 +165,32 @@ type LevelChipVm(initial: LevelChip, toggle: Level -> unit) =
             this.NotifyPropertyChanged "CountText"
             this.NotifyPropertyChanged "IsOn"
 
+/// One open file in the tab strip.
+type TabVm(initial: Node, isActive: bool, activate: Node -> unit, close: string -> unit) =
+    inherit Bindable()
+
+    let mutable active = isActive
+    let key = Node.key initial
+
+    member _.Key = key
+    member _.Name = initial.Name
+    member _.Tip = key
+    member _.IsActive = active
+    member _.ActivateCommand = Command(fun () -> activate initial)
+    member _.CloseCommand = Command(fun () -> close key)
+
+    member this.SetActive(value: bool) =
+        if value <> active then
+            active <- value
+            this.NotifyPropertyChanged "IsActive"
+
+/// One row of the Ctrl+P list.
+type QuickOpenItemVm(entry: QuickOpenEntry, isSelected: bool) =
+    member _.Name = entry.Node.Name
+    member _.Directory = if entry.Display.Length > entry.Node.Name.Length then entry.Display.Substring(0, entry.Display.Length - entry.Node.Name.Length).TrimEnd('/', ' ', '›') else ""
+    member _.Icon = Glyph.ofNode entry.Node false
+    member _.IsSelected = isSelected
+
 /// The window's viewmodel. Elmish owns the state; `Update` copies each new model into bindable properties,
 /// and setters for editable controls dispatch messages instead of changing state.
 type MainVm(localZone: TimeZoneInfo) =
@@ -176,6 +202,8 @@ type MainVm(localZone: TimeZoneInfo) =
     let treeRows = ObservableCollection<TreeRowVm>()
     let results = ObservableCollection<ResultRowVm>()
     let levelChips = ObservableCollection<LevelChipVm>()
+    let tabs = ObservableCollection<TabVm>()
+    let quickOpenItems = ObservableCollection<QuickOpenItemVm>()
     let revealRequested = Event<int * bool>()
 
     let mutable entries: EntryVm array = [||]
@@ -183,6 +211,12 @@ type MainVm(localZone: TimeZoneInfo) =
     let mutable shownLevels: Set<Level> = Set.empty
     let mutable shownTime: TimeContext option = None
     let mutable shownPattern: obj = null
+    let mutable shownMode = HighlightMatches
+    let mutable fileMode = HighlightMatches
+    let mutable activeTabKey = ""
+    let mutable quickOpenVisible = false
+    let mutable quickOpenQuery = ""
+    let mutable shownQuickOpen: obj = null
     let mutable keepSelectionInView = false
     let mutable selectedEntry: EntryVm = null
     let mutable lastReveal: Reveal option = None
@@ -233,12 +267,23 @@ type MainVm(localZone: TimeZoneInfo) =
     let showAllLevels = Command(fun () -> send ShowAllLevels)
     let closeDetail = Command(fun () -> send (SelectEntry None))
     let toggleFollow = Command(fun () -> send ToggleFollow)
+    let closeTab = Command(fun () -> if activeTabKey <> "" then send (CloseTab activeTabKey))
+    let showQuickOpen = Command(fun () -> send ShowQuickOpen)
+    let hideQuickOpen = Command(fun () -> send HideQuickOpen)
+    let quickOpenUp = Command(fun () -> send (QuickOpenMove -1))
+    let quickOpenDown = Command(fun () -> send (QuickOpenMove 1))
+    let acceptQuickOpen = Command(fun () -> send (QuickOpenAccept None))
+    let highlightMode = Command(fun () -> send (SetFileSearchMode HighlightMatches))
+    let filterMode = Command(fun () -> send (SetFileSearchMode FilterToMatches))
+    let ignoreMode = Command(fun () -> send (SetFileSearchMode IgnoreSearch))
 
     member _.TreeRows = treeRows
     member _.Results = results
     member _.LevelChips = levelChips
     member _.Zones = zones
     member _.Entries = entries
+    member _.Tabs = tabs
+    member _.QuickOpenItems = quickOpenItems
 
     [<CLIEvent>]
     member _.RevealRequested = revealRequested.Publish
@@ -271,7 +316,34 @@ type MainVm(localZone: TimeZoneInfo) =
                 selectedZone <- Some value
                 send (SetZone value.Id)
 
+    member this.QuickOpenQuery
+        with get () = quickOpenQuery
+        and set (value: string) =
+            let value = if isNull value then "" else value
+
+            if value <> quickOpenQuery then
+                quickOpenQuery <- value
+                send (QuickOpenQueryChanged value)
+
     member _.HasSearchText = searchText <> ""
+    member _.QuickOpenVisible = quickOpenVisible
+    member _.QuickOpenSelectedIndex = quickOpenItems |> Seq.tryFindIndex _.IsSelected |> Option.defaultValue -1
+    member _.IsHighlightMode = fileMode = HighlightMatches
+    member _.IsFilterMode = fileMode = FilterToMatches
+    member _.IsIgnoreMode = fileMode = IgnoreSearch
+    member _.HighlightModeCommand = highlightMode
+    member _.FilterModeCommand = filterMode
+    member _.IgnoreModeCommand = ignoreMode
+    member _.CloseTabCommand = closeTab
+    member _.ShowQuickOpenCommand = showQuickOpen
+    member _.HideQuickOpenCommand = hideQuickOpen
+    member _.QuickOpenUpCommand = quickOpenUp
+    member _.QuickOpenDownCommand = quickOpenDown
+    member _.AcceptQuickOpenCommand = acceptQuickOpen
+    member _.AcceptQuickOpenAt(index: int) = send (QuickOpenAccept(Some index))
+    member _.ChangeRoot(path: string) = send (ChangeRoot path)
+    member _.IncludeInSearch(text: string) = send (IncludeInSearch text)
+    member _.ExcludeFromSearch(text: string) = send (ExcludeFromSearch text)
     member _.IsRegex = isRegex
     member _.IsMatchCase = isMatchCase
     member _.SearchStatus = searchStatus
@@ -319,6 +391,7 @@ type MainVm(localZone: TimeZoneInfo) =
     member private this.UpdateEntries(model: Model) =
         match model.Viewer with
         | Showing file ->
+            let mode = App.fileMode model
             let pattern = model.Search.Pattern |> Option.map box |> Option.toObj
 
             // Reference checks: the document holds every entry, so structural equality would walk them all.
@@ -327,6 +400,7 @@ type MainVm(localZone: TimeZoneInfo) =
                 || model.Levels <> shownLevels
                 || Some model.Time <> shownTime
                 || not (obj.ReferenceEquals(pattern, shownPattern))
+                || mode <> shownMode
 
             if changed then
                 let displayChanged =
@@ -338,13 +412,18 @@ type MainVm(localZone: TimeZoneInfo) =
                 shownLevels <- model.Levels
                 shownTime <- Some model.Time
                 shownPattern <- pattern
+                shownMode <- mode
+
+                // Ignoring the search leaves the file as if nothing were searched for; filtering narrows it to the matches.
+                let highlight = if mode = IgnoreSearch then None else model.Search.Pattern
+                let filter = if mode = FilterToMatches then model.Search.Pattern else None
 
                 let showTime = LogDocument.hasTimestamps file.Document
                 let showLevel = LogDocument.hasLevels file.Document
 
                 entries <-
-                    Shape.visibleEntries model.Levels file.Document
-                    |> Array.map (fun entry -> EntryVm(entry, model.Time, model.Search.Pattern, showTime, showLevel))
+                    Shape.visibleEntries model.Levels filter file.Document
+                    |> Array.map (fun entry -> EntryVm(entry, model.Time, highlight, showTime, showLevel))
 
                 selectedEntry <- null
                 this.NotifyPropertyChanged "Entries"
@@ -401,11 +480,50 @@ type MainVm(localZone: TimeZoneInfo) =
             this.Change(&hasDetail, true, "HasDetail")
         | None -> this.Change(&hasDetail, false, "HasDetail")
 
+    member private this.UpdateTabsAndQuickOpen(model: Model) =
+        activeTabKey <- App.viewerNode model |> Option.map Node.key |> Option.defaultValue ""
+        let mode = App.fileMode model
+
+        if mode <> fileMode then
+            fileMode <- mode
+            for name in [ "IsHighlightMode"; "IsFilterMode"; "IsIgnoreMode" ] do
+                this.NotifyPropertyChanged name
+
+        tabs.SyncWith(
+            model.Tabs |> Array.ofList,
+            Node.key,
+            (fun (vm: TabVm) -> vm.Key),
+            (fun node -> TabVm(node, (Node.key node = activeTabKey), ActivateNode >> send, CloseTab >> send)),
+            (fun (vm: TabVm) node -> vm.SetActive(Node.key node = activeTabKey))
+        )
+
+        let isOpen = model.QuickOpen.IsSome
+        this.Change(&quickOpenVisible, isOpen, "QuickOpenVisible")
+
+        match model.QuickOpen with
+        | Some state ->
+            if state.Query <> quickOpenQuery then
+                quickOpenQuery <- state.Query
+                this.NotifyPropertyChanged "QuickOpenQuery"
+
+            // Rebuilt only when the ranking or the highlighted row changes.
+            let signature = box (state.Results, state.Selected)
+
+            if not (obj.Equals(signature, shownQuickOpen)) then
+                shownQuickOpen <- signature
+                quickOpenItems.Clear()
+                state.Results |> List.iteri (fun index entry -> quickOpenItems.Add(QuickOpenItemVm(entry, (index = state.Selected))))
+        | None ->
+            if not (isNull shownQuickOpen) then
+                shownQuickOpen <- null
+                quickOpenItems.Clear()
+
     member this.Update(model: Model) =
         this.Change(&rootPath, model.RootPath, "RootPath")
         this.Change(&rootName, model.Tree.Root.Name, "RootName")
         this.Change(&isDark, model.Settings.DarkTheme, "IsDark")
         this.Change(&isFollowing, model.Following, "IsFollowing")
+        this.UpdateTabsAndQuickOpen model
 
         treeRows.SyncWith(
             Shape.treeRows model |> Array.ofList,

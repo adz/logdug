@@ -64,11 +64,17 @@ module Shape =
 
         tree.Children.TryFind(Node.key tree.Root) |> Option.map (rows 0) |> Option.defaultValue []
 
-    let visibleEntries (levels: Set<Level>) (document: LogDocument) =
-        if levels.Count = Level.all.Length then
-            document.Entries
-        else
-            document.Entries |> Array.filter (fun entry -> levels.Contains entry.Level)
+    /// The entries to list: those at a shown level and, when `filter` is set, those the search matches.
+    let visibleEntries (levels: Set<Level>) (filter: SearchPattern option) (document: LogDocument) =
+        let atLevel =
+            if levels.Count = Level.all.Length then
+                document.Entries
+            else
+                document.Entries |> Array.filter (fun entry -> levels.Contains entry.Level)
+
+        match filter with
+        | Some pattern -> atLevel |> Array.filter (fun entry -> Render.countMatches (Some pattern) entry > 0)
+        | None -> atLevel
 
     let levelChips (model: Model) =
         match model.Viewer with

@@ -13,6 +13,7 @@
     <Compile Include="Pattern.fs" />
     <Compile Include="Render.fs" />
     <Compile Include="Search.fs" />
+    <Compile Include="QuickOpen.fs" />
     <Compile Include="Settings.fs" />
     <Compile Include="Env.fs" />
     <Compile Include="Runtime.fs" />
