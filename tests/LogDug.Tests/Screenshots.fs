@@ -98,6 +98,13 @@ let private scenario () =
     focusFirst window vm dispatch (fun entry -> entry.Entry.Level = Level.Error)
     capture window "02-jsonl.png"
 
+    openFile vm "inventory.csv"
+    window.FindControl<ListBox>("EntriesList").ScrollIntoView 0
+    capture window "07-csv.png"
+
+    openFile vm "startup-notes.log"
+    capture window "08-no-timestamps.png"
+
     activate vm "archives"
     activate vm "incident-4711.tar.gz"
     activate vm "incident-4711"

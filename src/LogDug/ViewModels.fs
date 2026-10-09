@@ -79,7 +79,7 @@ type TreeRowVm(initial: TreeRow, activate: Node -> unit) =
 /// One log entry as displayed. Immutable: a new set is built when the file, filter, zone, or search changes,
 /// and segments are only computed for rows the list actually realises.
 [<AllowNullLiteral>]
-type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option) =
+type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option, showTime: bool, showLevel: bool) =
     let segments = lazy (Render.body entry |> Render.highlight pattern |> Array.ofList)
 
     member _.Entry = entry
@@ -96,6 +96,9 @@ type EntryVm(entry: LogEntry, time: TimeContext, pattern: SearchPattern option) 
     member _.IsFatal = entry.Level = Level.Fatal
     member _.IsUnlevelled = entry.Level = Level.NoLevel
     member _.HasLevel = entry.Level <> Level.NoLevel
+    /// Document-wide: a file with no timestamps (or levels) gets no gap where the column would be.
+    member _.ShowTime = showTime
+    member _.ShowLevel = showLevel
     member _.Segments = segments.Value
     member _.IsHighlighted = (Render.countMatches pattern entry) > 0
 
@@ -336,9 +339,12 @@ type MainVm(localZone: TimeZoneInfo) =
                 shownTime <- Some model.Time
                 shownPattern <- pattern
 
+                let showTime = LogDocument.hasTimestamps file.Document
+                let showLevel = LogDocument.hasLevels file.Document
+
                 entries <-
                     Shape.visibleEntries model.Levels file.Document
-                    |> Array.map (fun entry -> EntryVm(entry, model.Time, model.Search.Pattern))
+                    |> Array.map (fun entry -> EntryVm(entry, model.Time, model.Search.Pattern, showTime, showLevel))
 
                 selectedEntry <- null
                 this.NotifyPropertyChanged "Entries"

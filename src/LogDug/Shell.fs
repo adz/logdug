@@ -14,6 +14,9 @@ module Shell =
         let chosen =
             match args |> Array.tryHead with
             | Some path when env.FileSystem.DirectoryExists path -> path
+            // A file (from a right-click "Open with") browses its folder.
+            | Some path when env.FileSystem.FileExists path ->
+                env.FileSystem.GetDirectoryName(env.FileSystem.GetFullPath path) |> Option.defaultValue (env.FileSystem.GetCurrentDirectory())
             | _ -> env.FileSystem.GetCurrentDirectory()
 
         env.FileSystem.TrimEndingDirectorySeparator(env.FileSystem.GetFullPath chosen)

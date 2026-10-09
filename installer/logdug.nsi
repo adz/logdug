@@ -1,6 +1,6 @@
 ; Log Dug per-user installer. Built by .github/workflows/release.yml:
 ;   makensis /DVERSION=0.1.0 /DNUMERIC_VERSION=0.1.0.0 /DSOURCE_DIR=<publish dir> /DOUTPUT_FILE=<setup.exe> installer/logdug.nsi
-; Installs to %LOCALAPPDATA%\Programs\LogDug without elevation, adds a Start menu shortcut, puts logdug on the
+; Installs to %LOCALAPPDATA%\Programs\LogDug without elevation, adds a Start menu shortcut, Explorer right-click entries, puts logdug on the
 ; user PATH and registers an uninstaller. Silent install/uninstall with /S (used by winget).
 
 Unicode true
@@ -49,6 +49,26 @@ VIAddVersionKey "LegalCopyright" "Apache-2.0"
   Pop $0
 !macroend
 
+; Explorer right-click entries ("Open with Log Dug") for any file, any folder, and the empty background of a folder.
+; Per-user (HKCU\Software\Classes), so no elevation is needed.
+!macro ContextMenu action
+  !if "${action}" == "add"
+    WriteRegStr HKCU "Software\Classes\*\shell\LogDug" "" "Open with Log Dug"
+    WriteRegStr HKCU "Software\Classes\*\shell\LogDug" "Icon" "$INSTDIR\logdug.exe,0"
+    WriteRegStr HKCU "Software\Classes\*\shell\LogDug\command" "" '"$INSTDIR\logdug.exe" "%1"'
+    WriteRegStr HKCU "Software\Classes\Directory\shell\LogDug" "" "Open with Log Dug"
+    WriteRegStr HKCU "Software\Classes\Directory\shell\LogDug" "Icon" "$INSTDIR\logdug.exe,0"
+    WriteRegStr HKCU "Software\Classes\Directory\shell\LogDug\command" "" '"$INSTDIR\logdug.exe" "%1"'
+    WriteRegStr HKCU "Software\Classes\Directory\Background\shell\LogDug" "" "Open Log Dug here"
+    WriteRegStr HKCU "Software\Classes\Directory\Background\shell\LogDug" "Icon" "$INSTDIR\logdug.exe,0"
+    WriteRegStr HKCU "Software\Classes\Directory\Background\shell\LogDug\command" "" '"$INSTDIR\logdug.exe" "%V"'
+  !else
+    DeleteRegKey HKCU "Software\Classes\*\shell\LogDug"
+    DeleteRegKey HKCU "Software\Classes\Directory\shell\LogDug"
+    DeleteRegKey HKCU "Software\Classes\Directory\Background\shell\LogDug"
+  !endif
+!macroend
+
 Section "Install"
   ; Replace a previous install's files rather than layering over them. Only a directory holding our
   ; uninstaller is cleared, so choosing an existing folder never deletes anything else in it.
@@ -58,7 +78,8 @@ Section "Install"
   File /r "${SOURCE_DIR}\*.*"
   WriteUninstaller "$INSTDIR\uninstall.exe"
 
-  CreateShortcut "$SMPROGRAMS\Log Dug.lnk" "$INSTDIR\logdug.exe"
+  CreateShortcut "$SMPROGRAMS\Log Dug.lnk" "$INSTDIR\logdug.exe" "" "$INSTDIR\logdug.exe" 0
+  !insertmacro ContextMenu add
   !insertmacro UserPath add
 
   WriteRegStr HKCU "${UNINSTALL_KEY}" "DisplayName" "${APP_NAME}"
@@ -75,6 +96,7 @@ SectionEnd
 
 Section "Uninstall"
   !insertmacro UserPath remove
+  !insertmacro ContextMenu remove
   Delete "$SMPROGRAMS\Log Dug.lnk"
   RMDir /r "$INSTDIR"  ; $INSTDIR is the uninstaller's own directory here
   DeleteRegKey HKCU "${UNINSTALL_KEY}"

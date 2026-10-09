@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d3b55"/>
+      <stop offset="1" stop-color="#151c2c"/>
+    </linearGradient>
+    <linearGradient id="bark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c98a4b"/>
+      <stop offset="1" stop-color="#8a5326"/>
+    </linearGradient>
+  </defs>
+  <clipPath id="r"><rect x="8" y="8" width="240" height="240" rx="54"/></clipPath>
+  <rect x="8" y="8" width="240" height="240" rx="54" fill="url(#bg)"/>
+  <g clip-path="url(#r)">
+  <!-- dirt mound -->
+  <path d="M8 196 Q128 150 248 196 L248 194 Q248 248 194 248 L62 248 Q8 248 8 194 Z" fill="#5a3b24"/>
+  <path d="M8 196 Q128 150 248 196" fill="none" stroke="#7a5233" stroke-width="6"/>
+  </g>
+  <!-- log body -->
+  <rect x="40" y="92" width="176" height="92" rx="20" fill="url(#bark)"/>
+  <path d="M60 112 H196 M60 138 H176 M60 164 H190" stroke="#6a3f1c" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+  <!-- cut end with rings -->
+  <ellipse cx="62" cy="138" rx="30" ry="46" fill="#e8c48f"/>
+  <ellipse cx="62" cy="138" rx="21" ry="33" fill="none" stroke="#b98a52" stroke-width="4"/>
+  <ellipse cx="62" cy="138" rx="11" ry="18" fill="none" stroke="#b98a52" stroke-width="4"/>
+  <circle cx="62" cy="138" r="3" fill="#b98a52"/>
+  <!-- shovel -->
+  <g transform="translate(32 -2) rotate(30 188 74)">
+    <rect x="184" y="40" width="8" height="66" rx="4" fill="#d9dee8"/>
+    <rect x="174" y="34" width="28" height="9" rx="4.5" fill="#d9dee8"/>
+    <path d="M168 104 H208 Q208 140 188 150 Q168 140 168 104 Z" fill="#9fb4d6"/>
+    <path d="M178 112 V128" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+  </g>
+  <!-- eyes: a log with personality -->
+  <g>
+    <circle cx="134" cy="128" r="12" fill="#fff"/><circle cx="170" cy="128" r="12" fill="#fff"/>
+    <circle cx="137" cy="130" r="6" fill="#1c1410"/><circle cx="173" cy="130" r="6" fill="#1c1410"/>
+    <path d="M132 156 Q152 172 172 156" fill="none" stroke="#1c1410" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>

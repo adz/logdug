@@ -7,6 +7,7 @@
     xmlns:core="clr-namespace:LogDug;assembly=LogDug.Core"
     x:DataType="ui:MainVm"
     Title="Log Dug"
+    Icon="/Assets/Icon/logdug.png"
     TitleFontWeight="SemiBold"
     Width="1480"
     Height="900"
@@ -232,13 +233,15 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="ui:EntryVm">
                                 <Border Classes="entry" Classes.level-trace="{Binding IsTrace}" Classes.level-debug="{Binding IsDebug}" Classes.level-info="{Binding IsInfo}" Classes.level-warn="{Binding IsWarn}" Classes.level-error="{Binding IsError}" Classes.level-fatal="{Binding IsFatal}" Classes.level-none="{Binding IsUnlevelled}">
-                                    <Grid ColumnDefinitions="64,186,60,*">
+                                    <Grid ColumnDefinitions="64,Auto,Auto,*">
                                         <TextBlock Grid.Column="0" Classes="mono" Text="{Binding LineText}" Foreground="{DynamicResource GutterBrush}"
                                                    HorizontalAlignment="Right" Margin="0,0,14,0" />
-                                        <TextBlock Grid.Column="1" Classes="mono" Text="{Binding TimeText}" Foreground="{DynamicResource TimeBrush}" />
-                                        <Border Grid.Column="2" Classes="badge" Classes.level-trace="{Binding IsTrace}" Classes.level-debug="{Binding IsDebug}" Classes.level-info="{Binding IsInfo}" Classes.level-warn="{Binding IsWarn}" Classes.level-error="{Binding IsError}" Classes.level-fatal="{Binding IsFatal}" Classes.level-none="{Binding IsUnlevelled}" IsVisible="{Binding HasLevel}">
+                                        <TextBlock Grid.Column="1" Classes="mono" Width="186" Text="{Binding TimeText}" Foreground="{DynamicResource TimeBrush}" IsVisible="{Binding ShowTime}" />
+                                        <Panel Grid.Column="2" Width="60" IsVisible="{Binding ShowLevel}">
+                                            <Border Classes="badge" Classes.level-trace="{Binding IsTrace}" Classes.level-debug="{Binding IsDebug}" Classes.level-info="{Binding IsInfo}" Classes.level-warn="{Binding IsWarn}" Classes.level-error="{Binding IsError}" Classes.level-fatal="{Binding IsFatal}" Classes.level-none="{Binding IsUnlevelled}" IsVisible="{Binding HasLevel}">
                                             <TextBlock Text="{Binding LevelText}" />
                                         </Border>
+                                        </Panel>
                                         <ui:LogLine Grid.Column="3" Classes="mono" TextWrapping="Wrap" Margin="10,0,0,0" />
                                     </Grid>
                                 </Border>

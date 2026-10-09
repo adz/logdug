@@ -103,6 +103,22 @@ module Render =
               Segment.make Punctuation "="
               Segment.make (valueTone field.Kind) field.Value ])
 
+    let private isNumber (cell: string) =
+        cell <> "" && Double.TryParse(cell, Globalization.NumberStyles.Float, Globalization.CultureInfo.InvariantCulture) |> fst
+
+    /// Cells padded to the column widths, separated by a muted bar. Numbers are right-aligned.
+    let private table (cells: string list) (widths: int array) (isHeader: bool) =
+        cells
+        |> List.mapi (fun column cell ->
+            let width = if column < widths.Length then widths[column] else 0
+            let shown = cell.Replace("\r\n", " ⏎ ").Replace('\n', '⏎')
+            let number = not isHeader && isNumber shown
+            let padded = if number then shown.PadLeft width else shown.PadRight width
+            let tone = if isHeader then PropertyKey elif number then NumberLiteral else Plain
+            let cellSegments = [ Segment.make tone padded ]
+            if column = 0 then cellSegments else Segment.make Punctuation " │ " :: cellSegments)
+        |> List.concat
+
     /// The entry's message, its structured fields, then every continuation line.
     let body (entry: LogEntry) =
         let first =
@@ -110,6 +126,7 @@ module Render =
             | PlainEntry -> message entry.Message
             | JsonEntry when entry.Message = "" && entry.Fields.IsEmpty -> [ Segment.make Muted entry.Lines[0] ]
             | JsonEntry -> message entry.Message @ fields entry.Fields
+            | TableEntry(widths, isHeader) -> table (entry.Fields |> List.map _.Value) widths isHeader
 
         let rest =
             entry.Continuation

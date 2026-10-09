@@ -1,0 +1,6 @@
+starting orders-api
+loading configuration from /etc/orders/app.conf
+no TLS certificate found, serving plain HTTP
+connected to postgres at db.internal:5432
+a very long line without any timestamp or level that should wrap neatly under the line number instead of leaving a big empty gap on the left side of the viewer
+listening on port 8080

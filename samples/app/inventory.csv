@@ -1,0 +1,31 @@
+sku,product,warehouse,qty,unit_price,notes
+SKU-1001,Flange A,MEL,405,78.95,discontinued
+SKU-1002,Sprocket A,ADL,411,90.51,
+SKU-1003,Gasket A,MEL,549,59.52,
+SKU-1004,Gasket A,SYD,219,4.70,"Reorder, low stock"
+SKU-1005,Gasket A,ADL,317,47.95,discontinued
+SKU-1006,Bracket Mk2,SYD,687,64.05,
+SKU-1007,Flange A,SYD,286,15.13,"Reorder, low stock"
+SKU-1008,Gasket B,MEL,721,51.57,
+SKU-1009,Flange B,MEL,295,71.12,"Fragile; ship ""flat"""
+SKU-1010,Bearing A,SYD,265,7.58,"Reorder, low stock"
+SKU-1011,Gadget B,MEL,287,85.51,
+SKU-1012,Bearing A,MEL,200,11.38,discontinued
+SKU-1013,Spindle Mk2,MEL,451,45.76,"Reorder, low stock"
+SKU-1014,Sprocket B,MEL,602,53.03,discontinued
+SKU-1015,Flange A,ADL,725,37.99,discontinued
+SKU-1016,Gasket Mk2,ADL,125,54.74,
+SKU-1017,Sprocket B,ADL,43,59.00,discontinued
+SKU-1018,Gadget Mk2,MEL,334,3.47,discontinued
+SKU-1019,Bracket B,ADL,793,67.74,discontinued
+SKU-1020,Gadget Mk2,ADL,454,48.34,discontinued
+SKU-1021,Sprocket B,MEL,162,54.78,discontinued
+SKU-1022,Widget A,SYD,173,60.33,discontinued
+SKU-1023,Bracket Mk2,ADL,449,34.45,discontinued
+SKU-1024,Spindle A,ADL,63,9.55,"Reorder, low stock"
+SKU-1025,Sprocket Mk2,ADL,621,7.19,
+SKU-1026,Bearing A,SYD,36,20.53,
+SKU-1027,Gasket Mk2,ADL,489,33.55,"Fragile; ship ""flat"""
+SKU-1028,Flange B,SYD,37,36.39,"Fragile; ship ""flat"""
+SKU-1029,Spindle A,MEL,438,35.84,"Fragile; ship ""flat"""
+SKU-1030,Bearing A,ADL,260,42.01,"Reorder, low stock"

@@ -100,3 +100,27 @@ let ``words that start like a level are not levels`` () =
 [<Fact>]
 let ``an empty file has no entries`` () =
     Assert.Empty((parse "").Entries)
+
+[<Fact>]
+let ``csv files become an aligned table with the header first`` () =
+    let document = parse "name,qty,note\nwidget,12,\"has, comma\"\ngadget,3,plain"
+    Assert.Equal(Delimited, document.Kind)
+    Assert.Equal(3, document.Entries.Length)
+    Assert.Equal<string list>([ "widget"; "12"; "has, comma" ], document.Entries[1].Fields |> List.map _.Value)
+
+    match document.Entries[1].Format with
+    | TableEntry(widths, false) -> Assert.Equal<int array>([| 6; 3; 10 |], widths)
+    | other -> failwithf "unexpected %A" other
+
+[<Fact>]
+let ``quoted csv cells can span lines`` () =
+    let document = parse "a,b\n1,\"two\nlines\"\n3,4"
+    Assert.Equal(3, document.Entries.Length)
+    Assert.Equal(2, document.Entries[1].Lines.Length)
+    Assert.Equal(4, document.Entries[2].Line)
+
+[<Fact>]
+let ``log4j timestamps with a comma are not mistaken for csv`` () =
+    let document = parse "2026-10-06 21:58:14,093 INFO a\n2026-10-06 21:58:15,000 WARN b\n2026-10-06 21:58:16,000 INFO c"
+    Assert.NotEqual(Delimited, document.Kind)
+    Assert.Equal(Level.Warn, document.Entries[1].Level)

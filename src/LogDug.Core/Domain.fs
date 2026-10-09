@@ -70,6 +70,8 @@ type Field =
 type EntryFormat =
     | PlainEntry
     | JsonEntry
+    /// A row of a delimited (CSV/TSV) file. Cells are padded to `widths` so the columns line up in a mono font.
+    | TableEntry of widths: int array * isHeader: bool
 
 type LogEntry =
     { Index: int
@@ -88,6 +90,7 @@ type LogEntry =
 type DocumentKind =
     | PlainText
     | JsonLines
+    | Delimited
     | Binary
 
 type LogDocument =
@@ -124,6 +127,13 @@ type FileHits =
       Truncated: bool }
 
 module LogDocument =
+    /// Whether any entry has a timestamp, so the viewer can leave out an always-empty time column.
+    let hasTimestamps (document: LogDocument) =
+        document.Entries |> Array.exists (fun entry -> entry.Timestamp.IsSome)
+
+    let hasLevels (document: LogDocument) =
+        document.Entries |> Array.exists (fun entry -> entry.Level <> Level.NoLevel)
+
     /// The entry that contains `line`: the last entry starting at or before it.
     let entryAtLine (document: LogDocument) (line: int) =
         let entries = document.Entries

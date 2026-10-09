@@ -4,6 +4,7 @@
     <RootNamespace>LogDug.UI</RootNamespace>
     <AssemblyName>logdug</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>logdug.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IsAotCompatible>true</IsAotCompatible>
     <PublishAot>true</PublishAot>

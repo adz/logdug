@@ -246,6 +246,119 @@ module LogParser =
             |> List.map (fun (key, value) -> fieldOf key value)
           Format = JsonEntry }
 
+    // ---- delimited tables ----------------------------------------------------------------------------------
+
+    /// A row's cells with the 1-based line it starts on and the physical lines it spans (quoted cells can hold newlines).
+    type private Row = { Line: int; Raw: string array; Cells: string array }
+
+    /// RFC 4180 style parsing: quoted cells, doubled quotes, and newlines inside quotes.
+    let private readRows (delimiter: char) (lines: string array) : Row array =
+        let rows = ResizeArray<Row>()
+        let mutable index = 0
+
+        while index < lines.Length do
+            let startLine = index + 1
+            let raw = ResizeArray<string>()
+            let cells = ResizeArray<string>()
+            let cell = StringBuilder()
+            let mutable inQuotes = false
+            let mutable finished = false
+
+            while not finished && index < lines.Length do
+                let line = lines[index]
+                raw.Add line
+                index <- index + 1
+                let mutable position = 0
+
+                while position < line.Length do
+                    let c = line[position]
+
+                    if inQuotes then
+                        if c = '"' && position + 1 < line.Length && line[position + 1] = '"' then
+                            cell.Append '"' |> ignore
+                            position <- position + 1
+                        elif c = '"' then
+                            inQuotes <- false
+                        else
+                            cell.Append c |> ignore
+                    elif c = '"' && cell.Length = 0 then
+                        inQuotes <- true
+                    elif c = delimiter then
+                        cells.Add(cell.ToString())
+                        cell.Clear() |> ignore
+                    else
+                        cell.Append c |> ignore
+
+                    position <- position + 1
+
+                if inQuotes then cell.Append '\n' |> ignore else finished <- true
+
+            cells.Add(cell.ToString().TrimEnd('\n'))
+            rows.Add { Line = startLine; Raw = raw.ToArray(); Cells = cells.ToArray() }
+
+        rows.ToArray()
+
+    let private maxColumnWidth = 40
+
+    /// Recognises comma, tab, semicolon or pipe separated tables: at least three non-empty lines whose rows
+    /// nearly all have the same number of cells, and more than one.
+    let private tryTable (lines: string array) : LogEntry array option =
+        let sample = lines |> Array.filter (fun line -> line.Trim() <> "") |> Array.truncate 200
+
+        // "2026-10-06 21:58:14,093 INFO ..." has a comma too, so lines that start like a log entry (and JSON
+        // objects) rule a table out. A timestamp followed by a delimiter is just a table's first cell.
+        let looksLikeLog (delimiter: char) (line: string) =
+            let timestamp = timestampPattern.Match line
+            let rest = if timestamp.Success then line.Substring timestamp.Length else ""
+            (timestamp.Success && not (rest.StartsWith(string delimiter))) || (tryJsonEntry line).IsSome
+
+        let candidate =
+            if sample.Length < 3 then
+                None
+            else
+                [ ','; '\t'; ';'; '|' ]
+                |> List.tryPick (fun delimiter ->
+                    let counts = readRows delimiter sample |> Array.map _.Cells.Length
+                    let common = counts |> Array.countBy id |> Array.maxBy snd |> fst
+
+                    let logLike = sample |> Array.filter (looksLikeLog delimiter) |> Array.length
+
+                    if common > 1 && logLike * 10 < sample.Length && (counts |> Array.filter ((=) common) |> Array.length) * 10 >= counts.Length * 9 then
+                        Some(delimiter, common)
+                    else
+                        None)
+
+        candidate
+        |> Option.map (fun (delimiter, columns) ->
+            let rows = readRows delimiter lines |> Array.filter (fun row -> row.Raw |> Array.exists (fun line -> line.Trim() <> ""))
+
+            let widths =
+                Array.init columns (fun column ->
+                    rows
+                    |> Array.map (fun row -> if column < row.Cells.Length then row.Cells[column].Length else 0)
+                    |> Array.max
+                    |> min maxColumnWidth)
+
+            let header = rows[0].Cells
+
+            rows
+            |> Array.mapi (fun index row ->
+                { Index = index
+                  Line = row.Line
+                  Lines = row.Raw
+                  Timestamp = None
+                  Level = Level.NoLevel
+                  Message = String.Join(", ", row.Cells)
+                  Continuation = [||]
+                  Fields =
+                    row.Cells
+                    |> Array.mapi (fun column value ->
+                        { Key = if column < header.Length then header[column] else ""
+                          Value = value
+                          Kind = TextValue })
+                    |> List.ofArray
+                  Format = TableEntry(widths, (index = 0)) }))
+
     // ---- documents -----------------------------------------------------------------------------------------
 
     let private splitLines (text: string) =
@@ -257,8 +370,18 @@ module LogParser =
     let private countLevels (entries: LogEntry array) =
         entries |> Array.countBy _.Level |> Map.ofArray
 
-    let parse (options: Options) (text: string) : LogDocument =
+    let rec parse (options: Options) (text: string) : LogDocument =
         let lines = splitLines text
+
+        match tryTable lines with
+        | Some entries ->
+            { Entries = entries
+              LineCount = lines.Length
+              Kind = Delimited
+              LevelCounts = countLevels entries }
+        | None -> parseLog options lines
+
+    and private parseLog (options: Options) (lines: string array) : LogDocument =
         let sample = lines |> Array.truncate 400
 
         // A file whose lines carry timestamps or levels groups unmarked lines (stack traces, wrapped output)
@@ -335,4 +458,5 @@ module LogParser =
                 Some(Json.reindent entry.Lines[0])
             with _ ->
                 None
-        | PlainEntry -> None
+        | PlainEntry
+        | TableEntry _ -> None

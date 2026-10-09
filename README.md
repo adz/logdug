@@ -9,6 +9,7 @@ A desktop log browser written in F#. Point it at a folder and it shows a file tr
 - **File tree** of the current directory (or a folder passed on the command line). Zip and tar.gz archives expand like folders, and gzipped files open as text.
 - **Log viewer** with colour-coded levels, a level filter, syntax colouring for strings, numbers, keys, exceptions, links and stack frames, and line wrapping. Stack traces and other unmarked lines stay with the entry above them.
 - **JSON lines** (Serilog compact `@t/@mt/@l/@x`, pino/bunyan numeric levels, and common `timestamp/level/message` keys) render as a message plus `key=value` properties. The detail pane shows the pretty-printed JSON.
+- **CSV and TSV** files (also `;` and `|` separated) show as an aligned table with a highlighted header row. Quoted cells, doubled quotes and newlines inside quotes are handled.
 - **Search everything** in plain text or regex mode, with optional match case. Results stream in per file and are grouped by file. Click a result, or press Enter/F3, to open the file, expand the tree to it, and select the matching entry.
 - **Time display** in UTC, the OS local zone, or a target zone chosen from a list. The active zone is always shown above the log, and the detail pane shows UTC, local and target times for the selected entry. Timestamps without an offset are treated as UTC.
 - **Follow** reloads the open file when it changes on disk and keeps the newest entries in view, like `tail -f`.
@@ -23,7 +24,9 @@ Download a build from [Releases](https://github.com/adz/logdug/releases):
 - `logdug-X.Y.Z-win-x64.zip`: portable Windows build
 - `logdug-X.Y.Z-linux-x64.tar.gz`, `-osx-x64.tar.gz`, `-osx-arm64.tar.gz`
 
-Each is a single NativeAOT executable plus its native graphics libraries. Run `logdug [folder]`. See [dev-docs/ReleaseProcess.md](dev-docs/ReleaseProcess.md) for how releases are built.
+Each is a single NativeAOT executable plus its native graphics libraries. Run `logdug [folder]`.
+
+**Right-click to open.** The Windows installer adds *Open with Log Dug* to the Explorer menu for files, folders and a folder's background, and gives the app its icon in the Start menu, taskbar and Alt+Tab. On Linux run `scripts/install-linux.sh [path/to/logdug]` to install the icon and a desktop entry (launcher, task switcher, *Open With*). Passing a file opens its folder. See [dev-docs/ReleaseProcess.md](dev-docs/ReleaseProcess.md) for how releases are built.
 
 ## Run from source
 

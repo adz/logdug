@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Log Dug
+GenericName=Log Viewer
+Comment=Dig through log files, JSON lines, CSV and archives
+Exec=logdug %F
+Icon=logdug
+Terminal=false
+Categories=Utility;
+MimeType=inode/directory;text/plain;text/csv;application/json;application/zip;application/gzip;application/x-tar;
+StartupWMClass=logdug
+Keywords=log;logs;jsonl;csv;viewer;
