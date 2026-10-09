@@ -11,6 +11,7 @@ A desktop log browser written in F#. Point it at a folder and it shows a file tr
 - **JSON lines** (Serilog compact `@t/@mt/@l/@x`, pino/bunyan numeric levels, and common `timestamp/level/message` keys) render as a message plus `key=value` properties. The detail pane shows the pretty-printed JSON.
 - **CSV and TSV** files (also `;` and `|` separated) show as an aligned table. The first row is treated as a header only when it looks like column names, and a *Header row* toggle overrides the guess. Quoted cells, doubled quotes and newlines inside quotes are handled.
 - **Search everything** in plain text or regex mode, with optional match case. Combine terms with `AND` and `NOT` (`timeout AND retry NOT healthcheck`). Select text in the log, right-click, and choose *Include in search* or *Exclude from search* to add it to the query. A *Highlight / Filter / Ignore* toggle on each open file chooses whether the search colours its matches, shows only the matching entries, or leaves the file alone.
+- **Find in file.** Each open file has its own find box (Ctrl+F) with its own text, case and regex toggles, a match count and next/previous (Enter / Shift+Enter), separate from the search over every file. Switching tabs restores each file's find.
 - **Tabs and quick open.** Files stay open as tabs (Ctrl+W closes one). Ctrl+P jumps to any file under the root, archives included, by typing part of its path. Click the folder in the bottom left (or press Ctrl+O) to browse a different root.
 - **Fold JSON, XML and YAML.** Files with those extensions (and `.gz` of them) show as lines with chevrons that collapse indented blocks, plus *Fold all* / *Unfold all*. A minified `.json` file is spread over lines first.
 - **Right-click a file, folder or tab** for *Open in VS Code*, *Show in Explorer / Reveal in Finder / Show in file manager*, and *Copy path*. For something inside an archive, the first two act on the archive file.
@@ -42,7 +43,7 @@ dotnet run --project src/LogDug -- samples
 
 With no argument the app browses the current directory.
 
-Keys: `Ctrl+P` open file, `Ctrl+O` change folder, `Ctrl+W` close tab, `Ctrl+F` or `/` search, `Enter`/`F3` next match, `Shift+Enter`/`Shift+F3` previous, `Esc` clear, `F5` reload the open file, `Alt+F4` quit.
+Keys: `Ctrl+P` open file, `Ctrl+O` change folder, `Ctrl+W` close tab, `Ctrl+F` find in the open file, `Ctrl+Shift+F` or `/` search every file, `Enter`/`F3` next match, `Shift+Enter`/`Shift+F3` previous, `Esc` clear, `F5` reload the open file, `Alt+F4` quit.
 
 ## Test
 

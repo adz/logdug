@@ -126,8 +126,8 @@ let private scenario () =
     pumpUntil "/ to focus search" (fun () -> search.IsFocused)
     Assert.Equal("", search.Text)
     entries.Focus() |> ignore
-    window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.Control)
-    pumpUntil "Ctrl+F to focus search" (fun () -> search.IsFocused)
+    window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.Control ||| RawInputModifiers.Shift)
+    pumpUntil "Ctrl+Shift+F to focus search" (fun () -> search.IsFocused)
     window.KeyTextInput "timed out|ECONNRESET"
     pumpUntil "search to finish" (fun () -> vm.HasSearch && not vm.IsSearching && vm.SearchStatus.Contains "matches")
     Assert.Equal("timed out|ECONNRESET", vm.SearchText)
@@ -152,6 +152,25 @@ let private scenario () =
     Assert.True(vm.Entries |> Array.forall (fun entry -> not entry.IsHighlighted))
     dispatch (SetFileSearchMode HighlightMatches)
     pumpUntil "highlighting again" (fun () -> vm.IsHighlightMode)
+
+    // Find in file has its own text, separate from the main search, and each tab keeps its own.
+    let find = window.FindControl<TextBox> "FindBox"
+    entries.Focus() |> ignore
+    window.KeyPressQwerty(PhysicalKey.F, RawInputModifiers.Control)
+    pumpUntil "Ctrl+F to focus find in file" (fun () -> find.IsFocused)
+    window.KeyTextInput "TimeoutException"
+    pumpUntil "find in file matches" (fun () -> vm.FindCaption.Contains " / " && not (vm.FindCaption.StartsWith "No"))
+    let firstMatch = vm.FindCaption
+    window.KeyPressQwerty(PhysicalKey.Enter, RawInputModifiers.None)
+    pumpUntil "find moves to the next match" (fun () -> vm.FindCaption <> firstMatch)
+    Assert.Equal("timed out|ECONNRESET", vm.SearchText)
+    capture window "14-find.png"
+    openFile vm "orders-api.log"
+    Assert.Equal("", vm.FindText)
+    openFile vm "orders-api.jsonl"
+    pumpUntil "the first file keeps its find" (fun () -> vm.FindText = "TimeoutException" && vm.FindCaption.Contains " / ")
+    dispatch CloseFind
+    pumpUntil "find closed" (fun () -> vm.FindText = "")
 
     // Include / exclude add terms to the search additively.
     dispatch ClearSearch

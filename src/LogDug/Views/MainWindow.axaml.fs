@@ -28,7 +28,15 @@ type MainWindow() as this =
         let control = args.KeyModifiers.HasFlag KeyModifiers.Control
         let alt = args.KeyModifiers.HasFlag KeyModifiers.Alt
 
-        if args.Key = Key.F && control then
+        let shift = args.KeyModifiers.HasFlag KeyModifiers.Shift
+
+        // Ctrl+F finds within the open file (or searches everything when no file is open); Ctrl+Shift+F and / search every file.
+        if args.Key = Key.F && control && not shift && (this.FindControl<TextBox> "FindBox").IsEffectivelyVisible then
+            let find = this.FindControl<TextBox> "FindBox"
+            find.Focus() |> ignore
+            find.SelectAll()
+            args.Handled <- true
+        elif args.Key = Key.F && control then
             focusSearch ()
             args.Handled <- true
         elif args.KeySymbol = "/" && not control && not alt && not (typingInTextBox ()) then

@@ -46,7 +46,7 @@
                     <TextBox x:Name="SearchBox"
                              Width="560"
                              Height="36"
-                             PlaceholderText="Search all files and archives  (Ctrl+F or /) · AND / NOT"
+                             PlaceholderText="Search all files and archives  (Ctrl+Shift+F or /) · AND / NOT"
                              Text="{Binding SearchText, Mode=TwoWay}">
                         <TextBox.KeyBindings>
                             <KeyBinding Gesture="Enter" Command="{Binding NextHitCommand}" />
@@ -205,6 +205,38 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </ScrollViewer>
+                        <!-- Find in this file -->
+                        <StackPanel Orientation="Horizontal" Spacing="6" IsVisible="{Binding ShowEntries}">
+                            <TextBox x:Name="FindBox" Width="420" Height="30" PlaceholderText="Find in this file  (Ctrl+F)"
+                                     Text="{Binding FindText, Mode=TwoWay}">
+                                <TextBox.KeyBindings>
+                                    <KeyBinding Gesture="Enter" Command="{Binding FindNextCommand}" />
+                                    <KeyBinding Gesture="Shift+Enter" Command="{Binding FindPreviousCommand}" />
+                                    <KeyBinding Gesture="Escape" Command="{Binding CloseFindCommand}" />
+                                </TextBox.KeyBindings>
+                                <TextBox.InnerLeftContent>
+                                    <TextBlock Classes="icon muted" Text="&#xe151;" Margin="9,0,2,0" FontSize="13" />
+                                </TextBox.InnerLeftContent>
+                                <TextBox.InnerRightContent>
+                                    <StackPanel Orientation="Horizontal" Spacing="2" Margin="0,0,4,0">
+                                        <TextBlock Text="{Binding FindCaption}" Classes="status" Classes.error="{Binding IsFindInvalid}"
+                                                   FontFamily="{StaticResource MonoFont}" FontSize="11.5" VerticalAlignment="Center" Margin="0,0,4,0" />
+                                        <ToggleButton Classes="option" ToolTip.Tip="Match case" IsChecked="{Binding IsFindCase, Mode=OneWay}" Command="{Binding ToggleFindCaseCommand}">
+                                            <TextBlock Classes="icon" Text="&#xe3d9;" FontSize="14" />
+                                        </ToggleButton>
+                                        <ToggleButton Classes="option" ToolTip.Tip="Regular expression" IsChecked="{Binding IsFindRegex, Mode=OneWay}" Command="{Binding ToggleFindRegexCommand}">
+                                            <TextBlock Classes="icon" Text="&#xe1fc;" FontSize="14" />
+                                        </ToggleButton>
+                                    </StackPanel>
+                                </TextBox.InnerRightContent>
+                            </TextBox>
+                            <Button Classes="Ghost" Width="28" Height="28" Padding="0" ToolTip.Tip="Previous match (Shift+Enter)" Command="{Binding FindPreviousCommand}">
+                                <TextBlock Classes="icon" Text="&#xe04a;" FontSize="14" />
+                            </Button>
+                            <Button Classes="Ghost" Width="28" Height="28" Padding="0" ToolTip.Tip="Next match (Enter)" Command="{Binding FindNextCommand}">
+                                <TextBlock Classes="icon" Text="&#xe042;" FontSize="14" />
+                            </Button>
+                        </StackPanel>
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
                             <TextBlock Text="{Binding ViewerTitle}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                             <StackPanel Grid.Column="1" Grid.RowSpan="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
@@ -419,7 +451,7 @@
                     </StackPanel>
                 </Button>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="16">
-                    <TextBlock Classes="muted" FontSize="11.5" Text="Ctrl+P open file · Ctrl+F or / search · Enter / F3 next · Esc clear · F5 reload · Alt+F4 quit" />
+                    <TextBlock Classes="muted" FontSize="11.5" Text="Ctrl+P open file · Ctrl+F find in file · Ctrl+Shift+F or / search all · F3 next · Esc clear · Alt+F4 quit" />
                     <TextBlock Classes="muted" FontSize="11.5" Text="{Binding TimeCaption, StringFormat='Times in {0}'}" />
                 </StackPanel>
             </Grid>

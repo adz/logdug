@@ -62,6 +62,15 @@ type FileSearchMode =
     | FilterToMatches
     | IgnoreSearch
 
+/// Find in the open file: its own text, separate from the search over every file. `Matches` are the entries that
+/// contain it, in document order, and `Cursor` is where the last jump landed in them.
+type FindState =
+    { Text: string
+      Pattern: SearchPattern option
+      Error: string option
+      Matches: int array
+      Cursor: int option }
+
 /// The Ctrl+P box: what was typed, the ranked files, and which one Enter would open.
 type QuickOpenState =
     { Query: string
@@ -78,6 +87,10 @@ type Model =
       FileModes: Map<string, FileSearchMode>
       /// Per-file entries whose foldable region is currently collapsed.
       Collapsed: Map<string, Set<int>>
+      /// Per-file find text and matches, so each tab keeps its own.
+      Find: Map<string, FindState>
+      FindMatchCase: bool
+      FindRegex: bool
       /// Per-file choice of whether a CSV's first row is column names; files not listed are guessed.
       CsvHeaders: Map<string, bool>
       QuickOpen: QuickOpenState option
@@ -138,6 +151,12 @@ type Msg =
     | CollapseAll
     | ExpandAll
     | ToggleCsvHeader
+    | FindTextChanged of string
+    | FindNext
+    | FindPrevious
+    | CloseFind
+    | ToggleFindCase
+    | ToggleFindRegex
 
 module App =
     let private followThrottle = TimeSpan.FromMilliseconds 300.0
@@ -206,6 +225,9 @@ module App =
               FileModes = Map.empty
               Collapsed = Map.empty
               CsvHeaders = Map.empty
+              Find = Map.empty
+              FindMatchCase = false
+              FindRegex = false
               QuickOpen = None
               FileIndex = None
               IndexLoading = false
@@ -448,6 +470,53 @@ module App =
         |> Option.bind (fun node -> model.Collapsed.TryFind(Node.key node))
         |> Option.defaultValue Set.empty
 
+    let findOf model =
+        viewerNode model |> Option.bind (fun node -> model.Find.TryFind(Node.key node))
+
+    let private emptyFind =
+        { Text = ""; Pattern = None; Error = None; Matches = [||]; Cursor = None }
+
+    /// Builds the find state for `text` against the open file.
+    let private computeFind model (text: string) =
+        if String.IsNullOrWhiteSpace text then
+            { emptyFind with Text = text }
+        else
+            let query =
+                { Text = text
+                  Mode = if model.FindRegex then RegexSearch else PlainSearch
+                  MatchCase = model.FindMatchCase }
+
+            match SearchPattern.create query with
+            | Error message -> { emptyFind with Text = text; Error = Some message }
+            | Ok pattern ->
+                let matches =
+                    match model.Viewer with
+                    | Showing file ->
+                        file.Document.Entries
+                        |> Array.filter (fun entry -> Render.countMatches (Some pattern) entry > 0)
+                        |> Array.map _.Index
+                    | _ -> [||]
+
+                { emptyFind with Text = text; Pattern = Some pattern; Matches = matches }
+
+    let private withFind model (state: FindState) =
+        match viewerNode model with
+        | Some node ->
+            let key = Node.key node
+            { model with Find = if state.Text = "" then model.Find.Remove key else model.Find.Add(key, state) }
+        | None -> model
+
+    /// Recomputes the open file's find against its current document, keeping the text.
+    let private refreshFind model =
+        match findOf model with
+        | Some state -> withFind model (computeFind model state.Text)
+        | None -> model
+
+    /// Jumps to match number `position` of the open file's find.
+    let private jumpToMatch model (state: FindState) (position: int) =
+        let state = { state with Cursor = Some position }
+        reveal (withFind model state) state.Matches[position] true
+
     let fileMode model =
         viewerNode model
         |> Option.bind (fun node -> model.FileModes.TryFind(Node.key node))
@@ -546,7 +615,7 @@ module App =
             | Opening node when Node.key node = key ->
                 let model =
                     match result with
-                    | Ok document -> { model with Viewer = Showing { Node = node; Document = document } }
+                    | Ok document -> refreshFind { model with Viewer = Showing { Node = node; Document = document } }
                     | Error message -> { model with Viewer = Unreadable(node, message) }
 
                 match model.PendingReveal with
@@ -640,6 +709,45 @@ module App =
                 let collapsed = match wrapper with Some(header, _) -> all.Remove header | None -> all
                 { model with Collapsed = model.Collapsed.Add(Node.key file.Node, collapsed) }, Cmd.none
             | _ -> model, Cmd.none
+
+        | FindTextChanged text ->
+            let state = computeFind model text
+            let model = withFind model state
+
+            if state.Matches.Length = 0 then
+                model, Cmd.none
+            else
+                // Land on the first match at or after the selected entry, so typing doesn't jump backwards.
+                let anchor = defaultArg model.SelectedEntry 0
+                let position = state.Matches |> Array.tryFindIndex (fun index -> index >= anchor) |> Option.defaultValue 0
+                jumpToMatch model state position, Cmd.none
+
+        | FindNext
+        | FindPrevious ->
+            match findOf model with
+            | Some state when state.Matches.Length > 0 ->
+                let forward = (match msg with FindNext -> true | _ -> false)
+                let count = state.Matches.Length
+                let anchor = defaultArg model.SelectedEntry -1
+
+                let position =
+                    match state.Cursor with
+                    | Some current -> (current + (if forward then 1 else -1) + count) % count
+                    | None when forward -> state.Matches |> Array.tryFindIndex (fun index -> index > anchor) |> Option.defaultValue 0
+                    | None -> state.Matches |> Array.tryFindIndexBack (fun index -> index < anchor) |> Option.defaultValue (count - 1)
+
+                jumpToMatch model state position, Cmd.none
+            | _ -> model, Cmd.none
+
+        | CloseFind -> withFind model emptyFind, Cmd.none
+
+        | ToggleFindCase ->
+            let model = { model with FindMatchCase = not model.FindMatchCase }
+            refreshFind model, Cmd.none
+
+        | ToggleFindRegex ->
+            let model = { model with FindRegex = not model.FindRegex }
+            refreshFind model, Cmd.none
 
         | ToggleCsvHeader ->
             match model.Viewer with

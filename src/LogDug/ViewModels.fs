@@ -239,6 +239,12 @@ type MainVm(localZone: TimeZoneInfo) =
     let mutable shownPattern: obj = null
     let mutable shownMode = HighlightMatches
     let mutable shownCollapsed: obj = null
+    let mutable shownFind: obj = null
+    let mutable findText = ""
+    let mutable findCaption = ""
+    let mutable isFindInvalid = false
+    let mutable isFindCase = false
+    let mutable isFindRegex = false
     let mutable fileMode = HighlightMatches
     let mutable activeTabKey = ""
     let mutable quickOpenVisible = false
@@ -300,6 +306,11 @@ type MainVm(localZone: TimeZoneInfo) =
     let mutable isCsv = false
     let mutable csvHasHeader = false
     let toggleCsvHeader = Command(fun () -> send ToggleCsvHeader)
+    let findNext = Command(fun () -> send FindNext)
+    let findPrevious = Command(fun () -> send FindPrevious)
+    let closeFind = Command(fun () -> send CloseFind)
+    let toggleFindCase = Command(fun () -> send ToggleFindCase)
+    let toggleFindRegex = Command(fun () -> send ToggleFindRegex)
     let closeTab = Command(fun () -> if activeTabKey <> "" then send (CloseTab activeTabKey))
     let showQuickOpen = Command(fun () -> send ShowQuickOpen)
     let hideQuickOpen = Command(fun () -> send HideQuickOpen)
@@ -358,6 +369,24 @@ type MainVm(localZone: TimeZoneInfo) =
                 quickOpenQuery <- value
                 send (QuickOpenQueryChanged value)
 
+    member this.FindText
+        with get () = findText
+        and set (value: string) =
+            let value = if isNull value then "" else value
+
+            if value <> findText then
+                findText <- value
+                send (FindTextChanged value)
+
+    member _.FindCaption = findCaption
+    member _.IsFindInvalid = isFindInvalid
+    member _.IsFindCase = isFindCase
+    member _.IsFindRegex = isFindRegex
+    member _.FindNextCommand = findNext
+    member _.FindPreviousCommand = findPrevious
+    member _.CloseFindCommand = closeFind
+    member _.ToggleFindCaseCommand = toggleFindCase
+    member _.ToggleFindRegexCommand = toggleFindRegex
     member _.IsCsv = isCsv
     member _.CsvHasHeader = csvHasHeader
     member _.ToggleCsvHeaderCommand = toggleCsvHeader
@@ -433,6 +462,9 @@ type MainVm(localZone: TimeZoneInfo) =
             let mode = App.fileMode model
             let collapsed = App.collapsedIn model
             let collapsedSet = box collapsed
+
+            let findPattern = App.findOf model |> Option.bind _.Pattern
+            let findPatternObj = findPattern |> Option.map box |> Option.toObj
             let pattern = model.Search.Pattern |> Option.map box |> Option.toObj
 
             // Reference checks: the document holds every entry, so structural equality would walk them all.
@@ -443,6 +475,7 @@ type MainVm(localZone: TimeZoneInfo) =
                 || not (obj.ReferenceEquals(pattern, shownPattern))
                 || mode <> shownMode
                 || not (obj.ReferenceEquals(collapsedSet, shownCollapsed))
+                || not (obj.ReferenceEquals(findPatternObj, shownFind))
 
             if changed then
                 let displayChanged =
@@ -456,9 +489,14 @@ type MainVm(localZone: TimeZoneInfo) =
                 shownPattern <- pattern
                 shownMode <- mode
                 shownCollapsed <- collapsedSet
+                shownFind <- findPatternObj
 
                 // Ignoring the search leaves the file as if nothing were searched for; filtering narrows it to the matches.
-                let highlight = if mode = IgnoreSearch then None else model.Search.Pattern
+                // The file's own find takes over highlighting while it has text; otherwise the main search shows.
+                let highlight =
+                    match findPattern with
+                    | Some pattern -> Some pattern
+                    | None -> if mode = IgnoreSearch then None else model.Search.Pattern
                 let filter = if mode = FilterToMatches then model.Search.Pattern else None
 
                 let hasDocumentFolds = not file.Document.Folds.IsEmpty
@@ -574,6 +612,28 @@ type MainVm(localZone: TimeZoneInfo) =
         this.Change(&rootName, model.Tree.Root.Name, "RootName")
         this.Change(&isDark, model.Settings.DarkTheme, "IsDark")
         this.Change(&isFollowing, model.Following, "IsFollowing")
+
+        let find = App.findOf model
+        let text = find |> Option.map _.Text |> Option.defaultValue ""
+
+        if text <> findText then
+            findText <- text
+            this.NotifyPropertyChanged "FindText"
+
+        let caption =
+            match find with
+            | Some state when state.Error.IsSome -> "Invalid"
+            | Some state when state.Pattern.IsNone -> ""
+            | Some state when state.Matches.Length = 0 -> "No matches"
+            | Some state ->
+                let position = match state.Cursor with Some position -> string (position + 1) | None -> "–"
+                $"{position} / {state.Matches.Length:N0}"
+            | None -> ""
+
+        this.Change(&findCaption, caption, "FindCaption")
+        this.Change(&isFindInvalid, (find |> Option.exists (fun state -> state.Error.IsSome || (state.Pattern.IsSome && state.Matches.Length = 0))), "IsFindInvalid")
+        this.Change(&isFindCase, model.FindMatchCase, "IsFindCase")
+        this.Change(&isFindRegex, model.FindRegex, "IsFindRegex")
         let csv = match model.Viewer with Showing { Document = { Kind = Delimited hasHeader } } -> Some hasHeader | _ -> None
         this.Change(&isCsv, csv.IsSome, "IsCsv")
         this.Change(&csvHasHeader, (csv = Some true), "CsvHasHeader")
