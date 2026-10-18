@@ -30,7 +30,7 @@ let private selfTest (localZone: TimeZoneInfo) =
 
 [<EntryPoint; STAThread>]
 let main argv =
-    // axial-allow-effect: clock (host boundary: machine time zone)
+    // axial-allow-effect: environment (host boundary: machine time zone)
     let localZone = TimeZoneInfo.Local
     if argv |> Array.contains "--self-test" then
         selfTest localZone
