@@ -15,9 +15,8 @@ type Runtime internal (env: AppEnv, handle: AppHandle<Never, unit>) =
 
     interface IDisposable with
         member _.Dispose() =
-            // Stop on the thread pool: disposal usually happens on the UI thread, whose synchronization
-            // context would otherwise receive Stop's continuation while blocked waiting for it.
-            Task.Run<unit>(fun () -> Async.StartAsTask(handle.Stop() |> Async.Ignore)).Wait(TimeSpan.FromSeconds 5.0)
+            // Disposal usually happens on the UI thread; StopAndWait is safe there and honours its timeout.
+            handle.StopAndWait(TimeSpan.FromSeconds 5.0)
             |> ignore
 
 module Runtime =
@@ -88,7 +87,7 @@ module Runtime =
             }
 
         let handle = App.start platform root
-        new Runtime(ready.Task.Result, handle)
+        new Runtime(ready.Task.Result, handle) // axial-allow-effect: blocking (startup handoff of the environment; replaced by ElmishRuntime.startLayer next)
 
     /// The runtime over the live platform services and the host-supplied time zone.
     let live (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) =

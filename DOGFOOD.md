@@ -20,3 +20,10 @@
 - Headless screenshot: not run.
 - `dotnet run --project src/LogDug/LogDug.fsproj -c Release --no-build -- --self-test`: **10/10 passed**.
 - NativeAOT publish and self-test: not run.
+
+## Coordinator update (2026-10-19)
+
+- verified: `AppHandle.StopAndWait(timeout)` (Axial 0.11) replaces the `Task.Run(... Stop ...).Wait` shutdown workaround in `Runtime.fs` directly; the build passes with Guardrails at error severity.
+- The startup environment handoff (`ready.Task.Result`) remains, marked as a host boundary, until `ElmishRuntime.startLayer` replaces it.
+- Tests: 58/58 passed on the rerun; `RenderTests.message tokens get tones` failed once earlier (possible flake, watch it). `--self-test`: 10/10 (earlier run).
+
