@@ -8,9 +8,11 @@
 - **[observed]** `src/LogDug.Core/LogDug.Core.fsproj`, `src/LogDug.Core/App.fs`, `src/LogDug.Core/FlowCmd.fs`: adding the `Axial.Elmish` reference introduces a namespace collision with `Elmish`; partially qualified `open Elmish` resolves to `Axial.Elmish`, and inference of records with an `EnvironmentVariables` field changes. Suggest a migration note recommending `open global.Elmish` and explicit record type annotations.
 - **[observed]** `src/LogDug.Core/Files/Files.fs`: switching the watcher to `Axial.Files.watch` requires an explicit `Axial.Files` package reference; the version in central package management alone does not expose its module. Suggest a package installation note alongside the API example.
 
+- **[observed]** `AXIAL_GUARDRAILS_SEVERITY=warning dotnet build LogDug.slnx -c Release` still reports AXG001 as errors for the two blocking waits in Runtime.fs (Axial.Guardrails 0.11.0-local.1); the severity override did not take effect in this build.
+
 ## Verification
 
-- `dotnet build LogDug.slnx -c Release`: **fails** on Runtime.fs AXG001 blocking waits and `TimeZoneInfo.Local`; the Files.fs watcher guardrail is resolved. No successful build yet.
+- `AXIAL_GUARDRAILS_SEVERITY=warning dotnet build LogDug.slnx -c Release`: **fails** on Runtime.fs AXG001 blocking waits; host time-zone read moved to Program.fs with an explicit clock boundary marker. No successful build yet.
 - Tests: not run (build blocked).
 - Headless screenshot: not run.
 - `--self-test`: not run.

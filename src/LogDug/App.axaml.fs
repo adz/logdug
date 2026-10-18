@@ -29,6 +29,8 @@ module private Options =
 type App() =
     inherit Application()
 
+    static member val LocalZone = TimeZoneInfo.Utc with get, set
+
     let after (delay: float) (action: unit -> unit) =
         DispatcherTimer.RunOnce((fun () -> action ()), TimeSpan.FromSeconds delay) |> ignore
 
@@ -38,7 +40,7 @@ type App() =
         match this.ApplicationLifetime with
         | :? IClassicDesktopStyleApplicationLifetime as desktop ->
             let options = Options.parse (if isNull desktop.Args then [||] else desktop.Args)
-            let runtime = Runtime.live Shell.postToDispatcher
+            let runtime = Runtime.live App.LocalZone Shell.postToDispatcher
             let env = runtime.Env
             let window, connection = Shell.create env (Shell.rootPath env options.Folder)
             desktop.MainWindow <- window

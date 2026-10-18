@@ -14,11 +14,11 @@ let buildAvaloniaApp () =
     AppBuilder.Configure<App>().UsePlatformDetect().WithInterFont().LogToTrace()
 
 /// `--self-test`: run the end-to-end checks without a window and report through the exit code.
-let private selfTest () =
+let private selfTest (localZone: TimeZoneInfo) =
     // A Windows GUI executable has no console of its own; borrow the parent's so a CI shell sees the report.
     if OperatingSystem.IsWindows() then Native.AttachConsole -1 |> ignore
 
-    use runtime = Runtime.live (fun callback -> callback ())
+    use runtime = Runtime.live localZone (fun callback -> callback ())
 
     match Flow.run runtime.Env (SelfTest.run runtime.Env) with
     | Exit.Success results ->
@@ -30,7 +30,10 @@ let private selfTest () =
 
 [<EntryPoint; STAThread>]
 let main argv =
+    // axial-allow-effect: clock (host boundary: machine time zone)
+    let localZone = TimeZoneInfo.Local
     if argv |> Array.contains "--self-test" then
-        selfTest ()
+        selfTest localZone
     else
+        App.LocalZone <- localZone
         buildAvaloniaApp().StartWithClassicDesktopLifetime argv

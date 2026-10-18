@@ -90,9 +90,9 @@ module Runtime =
         let handle = App.start platform root
         new Runtime(ready.Task.Result, handle)
 
-    /// The runtime over the live platform services and the OS time zone.
-    let live (post: (unit -> unit) -> unit) =
-        start (PlatformEnv.live ()) TimeZoneInfo.Local post
+    /// The runtime over the live platform services and the host-supplied time zone.
+    let live (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) =
+        start (PlatformEnv.live ()) localZone post
 
     /// Runs a flow against the runtime's environment and delivers each value of a stream through `post`,
     /// until the returned handle is disposed. This is how Elmish subscriptions follow Axial streams.
