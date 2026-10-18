@@ -29,10 +29,10 @@ module private Options =
 type App() =
     inherit Application()
 
-    static member val LocalZone = TimeZoneInfo.Utc with get, set
-
     let after (delay: float) (action: unit -> unit) =
         DispatcherTimer.RunOnce((fun () -> action ()), TimeSpan.FromSeconds delay) |> ignore
+
+    static member val LocalZone = TimeZoneInfo.Utc with get, set
 
     override this.Initialize() = AvaloniaXamlLoader.Load this
 
