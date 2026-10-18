@@ -181,43 +181,21 @@ module Files =
 
     let private watcher (fileSystem: IFileSystem) (location: Location) : FlowStream<unit, FilesError, LogDug.Files.FileChange> =
         let path = Location.diskPath location
+        let platform = { new IHasFileSystem with member _.FileSystem = fileSystem }
 
-        let acquire =
-            flow {
-                let! (changes: Axial.Queue<LogDug.Files.FileChange>) = Queue.sliding 256
-
-                let! watcher =
-                    Flow.attemptBlocking (fun _ ->
-                        let isFolder = fileSystem.DirectoryExists path
-
-                        let folder =
-                            if isFolder then path
-                            else fileSystem.GetDirectoryName path |> Option.defaultValue path
-
-                        let watcher = new FileSystemWatcher(folder)
-                        if not isFolder then watcher.Filter <- Location.fileName path
-                        watcher.NotifyFilter <- NotifyFilters.LastWrite ||| NotifyFilters.Size ||| NotifyFilters.FileName
-
-                        let offer (kind: ChangeKind) (args: FileSystemEventArgs) =
-                            let change: LogDug.Files.FileChange = { Path = args.FullPath; Kind = kind }
-                            Queue.tryOffer change changes |> ignore
-
-                        watcher.Changed.Add(offer Changed)
-                        watcher.Created.Add(offer Created)
-                        watcher.Deleted.Add(offer Deleted)
-                        watcher.Renamed.Add(fun args -> offer Renamed args)
-                        watcher.EnableRaisingEvents <- true
-                        watcher)
-                    |> Flow.mapError (fun _ -> WatchUnsupported path)
-
-                return changes, watcher
-            }
-
-        FlowStream.using
-            (Resource.create acquire (fun (_, watcher) ->
-                watcher.Dispose()
-                Flow.succeed ()))
-            (fun (changes, _) -> FlowStream.fromDequeue changes)
+        Axial.Files.Files.watch false path
+        |> FlowStream.map (fun (change: Axial.FileSystem.FileChange) ->
+            let kind =
+                match change.Kind with
+                | FileChangeKind.Changed -> Changed
+                | FileChangeKind.Created -> Created
+                | FileChangeKind.Deleted -> Deleted
+                | FileChangeKind.Renamed -> Renamed
+            { Path = change.Path; Kind = kind }: LogDug.Files.FileChange)
+        |> FlowStream.filter (fun change ->
+            fileSystem.DirectoryExists path || String.Equals(change.Path, path, StringComparison.OrdinalIgnoreCase))
+        |> FlowStream.mapError (FileSystemError.describe >> FileSystemFailure)
+        |> FlowStream.localEnv (fun () -> platform)
 
     /// Builds the live service over the platform file system. Decoded archives are shared through an Axial
     /// `Cache` owned by the scope this flow runs in, so concurrent requests for one archive decode it once.

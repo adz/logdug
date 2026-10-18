@@ -25,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Axial" />
     <PackageReference Include="Axial.FileSystem" />
+    <PackageReference Include="Axial.Files" />
     <PackageReference Include="Axial.PlatformService" />
     <PackageReference Include="Reified.Schema" />
     <PackageReference Include="Elmish" />
