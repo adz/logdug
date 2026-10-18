@@ -20,7 +20,7 @@ let options () : LogParser.Options = { ReferenceYear = 2026 }
 
 /// A fresh runtime (Axial application root with the Files service and search pipeline) for one test.
 let runtime () =
-    Runtime.start (PlatformEnv.live ()) TimeZoneInfo.Utc (fun callback -> callback ())
+    Runtime.start (PlatformEnv.live ()) TimeZoneInfo.Utc (fun callback -> callback ()) (fun defect -> eprintfn "defect: %s" defect.Rendered)
 
 let runIn (runtime: Runtime) (flow: Flow<AppEnv, 'error, 'value>) : 'value =
     match Flow.run runtime.Env flow with

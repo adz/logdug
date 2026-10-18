@@ -9,6 +9,11 @@ open LogDug
 module Shell =
     let postToDispatcher (callback: unit -> unit) = Dispatcher.UIThread.Post(fun () -> callback ())
 
+    /// The crash path for defects captured by the Axial Elmish runtime. A desktop app has no crash reporter of its
+    /// own, so defects are written to stderr; the runtime's diagnostic sink still isolates a throwing reporter.
+    let reportDefect (defect: Axial.ElmishFlows.CommandDefect) =
+        eprintfn "LogDug defect [%s]: %s" defect.Name defect.Rendered
+
     /// The folder to browse: the first command-line argument, else the current directory.
     let rootPath (env: AppEnv) (args: string array) =
         let chosen =
@@ -34,7 +39,8 @@ module Shell =
             if Dispatcher.UIThread.CheckAccess() then action.Invoke()
             else Dispatcher.UIThread.Post(fun () -> action.Invoke()))
 
-    let create (env: AppEnv) (rootPath: string) : MainWindow * ElmishHostConnection<Msg> =
+    let create (runtime: Runtime) (rootPath: string) : MainWindow * ElmishHostConnection<Msg> =
+        let env = runtime.Env
         let vm = MainVm(env.LocalZone)
         let window = MainWindow()
         window.Attach vm
@@ -42,7 +48,7 @@ module Shell =
         let connection =
             ElmishHost.startAndBindWithPost
                 postToUi
-                (App.program env rootPath)
+                (App.program runtime.Elmish env rootPath)
                 (Action<Model>(vm.Update))
                 (Action<Action<Msg>>(fun dispatch -> (vm :> IDispatchTarget<Msg>).SetDispatch dispatch))
 

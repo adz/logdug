@@ -197,111 +197,125 @@ module Files =
         |> FlowStream.mapError (FileSystemError.describe >> FileSystemFailure)
         |> FlowStream.localEnv (fun () -> platform)
 
-    /// Builds the live service over the platform file system. Decoded archives are shared through an Axial
-    /// `Cache` owned by the scope this flow runs in, so concurrent requests for one archive decode it once.
-    /// Run it in a long-lived scope, such as an application root.
-    let make<'env when 'env :> IHasFileSystem and 'env :> IHasClock> : Flow<'env, Never, IFiles> =
-        flow {
-            let! fileSystem = FileSystem.service
-            let archives: Cache<ArchiveKey, FilesError, ArchiveIndex> option ref = ref None
-            let recent = LinkedList<ArchiveKey>()
+    /// A single-flight, LRU archive cache that does not depend on an Axial scope, so the live `Files` service
+    /// can be constructed eagerly and owned by whatever long-lived scope hosts it (the Elmish runtime). Successes
+    /// are retained; failures are dropped so a later caller retries.
+    type private ArchiveCache(capacity: int) =
+        let gate = obj ()
+        let entries = Dictionary<ArchiveKey, Task<Exit<ArchiveIndex, FilesError>>>()
+        let order = LinkedList<ArchiveKey>()
 
-            let disk path (operation: unit -> 'value) : Flow<'any, FilesError, 'value> =
-                Flow.attemptBlocking (fun _ -> operation ()) |> Flow.mapError (fileSystemFailure path)
+        member _.Get(key: ArchiveKey, decode: unit -> Flow<unit, FilesError, ArchiveIndex>) : Flow<unit, FilesError, ArchiveIndex> =
+            let task =
+                lock gate (fun () ->
+                    order.Remove key |> ignore
+                    order.AddFirst key |> ignore
 
-            let rec openRead (location: Location) : Flow<unit, FilesError, Stream> =
-                match location with
-                | Disk path -> disk path (fun () -> fileSystem.OpenRead path)
-                | Entry(archive, entryPath) ->
-                    flow {
-                        let! index = archiveAt archive
+                    match entries.TryGetValue key with
+                    | true, task -> task
+                    | _ ->
+                        let task = decode () |> Flow.startTask ()
+                        entries[key] <- task
 
-                        match index.TryRead entryPath with
-                        | Some bytes -> return new MemoryStream(bytes, false) :> Stream
-                        | None -> return! Flow.fail (MissingEntry(Location.key location))
-                    }
+                        while order.Count > capacity do
+                            let oldest = order.Last.Value
+                            order.RemoveLast()
+                            entries.Remove oldest |> ignore
 
-            and archiveAt (location: Location) : Flow<unit, FilesError, ArchiveIndex> =
+                        task)
+
+            flow {
+                let! exit = Flow.awaitStartedTask task
+
+                match exit with
+                | Exit.Success index -> return index
+                | Exit.Failure cause ->
+                    lock gate (fun () ->
+                        entries.Remove key |> ignore
+                        order.Remove key |> ignore)
+
+                    return! Flow.ofExit (Exit.Failure cause)
+            }
+
+    /// Builds the live service over the platform file system. Decoded archives are shared through a scope-free
+    /// single-flight cache, so the service can be constructed eagerly and run against any scope.
+    let makeLive (fileSystem: IFileSystem) : IFiles =
+        let cache = ArchiveCache(archiveCapacity)
+
+        let disk path (operation: unit -> 'value) : Flow<'any, FilesError, 'value> =
+            Flow.attemptBlocking (fun _ -> operation ()) |> Flow.mapError (fileSystemFailure path)
+
+        let rec openRead (location: Location) : Flow<unit, FilesError, Stream> =
+            match location with
+            | Disk path -> disk path (fun () -> fileSystem.OpenRead path)
+            | Entry(archive, entryPath) ->
                 flow {
-                    let path = Location.diskPath location
-                    let! stamp = disk path (fun () -> fileSystem.GetFileLastWriteTimeUtc path)
-                    let key = { Version = $"{path}|{stamp.Ticks}"; Location = location }
-                    let cache = archives.Value.Value
+                    let! index = archiveAt archive
 
-                    // Keep the most recently used archives; forget the oldest beyond the capacity.
-                    let evicted =
-                        lock recent (fun () ->
-                            recent.Remove key |> ignore
-                            recent.AddFirst key |> ignore
-
-                            [ while recent.Count > archiveCapacity do
-                                  let oldest = recent.Last.Value
-                                  recent.RemoveLast()
-                                  oldest ])
-
-                    for key in evicted do
-                        do! Cache.invalidate key cache
-
-                    return! Cache.get key cache
+                    match index.TryRead entryPath with
+                    | Some bytes -> return new MemoryStream(bytes, false) :> Stream
+                    | None -> return! Flow.fail (MissingEntry(Location.key location))
                 }
 
-            let decode (key: ArchiveKey) : Flow<'env, FilesError, ArchiveIndex> =
-                let name =
-                    match key.Location with
-                    | Disk path -> Location.fileName path
-                    | Entry(_, entryPath) -> entryPath
+        and archiveAt (location: Location) : Flow<unit, FilesError, ArchiveIndex> =
+            flow {
+                let path = Location.diskPath location
+                let! stamp = disk path (fun () -> fileSystem.GetFileLastWriteTimeUtc path)
+                let key = { Version = $"{path}|{stamp.Ticks}"; Location = location }
+                return! cache.Get(key, (fun () -> decode key))
+            }
 
-                flow {
-                    let! stream = openRead key.Location
+        and decode (key: ArchiveKey) : Flow<unit, FilesError, ArchiveIndex> =
+            let name =
+                match key.Location with
+                | Disk path -> Location.fileName path
+                | Entry(_, entryPath) -> entryPath
 
-                    let! bytes =
-                        Flow.attemptBlocking (fun _ ->
-                            use stream = stream
-                            use buffer = new MemoryStream()
-                            stream.CopyTo buffer
-                            buffer.ToArray())
-                        |> Flow.mapError (fileSystemFailure (Location.key key.Location))
+            flow {
+                let! stream = openRead key.Location
 
-                    match Location.archiveKind name with
-                    | Some kind ->
-                        return!
-                            Flow.attemptBlocking (fun _ -> Archive.decode kind bytes)
-                            |> Flow.mapError (fun error -> ArchiveFailure(Location.key key.Location, error.Message))
-                    | None -> return! Flow.fail (ArchiveFailure(Location.key key.Location, "not a supported archive"))
-                }
-                |> Flow.localEnv ignore
+                let! bytes =
+                    Flow.attemptBlocking (fun _ ->
+                        use stream = stream
+                        use buffer = new MemoryStream()
+                        stream.CopyTo buffer
+                        buffer.ToArray())
+                    |> Flow.mapError (fileSystemFailure (Location.key key.Location))
 
-            let! cache = Cache.make decode
-            archives.Value <- Some cache
+                match Location.archiveKind name with
+                | Some kind ->
+                    return!
+                        Flow.attemptBlocking (fun _ -> Archive.decode kind bytes)
+                        |> Flow.mapError (fun error -> ArchiveFailure(Location.key key.Location, error.Message))
+                | None -> return! Flow.fail (ArchiveFailure(Location.key key.Location, "not a supported archive"))
+            }
 
-            let diskChildren (path: string) =
-                disk path (fun () ->
-                    fileSystem.GetFileSystemEntries(path, "*", SearchOption.TopDirectoryOnly)
-                    |> Seq.choose (fun entry ->
-                        try
-                            let isDirectory = fileSystem.DirectoryExists entry
-                            let size = if isDirectory then 0L else fileSystem.GetFileLength entry
-                            Some(Node.ofName (Disk entry) (Location.fileName entry) size isDirectory)
-                        with _ ->
-                            None)
-                    |> Node.sort)
+        let diskChildren (path: string) =
+            disk path (fun () ->
+                fileSystem.GetFileSystemEntries(path, "*", SearchOption.TopDirectoryOnly)
+                |> Seq.choose (fun entry ->
+                    try
+                        let isDirectory = fileSystem.DirectoryExists entry
+                        let size = if isDirectory then 0L else fileSystem.GetFileLength entry
+                        Some(Node.ofName (Disk entry) (Location.fileName entry) size isDirectory)
+                    with _ ->
+                        None)
+                |> Node.sort)
 
-            let archiveChildren (archive: Location) (directory: string) =
-                archiveAt archive
-                |> Flow.map (fun index ->
-                    index.Children directory
-                    |> Seq.map (fun child -> Node.ofName (Entry(archive, child.Path)) child.Name child.Size child.IsDirectory)
-                    |> Node.sort)
+        let archiveChildren (archive: Location) (directory: string) =
+            archiveAt archive
+            |> Flow.map (fun index ->
+                index.Children directory
+                |> Seq.map (fun child -> Node.ofName (Entry(archive, child.Path)) child.Name child.Size child.IsDirectory)
+                |> Node.sort)
 
-            return
-                { new IFiles with
-                    member _.Children node =
-                        match node.Kind, node.Location with
-                        | NodeKind.Folder, Disk path -> diskChildren path
-                        | NodeKind.Folder, Entry(archive, directory) -> archiveChildren archive directory
-                        | NodeKind.Archive _, location -> archiveChildren location ""
-                        | NodeKind.File, _ -> Flow.succeed []
+        { new IFiles with
+            member _.Children node =
+                match node.Kind, node.Location with
+                | NodeKind.Folder, Disk path -> diskChildren path
+                | NodeKind.Folder, Entry(archive, directory) -> archiveChildren archive directory
+                | NodeKind.Archive _, location -> archiveChildren location ""
+                | NodeKind.File, _ -> Flow.succeed []
 
-                    member _.OpenRead location = openRead location
-                    member _.Watch location = watcher fileSystem location }
-        }
+            member _.OpenRead location = openRead location
+            member _.Watch location = watcher fileSystem location }

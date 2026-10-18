@@ -1,22 +1,24 @@
 namespace LogDug
 
 open System
-open System.Threading
-open System.Threading.Tasks
 open Axial
+open Axial.ElmishFlows
 open LogDug.Files
 
-/// The running Axial application behind the UI. Its root scope owns the long-lived services: the `Files`
+module AxialCmd = Axial.ElmishFlows.Cmd
+
+/// The running Axial application behind the UI. Its Elmish runtime owns the long-lived services: the `Files`
 /// service (and its archive cache), the search command queue, the search event hub, and the search pipeline.
-/// Disposing it stops the pipeline, interrupts any running search, and closes the scope.
+/// Disposing it stops the pipeline, interrupts any running search, and closes the runtime.
 [<Sealed>]
-type Runtime internal (env: AppEnv, handle: AppHandle<Never, unit>) =
+type Runtime internal (env: AppEnv, runtime: ElmishRuntime<AppEnv>) =
     member _.Env = env
+    member _.Elmish = runtime
 
     interface IDisposable with
         member _.Dispose() =
             // Disposal usually happens on the UI thread; StopAndWait is safe there and honours its timeout.
-            handle.StopAndWait(TimeSpan.FromSeconds 5.0)
+            runtime.StopAndWait(TimeSpan.FromSeconds 5.0)
             |> ignore
 
 module Runtime =
@@ -62,45 +64,42 @@ module Runtime =
                 |> FlowStream.runDrain
         }
 
-    /// Starts the application root and returns once its services exist.
-    let start (platform: PlatformEnv) (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) : Runtime =
-        let ready = TaskCompletionSource<AppEnv>(TaskCreationOptions.RunContinuationsAsynchronously)
+    /// Starts the application: provisions the services, starts the Elmish runtime over them, and runs the
+    /// search pipeline as a long-lived service fiber inside the runtime's scope.
+    let start (platform: PlatformEnv) (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) (onDefect: CommandDefect -> unit) : Runtime =
+        let (commands: Queue<SearchCommand>), (events: Hub<SearchEvent>) =
+            match
+                Flow.run platform (flow {
+                    let! commands = Queue.sliding 1
+                    let! events = Hub.make ()
+                    return commands, events
+                })
+            with
+            | Exit.Success (commands, events) -> commands, events
+            | Exit.Failure cause -> failwith (Cause.prettyPrint (fun (never: Never) -> Never.absurd never) cause)
 
-        let root: Flow<PlatformEnv, Never, unit> =
-            flow {
-                let! files = Files.make
-                let! (commands: Queue<SearchCommand>) = Queue.sliding 1
-                let! (events: Hub<SearchEvent>) = Hub.make ()
+        let env =
+            { FileSystem = platform.FileSystem
+              Clock = platform.Clock
+              EnvironmentVariables = platform.EnvironmentVariables
+              Files = Files.makeLive platform.FileSystem
+              SearchCommands = commands
+              SearchEvents = events
+              LocalZone = localZone }
 
-                let env =
-                    { FileSystem = platform.FileSystem
-                      Clock = platform.Clock
-                      EnvironmentVariables = platform.EnvironmentVariables
-                      Files = files
-                      SearchCommands = commands
-                      SearchEvents = events
-                      LocalZone = localZone
-                      Post = post }
+        let runtime =
+            ElmishRuntime.start
+                { Post = post
+                  OnDefect = onDefect
+                  HistoryCapacity = 128 }
+                env
 
-                do! Flow.delay (fun () -> ready.SetResult env; Flow.succeed ())
-                return! searchPipeline |> Flow.localEnv (fun _ -> env)
-            }
+        // The search pipeline never completes; it runs as a service fiber owned by the runtime's scope.
+        AxialCmd.OfFlow.perform "search-pipeline" runtime searchPipeline (fun () -> failwith "search pipeline ended")
+        |> List.iter (fun start -> start ignore)
 
-        let handle = App.start platform root
-        new Runtime(ready.Task.Result, handle) // axial-allow-effect: blocking (startup handoff of the environment; replaced by ElmishRuntime.startLayer next)
+        new Runtime(env, runtime)
 
     /// The runtime over the live platform services and the host-supplied time zone.
-    let live (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) =
-        start (PlatformEnv.live ()) localZone post
-
-    /// Runs a flow against the runtime's environment and delivers each value of a stream through `post`,
-    /// until the returned handle is disposed. This is how Elmish subscriptions follow Axial streams.
-    let follow (env: AppEnv) (stream: FlowStream<AppEnv, 'error, 'value>) (deliver: 'value -> unit) : IDisposable =
-        let stop = new CancellationTokenSource()
-        let work = stream |> FlowStream.runForEach (fun value -> env.Post(fun () -> deliver value))
-        work.StartAsTask(env, stop.Token) |> ignore
-
-        { new IDisposable with
-            member _.Dispose() =
-                stop.Cancel()
-                stop.Dispose() }
+    let live (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) (onDefect: CommandDefect -> unit) =
+        start (PlatformEnv.live ()) localZone post onDefect

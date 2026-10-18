@@ -3,8 +3,12 @@ namespace LogDug
 open System
 open System.IO
 open Axial
+open Axial.ElmishFlows
 open Elmish
 open LogDug.Files
+
+module AxialCmd = Axial.ElmishFlows.Cmd
+module AxialSub = Axial.ElmishFlows.Sub
 
 type TreeState =
     { Root: Node
@@ -209,7 +213,7 @@ module App =
         else
             settings
 
-    let init (env: AppEnv) (rootPath: string) () : Model * Cmd<Msg> =
+    let init (runtime: ElmishRuntime<AppEnv>) (env: AppEnv) (rootPath: string) () : Model * Cmd<Msg> =
         let now = env.Clock.UtcNow()
 
         let root =
@@ -253,27 +257,27 @@ module App =
               Now = now }
 
         let loadRoot =
-            Files.children root
-            |> FlowCmd.attempt env.Post env string (fun result -> ChildrenLoaded(rootKey, result))
+            AxialCmd.OfFlow.either "load-root" runtime (Files.children root)
+                (fun children -> ChildrenLoaded(rootKey, Ok children))
+                (fun (error: FilesError) -> ChildrenLoaded(rootKey, Error(string error)))
 
         let loadSettings =
-            Settings.load
-            |> FlowCmd.attempt env.Post env (fun (never: Never) -> Never.absurd never) (fun result ->
-                SettingsLoaded(Result.defaultValue Settings.defaults result))
+            AxialCmd.OfFlow.either "load-settings" runtime Settings.load SettingsLoaded (fun (never: Never) -> Never.absurd never)
 
         model, Cmd.batch [ loadRoot; loadSettings ]
 
     let private saveSettings env (settings: Settings) =
         Settings.save settings |> FlowCmd.fireAndForget env
 
-    let private loadChildren env (node: Node) =
+    let private loadChildren (runtime: ElmishRuntime<AppEnv>) env (node: Node) =
         let key = Node.key node
 
-        Files.children node
-        |> FlowCmd.attempt env.Post env string (fun result -> ChildrenLoaded(key, result))
+        AxialCmd.OfFlow.either "load-children" runtime (Files.children node)
+            (fun children -> ChildrenLoaded(key, Ok children))
+            (fun (error: FilesError) -> ChildrenLoaded(key, Error(string error)))
 
     /// Expands every container on the way to `location`, loading any that have not been read yet.
-    let private expandTo env model (location: Location) =
+    let private expandTo (runtime: ElmishRuntime<AppEnv>) env model (location: Location) =
         let path = ancestors model.RootPath location
 
         let toLoad =
@@ -287,9 +291,9 @@ module App =
                 Expanded = path |> List.fold (fun expanded node -> Set.add (Node.key node) expanded) model.Tree.Expanded
                 Loading = toLoad |> List.fold (fun loading node -> Set.add (Node.key node) loading) model.Tree.Loading }
 
-        { model with Tree = tree }, toLoad |> List.map (loadChildren env) |> Cmd.batch
+        { model with Tree = tree }, toLoad |> List.map (loadChildren runtime env) |> Cmd.batch
 
-    let private openNode env model (node: Node) =
+    let private openNode (runtime: ElmishRuntime<AppEnv>) env model (node: Node) =
         let key = Node.key node
         let options = parseOptions model
 
@@ -305,7 +309,9 @@ module App =
             SelectedNode = Some key
             SelectedEntry = None
             PendingReveal = None },
-        work |> FlowCmd.attempt env.Post env string (fun result -> FileOpened(key, result))
+        AxialCmd.OfFlow.either "open-file" runtime work
+            (fun document -> FileOpened(key, Ok document))
+            (fun (error: FilesError) -> FileOpened(key, Error(string error)))
 
     let private send env (command: SearchCommand) : Cmd<Msg> =
         Cmd.ofEffect (fun _ -> Queue.tryOffer command env.SearchCommands |> ignore)
@@ -393,7 +399,7 @@ module App =
         |> List.tryFind (fun file -> file.Order = cursor.Order)
         |> Option.bind (fun file -> file.Hits |> List.tryItem cursor.Hit |> Option.map (fun hit -> file, hit))
 
-    let private openHit env model cursor =
+    let private openHit (runtime: ElmishRuntime<AppEnv>) env model cursor =
         match hitAt model cursor with
         | None -> model, Cmd.none
         | Some(file, hit) ->
@@ -402,15 +408,15 @@ module App =
             match model.Viewer with
             | Showing shown when Node.key shown.Node = Node.key file.Node -> revealLine model hit.Line, Cmd.none
             | _ ->
-                let opened, openCmd = openNode env model file.Node
-                let expanded, expandCmd = expandTo env { opened with PendingReveal = Some(AtLine hit.Line) } file.Node.Location
+                let opened, openCmd = openNode runtime env model file.Node
+                let expanded, expandCmd = expandTo runtime env { opened with PendingReveal = Some(AtLine hit.Line) } file.Node.Location
                 expanded, Cmd.batch [ openCmd; expandCmd ]
 
     let private allCursors model =
         model.Search.Results
         |> List.collect (fun file -> file.Hits |> List.mapi (fun index _ -> { Order = file.Order; Hit = index }))
 
-    let private stepHit env model direction =
+    let private stepHit (runtime: ElmishRuntime<AppEnv>) env model direction =
         let cursors = allCursors model
 
         if cursors.IsEmpty then
@@ -425,7 +431,7 @@ module App =
                 | None -> if direction > 0 then 0 else cursors.Length - 1
                 | Some index -> (index + direction + cursors.Length) % cursors.Length
 
-            openHit env model cursors[next]
+            openHit runtime env model cursors[next]
 
     let private receive model (event: SearchEvent) =
         let search = model.Search
@@ -530,14 +536,16 @@ module App =
         |> Option.bind (fun node -> model.FileModes.TryFind(Node.key node))
         |> Option.defaultValue HighlightMatches
 
-    let private loadIndex env model =
+    let private loadIndex (runtime: ElmishRuntime<AppEnv>) env model =
         let root = model.RootPath
 
-        Files.walk Search.descend model.Tree.Root
-        |> FlowStream.filter Search.isSearchable
-        |> FlowStream.take 50_000
-        |> FlowStream.runCollect
-        |> FlowCmd.attempt env.Post env string (fun result -> FileIndexLoaded(root, result))
+        AxialCmd.OfFlow.either "load-index" runtime
+            (Files.walk Search.descend model.Tree.Root
+             |> FlowStream.filter Search.isSearchable
+             |> FlowStream.take 50_000
+             |> FlowStream.runCollect)
+            (fun nodes -> FileIndexLoaded(root, Ok nodes))
+            (fun (error: FilesError) -> FileIndexLoaded(root, Error(string error)))
 
     let private quickOpenState model query selected =
         let results =
@@ -548,8 +556,8 @@ module App =
         { Query = query; Selected = max 0 (min selected (results.Length - 1)); Results = results }
 
     /// The same model rooted at another folder: a fresh tree and no open files, keeping settings and the search text.
-    let private rootedAt env model (path: string) =
-        let fresh, loadRoot = init env (env.FileSystem.TrimEndingDirectorySeparator(env.FileSystem.GetFullPath path)) ()
+    let private rootedAt (runtime: ElmishRuntime<AppEnv>) env model (path: string) =
+        let fresh, loadRoot = init runtime env (env.FileSystem.TrimEndingDirectorySeparator(env.FileSystem.GetFullPath path)) ()
 
         let rooted =
             { fresh with
@@ -560,7 +568,7 @@ module App =
 
         rooted, loadRoot
 
-    let rec update (env: AppEnv) (msg: Msg) (model: Model) : Model * Cmd<Msg> =
+    let rec update (runtime: ElmishRuntime<AppEnv>) (env: AppEnv) (msg: Msg) (model: Model) : Model * Cmd<Msg> =
         match msg with
         | SettingsLoaded settings ->
             let settings = withLocalZoneDefault env.LocalZone settings
@@ -591,7 +599,7 @@ module App =
                 match node with
                 | Some node when not (tree.Children.ContainsKey key) ->
                     { model with Tree = { tree with Expanded = tree.Expanded.Add key; Loading = tree.Loading.Add key } },
-                    loadChildren env node
+                    loadChildren runtime env node
                 | _ -> { model with Tree = { tree with Expanded = tree.Expanded.Add key } }, Cmd.none
 
         | ChildrenLoaded(key, result) ->
@@ -603,7 +611,7 @@ module App =
                 | Error message -> { tree with Expanded = tree.Expanded.Remove key; Failed = tree.Failed.Add(key, message) }
 
             match model.OpenOnLoad with
-            | Some path when key = Node.key model.Tree.Root -> update env (OpenPath path) { model with Tree = tree }
+            | Some path when key = Node.key model.Tree.Root -> update runtime env (OpenPath path) { model with Tree = tree }
             | _ -> { model with Tree = tree }, Cmd.none
 
         | OpenPath path ->
@@ -613,12 +621,12 @@ module App =
                 let model = { model with OpenOnLoad = None }
 
                 match children |> List.tryFind (fun node -> String.Equals(Node.key node, path, StringComparison.OrdinalIgnoreCase)) with
-                | Some node -> update env (ActivateNode node) model
+                | Some node -> update runtime env (ActivateNode node) model
                 | None -> model, Cmd.none
 
-        | ActivateNode node when Node.isContainer node -> update env (ToggleNode(Node.key node)) { model with SelectedNode = Some(Node.key node) }
+        | ActivateNode node when Node.isContainer node -> update runtime env (ToggleNode(Node.key node)) { model with SelectedNode = Some(Node.key node) }
 
-        | ActivateNode node -> openNode env model node
+        | ActivateNode node -> openNode runtime env model node
 
         | FileOpened(key, result) ->
             match model.Viewer with
@@ -637,7 +645,7 @@ module App =
         | Reload ->
             match model.Viewer with
             | Showing { Node = node }
-            | Unreadable(node, _) -> openNode env model node
+            | Unreadable(node, _) -> openNode runtime env model node
             | _ -> model, Cmd.none
 
         | ToggleFollow ->
@@ -650,7 +658,7 @@ module App =
         | FileChanged key ->
             match model.Viewer with
             | Showing { Node = node } when model.Following && Node.key node = key ->
-                let opened, cmd = openNode env model node
+                let opened, cmd = openNode runtime env model node
                 { opened with PendingReveal = Some AtEnd }, cmd
             | _ -> model, Cmd.none
 
@@ -681,9 +689,9 @@ module App =
 
         | SearchEventReceived event -> receive model event, Cmd.none
 
-        | OpenHit cursor -> openHit env model cursor
-        | NextHit -> stepHit env model 1
-        | PreviousHit -> stepHit env model -1
+        | OpenHit cursor -> openHit runtime env model cursor
+        | NextHit -> stepHit runtime env model 1
+        | PreviousHit -> stepHit runtime env model -1
 
         | ClearSearch ->
             { model with
@@ -762,7 +770,7 @@ module App =
         | ToggleCsvHeader ->
             match model.Viewer with
             | Showing({ Document = { Kind = Delimited hasHeader } } as file) ->
-                openNode env { model with CsvHeaders = model.CsvHeaders.Add(Node.key file.Node, not hasHeader) } file.Node
+                openNode runtime env { model with CsvHeaders = model.CsvHeaders.Add(Node.key file.Node, not hasHeader) } file.Node
             | _ -> model, Cmd.none
 
         | ExpandAll ->
@@ -787,7 +795,7 @@ module App =
                         PendingReveal = None
                         Following = false },
                     Cmd.none
-                | _ -> openNode env { model with Tabs = tabs } tabs[min index (tabs.Length - 1)]
+                | _ -> openNode runtime env { model with Tabs = tabs } tabs[min index (tabs.Length - 1)]
             | _ -> { model with Tabs = tabs }, Cmd.none
 
         | SetFileSearchMode mode ->
@@ -796,7 +804,7 @@ module App =
             | None -> model, Cmd.none
 
         | ChangeRoot path when env.FileSystem.DirectoryExists path ->
-            let rooted, loadRoot = rootedAt env model path
+            let rooted, loadRoot = rootedAt runtime env model path
             let searched, searchCmd = requestSearch env rooted
             searched, Cmd.batch [ loadRoot; searchCmd ]
 
@@ -811,13 +819,13 @@ module App =
                 model, Cmd.none
             else
                 let isInclude = (match msg with IncludeInSearch _ -> true | _ -> false)
-                update env (SearchTextChanged(SearchPattern.addTerm isInclude model.Search.Query.Text term)) model
+                update runtime env (SearchTextChanged(SearchPattern.addTerm isInclude model.Search.Query.Text term)) model
 
         | ShowQuickOpen ->
             let model = { model with QuickOpen = Some(quickOpenState model "" 0) }
 
             if model.FileIndex.IsNone && not model.IndexLoading then
-                { model with IndexLoading = true }, loadIndex env model
+                { model with IndexLoading = true }, loadIndex runtime env model
             else
                 model, Cmd.none
 
@@ -840,8 +848,8 @@ module App =
             | Some state ->
                 match state.Results |> List.tryItem (defaultArg index state.Selected) with
                 | Some entry ->
-                    let opened, openCmd = openNode env { model with QuickOpen = None } entry.Node
-                    let expanded, expandCmd = expandTo env opened entry.Node.Location
+                    let opened, openCmd = openNode runtime env { model with QuickOpen = None } entry.Node
+                    let expanded, expandCmd = expandTo runtime env opened entry.Node.Location
                     expanded, Cmd.batch [ openCmd; expandCmd ]
                 | None -> model, Cmd.none
             | None -> model, Cmd.none
@@ -867,20 +875,27 @@ module App =
 
     /// Long-running inputs, as Elmish subscriptions over Axial streams: search events from the runtime's hub,
     /// and, while following a file, its changes on disk (throttled so a busy log reloads a few times a second).
-    let subscriptions (env: AppEnv) (model: Model) : Sub<Msg> =
-        [ [ "search-events" ],
-          fun dispatch ->
-              Runtime.follow env (FlowStream.fromHub QueueStrategy.Unbounded env.SearchEvents) (SearchEventReceived >> dispatch)
+    let subscriptions (runtime: ElmishRuntime<AppEnv>) (env: AppEnv) (model: Model) : Sub<Msg> =
+        let follow =
+            match followedNode model with
+            | Some node ->
+                let key = Node.key node
 
-          match followedNode model with
-          | Some node ->
-              let key = Node.key node
+                AxialSub.OfFlowStream.subscribe [ "follow"; key ] runtime
+                    (Files.watch node
+                     |> FlowStream.throttle followThrottle
+                     |> FlowStream.map (fun (_: FileChange) -> FileChanged key))
+                    (fun (_: FilesError) -> FileChanged key)
+            | None -> Sub.none
 
-              [ "follow"; key ],
-              fun dispatch ->
-                  Runtime.follow env (Files.watch node |> FlowStream.throttle followThrottle) (fun _ -> dispatch (FileChanged key))
-          | None -> () ]
+        Sub.batch [
+            AxialSub.OfFlowStream.subscribe [ "search-events" ] runtime
+                (FlowStream.fromHub QueueStrategy.Unbounded env.SearchEvents |> FlowStream.map SearchEventReceived)
+                (fun (never: Never) -> Never.absurd never)
 
-    let program (env: AppEnv) (rootPath: string) =
-        Program.mkProgram (init env rootPath) (update env) (fun _ _ -> ())
-        |> Program.withSubscription (subscriptions env)
+            follow
+        ]
+
+    let program (runtime: ElmishRuntime<AppEnv>) (env: AppEnv) (rootPath: string) =
+        Program.mkProgram (init runtime env rootPath) (update runtime env) (fun _ _ -> ())
+        |> Program.withSubscription (subscriptions runtime env)

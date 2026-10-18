@@ -18,7 +18,7 @@ let private selfTest (localZone: TimeZoneInfo) =
     // A Windows GUI executable has no console of its own; borrow the parent's so a CI shell sees the report.
     if OperatingSystem.IsWindows() then Native.AttachConsole -1 |> ignore
 
-    use runtime = Runtime.live localZone (fun callback -> callback ())
+    use runtime = Runtime.live localZone (fun callback -> callback ()) Shell.reportDefect
 
     match Flow.run runtime.Env (SelfTest.run runtime.Env) with
     | Exit.Success results ->

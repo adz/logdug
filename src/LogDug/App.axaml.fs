@@ -6,6 +6,7 @@ open Avalonia.Controls.ApplicationLifetimes
 open Avalonia.Markup.Xaml
 open Avalonia.Media.Imaging
 open Avalonia.Threading
+open Elmish.Avalonia.Glue
 open LogDug
 
 /// Command-line options. `--snapshot` renders the window to a PNG and exits, which lets a published
@@ -40,9 +41,9 @@ type App() =
         match this.ApplicationLifetime with
         | :? IClassicDesktopStyleApplicationLifetime as desktop ->
             let options = Options.parse (if isNull desktop.Args then [||] else desktop.Args)
-            let runtime = Runtime.live App.LocalZone Shell.postToDispatcher
+            let runtime = Runtime.live App.LocalZone ElmishHost.post Shell.reportDefect
             let env = runtime.Env
-            let window, connection = Shell.create env (Shell.rootPath env options.Folder)
+            let window, connection = Shell.create runtime (Shell.rootPath env options.Folder)
             desktop.MainWindow <- window
             Shell.fileArgument env options.Folder |> Option.iter (fun path -> connection.Dispatch.Invoke(OpenPath path))
 

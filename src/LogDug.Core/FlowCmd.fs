@@ -3,31 +3,9 @@ namespace LogDug
 open Axial
 open Elmish
 
-/// Runs Axial flows as Elmish commands. Results come back through `post`, so every message reaches
-/// Elmish on one thread no matter which worker thread finished the flow.
+/// Runs an Axial flow as an Elmish command for its side effects only; the outcome is discarded and no message
+/// is dispatched. Kept because `Cmd.OfFlow.*` has no equivalent that drops both the success and the typed
+/// failure of a workflow: `either`/`perform`/`attempt` all dispatch a message on completion.
 module FlowCmd =
-    let describe (render: 'error -> string) (cause: Cause<'error>) = Cause.prettyPrint render cause
-
-    let attempt
-        (post: (unit -> unit) -> unit)
-        (environment: 'env)
-        (render: 'error -> string)
-        (toMsg: Result<'value, string> -> 'msg)
-        (work: Flow<'env, 'error, 'value>)
-        : Cmd<'msg> =
-        Cmd.ofEffect (fun dispatch ->
-            async {
-                let! exit = Flow.toAsync environment work
-
-                let result =
-                    match exit with
-                    | Exit.Success value -> Ok value
-                    | Exit.Failure cause -> Error(describe render cause)
-
-                post (fun () -> dispatch (toMsg result))
-            }
-            |> Async.Start)
-
-    /// Runs a flow for its effect only; failures are ignored.
     let fireAndForget (environment: 'env) (work: Flow<'env, 'error, unit>) : Cmd<'msg> =
         Cmd.ofEffect (fun _ -> Flow.toAsync environment work |> Async.Ignore |> Async.Start)

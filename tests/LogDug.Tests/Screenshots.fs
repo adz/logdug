@@ -79,10 +79,11 @@ let private scenario () =
             { PlatformEnv.live () with EnvironmentVariables = EnvironmentVariables.fromPairs [ "APPDATA", settingsFolder.FullName ] }
             (TimeZoneInfo.FindSystemTimeZoneById "Europe/London")
             Shell.postToDispatcher
+            Shell.reportDefect
 
     let env = runtime.Env
 
-    let window, connection = Shell.create env (samples ())
+    let window, connection = Shell.create runtime (samples ())
     let dispatch (msg: Msg) = connection.Dispatch.Invoke msg
     let vm = window.DataContext :?> MainVm
     window.Show()
@@ -260,7 +261,7 @@ let private scenario () =
     let livePath = Path.Combine(liveFolder.FullName, "live.log")
     File.WriteAllText(livePath, "2026-10-07 09:00:00 [INF] started\n")
 
-    let liveWindow, liveConnection = Shell.create env liveFolder.FullName
+    let liveWindow, liveConnection = Shell.create runtime liveFolder.FullName
     let liveVm = liveWindow.DataContext :?> MainVm
     liveWindow.Show()
     // A file named on the command line opens itself once its folder has loaded.

@@ -45,7 +45,7 @@ module PlatformEnv =
           EnvironmentVariables = EnvironmentVariables.live }
 
 /// Everything the Elmish program's effects run against. The runtime services (`Files`, the search queue and
-/// hub) live in the Axial application root started by `Runtime.start`; this record only refers to them.
+/// hub) are owned by the Elmish runtime started by `Runtime.start`; this record only refers to them.
 type AppEnv =
     { FileSystem: IFileSystem
       Clock: IClock
@@ -53,9 +53,7 @@ type AppEnv =
       Files: IFiles
       SearchCommands: Queue<SearchCommand>
       SearchEvents: Hub<SearchEvent>
-      LocalZone: TimeZoneInfo
-      /// Delivers a callback to the thread that owns the Elmish loop (the UI thread in the app).
-      Post: (unit -> unit) -> unit }
+      LocalZone: TimeZoneInfo }
 
     interface IHasFileSystem with
         member this.FileSystem = this.FileSystem
