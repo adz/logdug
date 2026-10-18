@@ -18,7 +18,7 @@ type IFiles =
     /// Opens a file for reading, wherever it lives. The caller owns the stream.
     abstract OpenRead: Location -> Flow<unit, FilesError, Stream>
     /// Changes to the file or folder on disk that holds the location, for as long as the stream runs.
-    abstract Watch: Location -> FlowStream<unit, FilesError, FileChange>
+    abstract Watch: Location -> FlowStream<unit, FilesError, LogDug.Files.FileChange>
 
 type IHasFiles =
     abstract Files: IFiles
@@ -111,9 +111,9 @@ module Files =
                     Flow.attemptBlocking (fun _ -> openDecoded node raw)
                     |> Flow.mapError (fun error -> ArchiveFailure(Location.key node.Location, error.Message))
             })
-            (fun reader _ ->
+            (fun reader ->
                 reader |> Option.iter _.Dispose()
-                Task.CompletedTask)
+                Flow.succeed ())
 
     /// The whole file as text, or None for binary content.
     let readText (node: Node) : Flow<'env, FilesError, string option> when 'env :> IHasFiles =
@@ -166,7 +166,7 @@ module Files =
             [ root ]
 
     /// Changes to the file on disk that holds `node` (for archive contents, the outermost archive).
-    let watch (node: Node) : FlowStream<'env, FilesError, FileChange> when 'env :> IHasFiles =
+    let watch (node: Node) : FlowStream<'env, FilesError, LogDug.Files.FileChange> when 'env :> IHasFiles =
         FlowStream.fromFlow service
         |> FlowStream.collect (fun files -> files.Watch node.Location |> FlowStream.localEnv ignore)
 
@@ -179,12 +179,12 @@ module Files =
     let private fileSystemFailure (path: string) (error: exn) =
         FileSystemFailure(FileSystemError.describe (FileSystemError.fromException (Some path) error))
 
-    let private watcher (fileSystem: IFileSystem) (location: Location) : FlowStream<unit, FilesError, FileChange> =
+    let private watcher (fileSystem: IFileSystem) (location: Location) : FlowStream<unit, FilesError, LogDug.Files.FileChange> =
         let path = Location.diskPath location
 
         let acquire =
             flow {
-                let! (changes: Queue<FileChange>) = Queue.sliding 256
+                let! (changes: Axial.Queue<LogDug.Files.FileChange>) = Queue.sliding 256
 
                 let! watcher =
                     Flow.attemptBlocking (fun _ ->
@@ -198,8 +198,9 @@ module Files =
                         if not isFolder then watcher.Filter <- Location.fileName path
                         watcher.NotifyFilter <- NotifyFilters.LastWrite ||| NotifyFilters.Size ||| NotifyFilters.FileName
 
-                        let offer kind (args: FileSystemEventArgs) =
-                            Queue.tryOffer { Path = args.FullPath; Kind = kind } changes |> ignore
+                        let offer (kind: ChangeKind) (args: FileSystemEventArgs) =
+                            let change: LogDug.Files.FileChange = { Path = args.FullPath; Kind = kind }
+                            Queue.tryOffer change changes |> ignore
 
                         watcher.Changed.Add(offer Changed)
                         watcher.Created.Add(offer Created)
@@ -213,9 +214,9 @@ module Files =
             }
 
         FlowStream.using
-            (Resource.create acquire (fun (_, watcher) _ ->
+            (Resource.create acquire (fun (_, watcher) ->
                 watcher.Dispose()
-                Task.CompletedTask))
+                Flow.succeed ()))
             (fun (changes, _) -> FlowStream.fromDequeue changes)
 
     /// Builds the live service over the platform file system. Decoded archives are shared through an Axial
