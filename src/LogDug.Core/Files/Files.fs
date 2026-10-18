@@ -184,13 +184,13 @@ module Files =
         let platform = { new IHasFileSystem with member _.FileSystem = fileSystem }
 
         Axial.Files.Files.watch false path
-        |> FlowStream.map (fun (change: Axial.FileSystem.FileChange) ->
+        |> FlowStream.map (fun (change: Axial.FileSystem.FileSystemChange) ->
             let kind =
                 match change.Kind with
-                | FileChangeKind.Changed -> Changed
-                | FileChangeKind.Created -> Created
-                | FileChangeKind.Deleted -> Deleted
-                | FileChangeKind.Renamed -> Renamed
+                | FileSystemChangeKind.Changed -> Changed
+                | FileSystemChangeKind.Created -> Created
+                | FileSystemChangeKind.Deleted -> Deleted
+                | FileSystemChangeKind.Renamed -> Renamed
             { Path = change.Path; Kind = kind }: LogDug.Files.FileChange)
         |> FlowStream.filter (fun change ->
             fileSystem.DirectoryExists path || String.Equals(change.Path, path, StringComparison.OrdinalIgnoreCase))
