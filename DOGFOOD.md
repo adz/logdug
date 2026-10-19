@@ -66,3 +66,12 @@
 - `Cmd.OfFlow.start` still accepts only `Flow<'env, Never, unit>`; typed-failure side effects (e.g. `Settings.save`) must fold/convert their errors to unit first.
 - `Cmd.OfFlow.*` has no fire-and-forget primitive that dispatches no message on completion.
 - `Axial.ElmishFlows` has no dedicated long-lived-service primitive; the search pipeline runs as a never-completing `Cmd.OfFlow.perform` fiber with an unreachable `onSuccess`.
+
+## Moved to released packages
+
+The app now builds, tests, self-tests and publishes against the released nuget.org packages — Axial 0.11.0, Reified 0.11.0 and Elmish.Avalonia.Glue / Elmish.Glue.Core 0.2.0. The local feed (`~/.nuget/local-feeds/adz`) and `nuget.config` are gone; restore is nuget.org only.
+
+- `dotnet build LogDug.slnx -c Release -m:1` (default Guardrails severity): **passed** — only the two known FS0044 `BitmapEncoder` deprecation warnings.
+- `dotnet test --project tests/LogDug.Tests -c Release`: **58/58 passed**.
+- `dotnet run --project src/LogDug -c Release --no-build -- --self-test`: **10/10 passed**.
+- `bash scripts/publish-logdug.sh && artifacts/publish/logdug/logdug --self-test`: NativeAOT publish **passed**; shipped-binary self-test **10/10 passed**.
