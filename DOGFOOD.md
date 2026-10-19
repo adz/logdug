@@ -52,3 +52,17 @@
 - `Settings.save` now uses `Cmd.OfFlow.start` after folding its typed file-system failure to unit, preserving the previous fire-and-forget behavior (no UI message and errors discarded). Removed `FlowCmd`.
 - Default-severity Release build: **passed**. Solution tests: **58/58 passed on first run before deleting unused FlowCmd source**; after its removal, **57/58 passed twice**, with the previously observed `RenderTests.message tokens get tones` failure (one Plain token, expected property-key token). Published-host `--self-test` via Release `dotnet run --no-build`: **10/10 passed**. Restored `docs/screenshots` after tests.
 - **[finding]** `Cmd.OfFlow.start` accepts only `Flow<'env, Never, unit>`; a side-effect with typed failures such as `Settings.save` needs explicit error handling/folding before starting.
+
+## Verification (0.11.0-local.4)
+
+- All Axial packages bumped to `0.11.0-local.4` from the same local feed (`~/.nuget/local-feeds/adz`). The `Axial.Elmish` package is **renamed to `Axial.ElmishFlows`** (namespace unchanged: `Axial.ElmishFlows`); only the `PackageVersion` id in `Directory.Packages.props` and the `PackageReference` id in `src/LogDug.Core/LogDug.Core.fsproj` changed. No source changes were required because the code already used `open Axial.ElmishFlows`.
+- Default-severity Release build (`dotnet build LogDug.slnx -c Release`): **passed**. Only pre-existing FS0044 `BitmapEncoder` deprecation warnings in `App.axaml.fs` and `Screenshots.fs` remain; no Guardrails errors.
+- Solution tests (`dotnet test --solution LogDug.slnx -c Release`): **58/58 passed**; the previously flaky `RenderTests.message tokens get tones` passed this run. Restored `docs/screenshots` after the headless screenshot scenario.
+- Published-host `--self-test` via Release `dotnet run --no-build`: **10/10 passed**.
+- NativeAOT publish + self-test (`bash scripts/publish-logdug.sh`, then `artifacts/publish/logdug/logdug --self-test`): **10/10 passed**. Publish emitted only the known FSharp.Core trim/AOT aggregate warnings and a non-fatal `ShadUI.OnScreenKeyboard.UIHostNoLaunch..ctor()` ILC note.
+
+### Remaining library findings
+
+- `Cmd.OfFlow.start` still accepts only `Flow<'env, Never, unit>`; typed-failure side effects (e.g. `Settings.save`) must fold/convert their errors to unit first.
+- `Cmd.OfFlow.*` has no fire-and-forget primitive that dispatches no message on completion.
+- `Axial.ElmishFlows` has no dedicated long-lived-service primitive; the search pipeline runs as a never-completing `Cmd.OfFlow.perform` fiber with an unreachable `onSuccess`.

@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Axial" />
-    <PackageReference Include="Axial.Elmish" />
+    <PackageReference Include="Axial.ElmishFlows" />
     <PackageReference Include="Axial.FileSystem" />
     <PackageReference Include="Axial.Files" />
     <PackageReference Include="Axial.PlatformService" />
