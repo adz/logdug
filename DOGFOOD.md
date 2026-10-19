@@ -44,3 +44,11 @@
 - `dotnet run --project src/LogDug/LogDug.fsproj -c Release --no-build -- --self-test`: **10/10 passed**.
 - `git checkout -- docs/screenshots` after the screenshot test restored the checked-in screenshots.
 
+
+## Verification (0.11.0-local.3)
+
+- All six Axial packages bumped to `0.11.0-local.3` from the existing local feed. `Cmd.OfFlow.*` and `Sub.OfFlowStream.*` resolve alongside Elmish `Cmd.ofMsg` / `Sub.batch` without aliases: **no module-merge compiler finding**.
+- `ElmishRuntime.startLayer` provisions `AppEnv`, queue, hub, and `Files.make` inside the runtime root scope. Archive decoding uses `Cache.makeBounded` (12 entries, single-flight, failures not retained); nested archives look up through the same cache. Startup awaits layer provisioning at the synchronous host boundary with an explicit Guardrails marker.
+- `Settings.save` now uses `Cmd.OfFlow.start` after folding its typed file-system failure to unit, preserving the previous fire-and-forget behavior (no UI message and errors discarded). Removed `FlowCmd`.
+- Default-severity Release build: **passed**. Solution tests: **58/58 passed on first run before deleting unused FlowCmd source**; after its removal, **57/58 passed twice**, with the previously observed `RenderTests.message tokens get tones` failure (one Plain token, expected property-key token). Published-host `--self-test` via Release `dotnet run --no-build`: **10/10 passed**. Restored `docs/screenshots` after tests.
+- **[finding]** `Cmd.OfFlow.start` accepts only `Flow<'env, Never, unit>`; a side-effect with typed failures such as `Settings.save` needs explicit error handling/folding before starting.

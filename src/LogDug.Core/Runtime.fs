@@ -3,9 +3,9 @@ namespace LogDug
 open System
 open Axial
 open Axial.ElmishFlows
+open Axial.Layers
 open LogDug.Files
 
-module AxialCmd = Axial.ElmishFlows.Cmd
 
 /// The running Axial application behind the UI. Its Elmish runtime owns the long-lived services: the `Files`
 /// service (and its archive cache), the search command queue, the search event hub, and the search pipeline.
@@ -67,35 +67,37 @@ module Runtime =
     /// Starts the application: provisions the services, starts the Elmish runtime over them, and runs the
     /// search pipeline as a long-lived service fiber inside the runtime's scope.
     let start (platform: PlatformEnv) (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) (onDefect: CommandDefect -> unit) : Runtime =
-        let (commands: Queue<SearchCommand>), (events: Hub<SearchEvent>) =
-            match
-                Flow.run platform (flow {
-                    let! commands = Queue.sliding 1
-                    let! events = Hub.make ()
-                    return commands, events
-                })
-            with
-            | Exit.Success (commands, events) -> commands, events
-            | Exit.Failure cause -> failwith (Cause.prettyPrint (fun (never: Never) -> Never.absurd never) cause)
-
-        let env =
-            { FileSystem = platform.FileSystem
-              Clock = platform.Clock
-              EnvironmentVariables = platform.EnvironmentVariables
-              Files = Files.makeLive platform.FileSystem
-              SearchCommands = commands
-              SearchEvents = events
-              LocalZone = localZone }
+        let layer : Layer<PlatformEnv, Never, AppEnv> =
+            Layer.fromFlow (flow {
+                let! commands = Queue.sliding 1
+                let! events = Hub.make ()
+                let! files = Files.make platform.FileSystem
+                return
+                    { FileSystem = platform.FileSystem
+                      Clock = platform.Clock
+                      EnvironmentVariables = platform.EnvironmentVariables
+                      Files = files
+                      SearchCommands = commands
+                      SearchEvents = events
+                      LocalZone = localZone }
+            })
 
         let runtime =
-            ElmishRuntime.start
+            ElmishRuntime.startLayer
                 { Post = post
                   OnDefect = onDefect
                   HistoryCapacity = 128 }
-                env
+                layer platform
+            // axial-allow-effect: blocking
+            |> Async.RunSynchronously
+            |> function
+                | Ok runtime -> runtime
+                | Error (never: Never) -> Never.absurd never
+
+        let env = runtime.Environment
 
         // The search pipeline never completes; it runs as a service fiber owned by the runtime's scope.
-        AxialCmd.OfFlow.perform "search-pipeline" runtime searchPipeline (fun () -> failwith "search pipeline ended")
+        Cmd.OfFlow.perform "search-pipeline" runtime searchPipeline (fun () -> failwith "search pipeline ended")
         |> List.iter (fun start -> start ignore)
 
         new Runtime(env, runtime)

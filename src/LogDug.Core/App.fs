@@ -7,8 +7,6 @@ open Axial.ElmishFlows
 open Elmish
 open LogDug.Files
 
-module AxialCmd = Axial.ElmishFlows.Cmd
-module AxialSub = Axial.ElmishFlows.Sub
 
 type TreeState =
     { Root: Node
@@ -257,22 +255,22 @@ module App =
               Now = now }
 
         let loadRoot =
-            AxialCmd.OfFlow.either "load-root" runtime (Files.children root)
+            Cmd.OfFlow.either "load-root" runtime (Files.children root)
                 (fun children -> ChildrenLoaded(rootKey, Ok children))
                 (fun (error: FilesError) -> ChildrenLoaded(rootKey, Error(string error)))
 
         let loadSettings =
-            AxialCmd.OfFlow.either "load-settings" runtime Settings.load SettingsLoaded (fun (never: Never) -> Never.absurd never)
+            Cmd.OfFlow.either "load-settings" runtime Settings.load SettingsLoaded (fun (never: Never) -> Never.absurd never)
 
         model, Cmd.batch [ loadRoot; loadSettings ]
 
-    let private saveSettings env (settings: Settings) =
-        Settings.save settings |> FlowCmd.fireAndForget env
+    let private saveSettings (runtime: ElmishRuntime<AppEnv>) env (settings: Settings) =
+        Settings.save settings |> Flow.fold (fun () -> Flow.succeed ()) (fun _ -> Flow.succeed ()) |> Cmd.OfFlow.start "save-settings" runtime
 
     let private loadChildren (runtime: ElmishRuntime<AppEnv>) env (node: Node) =
         let key = Node.key node
 
-        AxialCmd.OfFlow.either "load-children" runtime (Files.children node)
+        Cmd.OfFlow.either "load-children" runtime (Files.children node)
             (fun children -> ChildrenLoaded(key, Ok children))
             (fun (error: FilesError) -> ChildrenLoaded(key, Error(string error)))
 
@@ -309,7 +307,7 @@ module App =
             SelectedNode = Some key
             SelectedEntry = None
             PendingReveal = None },
-        AxialCmd.OfFlow.either "open-file" runtime work
+        Cmd.OfFlow.either "open-file" runtime work
             (fun document -> FileOpened(key, Ok document))
             (fun (error: FilesError) -> FileOpened(key, Error(string error)))
 
@@ -457,13 +455,13 @@ module App =
             { model with Search = { search with Status = Invalid $"Search stopped: {message}" } }
         | _ -> model
 
-    let private setTimeDisplay env model display =
+    let private setTimeDisplay runtime env model display =
         let settings = Settings.withTimeDisplay display model.Settings
 
         { model with
             Time = Time.context env.LocalZone model.Now display
             Settings = settings },
-        saveSettings env settings
+        saveSettings runtime env settings
 
     let private followedNode model =
         match model.Viewer with
@@ -539,7 +537,7 @@ module App =
     let private loadIndex (runtime: ElmishRuntime<AppEnv>) env model =
         let root = model.RootPath
 
-        AxialCmd.OfFlow.either "load-index" runtime
+        Cmd.OfFlow.either "load-index" runtime
             (Files.walk Search.descend model.Tree.Root
              |> FlowStream.filter Search.isSearchable
              |> FlowStream.take 50_000
@@ -678,14 +676,14 @@ module App =
             let settings = { model.Settings with Regex = (mode = RegexSearch) }
             let search = { model.Search with Query = { model.Search.Query with Mode = mode } }
             let model, cmd = requestSearch env { model with Settings = settings; Search = search }
-            model, Cmd.batch [ cmd; saveSettings env settings ]
+            model, Cmd.batch [ cmd; saveSettings runtime env settings ]
 
         | ToggleMatchCase ->
             let matchCase = not model.Search.Query.MatchCase
             let settings = { model.Settings with MatchCase = matchCase }
             let search = { model.Search with Query = { model.Search.Query with MatchCase = matchCase } }
             let model, cmd = requestSearch env { model with Settings = settings; Search = search }
-            model, Cmd.batch [ cmd; saveSettings env settings ]
+            model, Cmd.batch [ cmd; saveSettings runtime env settings ]
 
         | SearchEventReceived event -> receive model event, Cmd.none
 
@@ -701,12 +699,12 @@ module App =
                         RequestId = model.Search.RequestId + 1 } },
             send env StopSearch
 
-        | SetTimeDisplay display -> setTimeDisplay env model display
-        | SetZone zoneId -> setTimeDisplay env model (Zone zoneId)
+        | SetTimeDisplay display -> setTimeDisplay runtime env model display
+        | SetZone zoneId -> setTimeDisplay runtime env model (Zone zoneId)
 
         | ToggleTheme ->
             let settings = { model.Settings with DarkTheme = not model.Settings.DarkTheme }
-            { model with Settings = settings }, saveSettings env settings
+            { model with Settings = settings }, saveSettings runtime env settings
 
         | ToggleFold entryIndex ->
             match viewerNode model with
@@ -881,7 +879,7 @@ module App =
             | Some node ->
                 let key = Node.key node
 
-                AxialSub.OfFlowStream.subscribe [ "follow"; key ] runtime
+                Sub.OfFlowStream.subscribe [ "follow"; key ] runtime
                     (Files.watch node
                      |> FlowStream.throttle followThrottle
                      |> FlowStream.map (fun (_: FileChange) -> FileChanged key))
@@ -889,7 +887,7 @@ module App =
             | None -> Sub.none
 
         Sub.batch [
-            AxialSub.OfFlowStream.subscribe [ "search-events" ] runtime
+            Sub.OfFlowStream.subscribe [ "search-events" ] runtime
                 (FlowStream.fromHub QueueStrategy.Unbounded env.SearchEvents |> FlowStream.map SearchEventReceived)
                 (fun (never: Never) -> Never.absurd never)
 

@@ -1,11 +1,9 @@
 namespace LogDug.Files
 
 open System
-open System.Collections.Generic
 open System.IO
 open System.IO.Compression
 open System.Text
-open System.Threading.Tasks
 open Axial
 open Axial.FileSystem
 
@@ -197,50 +195,9 @@ module Files =
         |> FlowStream.mapError (FileSystemError.describe >> FileSystemFailure)
         |> FlowStream.localEnv (fun () -> platform)
 
-    /// A single-flight, LRU archive cache that does not depend on an Axial scope, so the live `Files` service
-    /// can be constructed eagerly and owned by whatever long-lived scope hosts it (the Elmish runtime). Successes
-    /// are retained; failures are dropped so a later caller retries.
-    type private ArchiveCache(capacity: int) =
-        let gate = obj ()
-        let entries = Dictionary<ArchiveKey, Task<Exit<ArchiveIndex, FilesError>>>()
-        let order = LinkedList<ArchiveKey>()
-
-        member _.Get(key: ArchiveKey, decode: unit -> Flow<unit, FilesError, ArchiveIndex>) : Flow<unit, FilesError, ArchiveIndex> =
-            let task =
-                lock gate (fun () ->
-                    order.Remove key |> ignore
-                    order.AddFirst key |> ignore
-
-                    match entries.TryGetValue key with
-                    | true, task -> task
-                    | _ ->
-                        let task = decode () |> Flow.startTask ()
-                        entries[key] <- task
-
-                        while order.Count > capacity do
-                            let oldest = order.Last.Value
-                            order.RemoveLast()
-                            entries.Remove oldest |> ignore
-
-                        task)
-
-            flow {
-                let! exit = Flow.awaitStartedTask task
-
-                match exit with
-                | Exit.Success index -> return index
-                | Exit.Failure cause ->
-                    lock gate (fun () ->
-                        entries.Remove key |> ignore
-                        order.Remove key |> ignore)
-
-                    return! Flow.ofExit (Exit.Failure cause)
-            }
-
-    /// Builds the live service over the platform file system. Decoded archives are shared through a scope-free
-    /// single-flight cache, so the service can be constructed eagerly and run against any scope.
-    let makeLive (fileSystem: IFileSystem) : IFiles =
-        let cache = ArchiveCache(archiveCapacity)
+    /// Builds the live service and its archive cache in the owning runtime scope.
+    let make (fileSystem: IFileSystem) : Flow<'env, Never, IFiles> when 'env :> IHasClock = flow {
+        let mutable archiveCache = Unchecked.defaultof<Cache<ArchiveKey, FilesError, ArchiveIndex>>
 
         let disk path (operation: unit -> 'value) : Flow<'any, FilesError, 'value> =
             Flow.attemptBlocking (fun _ -> operation ()) |> Flow.mapError (fileSystemFailure path)
@@ -262,7 +219,7 @@ module Files =
                 let path = Location.diskPath location
                 let! stamp = disk path (fun () -> fileSystem.GetFileLastWriteTimeUtc path)
                 let key = { Version = $"{path}|{stamp.Ticks}"; Location = location }
-                return! cache.Get(key, (fun () -> decode key))
+                return! Cache.get key archiveCache
             }
 
         and decode (key: ArchiveKey) : Flow<unit, FilesError, ArchiveIndex> =
@@ -290,6 +247,9 @@ module Files =
                 | None -> return! Flow.fail (ArchiveFailure(Location.key key.Location, "not a supported archive"))
             }
 
+        let! bounded = Cache.makeBounded archiveCapacity (fun key -> decode key |> Flow.localEnv ignore)
+        archiveCache <- bounded
+
         let diskChildren (path: string) =
             disk path (fun () ->
                 fileSystem.GetFileSystemEntries(path, "*", SearchOption.TopDirectoryOnly)
@@ -309,7 +269,7 @@ module Files =
                 |> Seq.map (fun child -> Node.ofName (Entry(archive, child.Path)) child.Name child.Size child.IsDirectory)
                 |> Node.sort)
 
-        { new IFiles with
+        return { new IFiles with
             member _.Children node =
                 match node.Kind, node.Location with
                 | NodeKind.Folder, Disk path -> diskChildren path
@@ -319,3 +279,4 @@ module Files =
 
             member _.OpenRead location = openRead location
             member _.Watch location = watcher fileSystem location }
+    }
