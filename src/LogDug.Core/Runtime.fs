@@ -3,7 +3,6 @@ namespace LogDug
 open System
 open Axial
 open Axial.ElmishFlows
-open Axial.PlatformService
 open LogDug.Files
 
 

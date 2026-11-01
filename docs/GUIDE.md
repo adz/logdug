@@ -105,7 +105,7 @@ Files compile in this order, and each only depends on the files above it.
 
 ## Rules the build enforces
 
-- **Axial.Guardrails 0.12** (`Axial.Guardrails.toml` roles and the approved `Axial.Guardrails.lock`): no ambient effects outside declared boundaries (AXG001), no `raise`/`failwith` inside `flow { }` (AXG003), no discarded cancellation tokens (AXG005), no reflection-based formatting such as `%A` or `string` on a union without a `ToString` override (AXG006), and no `printf`-style formatting in AOT projects. Error types like `FilesError` override `ToString` for this reason. Test files are analysed separately because xunit.v3 MTP content sources live outside the repository.
+- **Axial.Guardrails 0.12** (`Axial.Guardrails.toml` roles and the approved `Axial.Guardrails.lock`): no ambient effects outside declared boundaries (AXG001), no `raise`/`failwith` inside `flow { }` (AXG003), no discarded cancellation tokens (AXG005), no reflection-based formatting such as `%A` or `string` on a union without a `ToString` override (AXG006), and no `printf`-style formatting in AOT projects. Error types like `FilesError` override `ToString` for this reason.
 - **AOT**: Core sets `IsAotCompatible`, the app sets `PublishAot`, and every AXAML binding is compiled (`x:DataType` everywhere). A NativeAOT publish reports no trim or AOT warnings for this code; the only aggregate warning comes from FSharp.Core's own reflection-based printing, which the app does not call.
 - **Central package versions** live in `Directory.Packages.props`.
 

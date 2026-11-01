@@ -32,7 +32,7 @@ let private selfTest (localZone: TimeZoneInfo) =
 let main argv =
     let localZone =
         match Flow.run () Axial.TimeZone.local with
-        | Exit.Success zone -> TimeZoneInfo.FindSystemTimeZoneById(Axial.TimeZone.id zone)
+        | Exit.Success zone -> Axial.TimeZone.toTimeZoneInfo zone
         | Exit.Failure _ -> TimeZoneInfo.Utc
     if argv |> Array.contains "--self-test" then
         selfTest localZone

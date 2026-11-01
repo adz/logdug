@@ -3,8 +3,6 @@
     <OutputType>Exe</OutputType>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
-    <!-- Axial.Guardrails 0.12 crashes on xunit.v3's MTP content sources outside the repository; run its analyzers over the test files directly with the exclude-files option. -->
-    <AxialGuardrailsEnabled>false</AxialGuardrailsEnabled>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Support.fs" />

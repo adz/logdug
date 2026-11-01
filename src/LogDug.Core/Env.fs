@@ -5,7 +5,6 @@ open System
 open Axial
 open Axial.Configuration
 open Axial.FileSystem
-open Axial.PlatformService
 open LogDug.Files
 
 type SearchRequest =
@@ -37,15 +36,24 @@ type PlatformEnv =
         member this.Config = this.Config
 
 module PlatformEnv =
+    let private noSources =
+        { new IConfig with
+            member _.Data = Reified.Data.Object []
+            member _.Sources = [] }
+
+    /// The host boundary: read the process environment once through the configuration source.
     let live () =
-        let data =
-            Reified.Data.Object [
-                for entry in Environment.GetEnvironmentVariables() |> Seq.cast<Collections.DictionaryEntry> do // axial-allow-AXG001: the host boundary reads the process environment once into a configuration snapshot.
-                    string entry.Key, Reified.Data.Text(string entry.Value)
-            ]
+        let config =
+            match Flow.run () (Config.loadData [ ConfigSource.environment None ]) with
+            | Exit.Success config -> config
+            | Exit.Failure cause ->
+                Cause.prettyPrint
+                    (List.map (ConfigError.describe noSources) >> String.concat "; ")
+                    cause
+                |> failwith
 
         { FileSystem = FileSystem.live
-          Config = Config.ofData data }
+          Config = config }
 
 /// Everything the Elmish program's effects run against. The runtime services (`Files`, the search queue and
 /// hub) are owned by the Elmish runtime started by `Runtime.start`; this record only refers to them.

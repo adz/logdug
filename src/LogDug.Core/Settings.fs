@@ -109,5 +109,5 @@ module Settings =
         flow {
             let! folder = directory |> Flow.widenError
             do! FileSystem.createDirectory folder
-            do! Axial.Files.Files.writeAllTextAtomic (Path.Combine(folder, "settings.json")) (serialize settings)
+            do! Axial.FileSystem.Files.writeAllTextAtomic (Path.Combine(folder, "settings.json")) (serialize settings)
         }

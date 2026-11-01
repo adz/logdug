@@ -181,7 +181,7 @@ module Files =
         let path = Location.diskPath location
         let platform = { new IHasFileSystem with member _.FileSystem = fileSystem }
 
-        Axial.Files.Files.watch false path
+        Axial.FileSystem.Files.watch false path
         |> FlowStream.map (fun (change: Axial.FileSystem.FileSystemChange) ->
             let kind =
                 match change.Kind with
