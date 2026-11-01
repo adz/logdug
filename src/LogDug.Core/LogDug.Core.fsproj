@@ -23,10 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Axial" />
+    <PackageReference Include="Axial.Configuration" />
     <PackageReference Include="Axial.ElmishFlows" />
     <PackageReference Include="Axial.FileSystem" />
-    <PackageReference Include="Axial.Files" />
-    <PackageReference Include="Axial.PlatformService" />
     <PackageReference Include="Reified.Schema" />
     <PackageReference Include="Elmish" />
   </ItemGroup>

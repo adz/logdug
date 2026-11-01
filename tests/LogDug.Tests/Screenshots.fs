@@ -10,7 +10,8 @@ open Avalonia.Headless
 open Avalonia.Input
 open Avalonia.Threading
 open Avalonia.VisualTree
-open Axial.PlatformService
+open Axial.Configuration
+open Reified
 open Xunit
 open LogDug
 open LogDug.Files
@@ -22,15 +23,13 @@ let private pumpUntil (description: string) (condition: unit -> bool) =
 
     while not (condition ()) && clock.Elapsed < TimeSpan.FromSeconds 60.0 do
         Dispatcher.UIThread.RunJobs()
-        Thread.Sleep 10
+        SpinWait.SpinUntil(System.Func<bool>(fun () -> Dispatcher.UIThread.RunJobs(); condition ()), TimeSpan.FromMilliseconds 10.0) |> ignore
 
     Dispatcher.UIThread.RunJobs()
     if not (condition ()) then failwith $"Timed out waiting for: {description}"
 
 let private settle () =
-    for _ in 1..20 do
-        Dispatcher.UIThread.RunJobs()
-        Thread.Sleep 10
+    SpinWait.SpinUntil(System.Func<bool>(fun () -> Dispatcher.UIThread.RunJobs(); false), TimeSpan.FromMilliseconds 200.0) |> ignore
 
 let private capture (window: Window) (name: string) =
     settle ()
@@ -76,7 +75,8 @@ let private scenario () =
 
     use runtime =
         Runtime.start
-            { PlatformEnv.live () with EnvironmentVariables = EnvironmentVariables.fromPairs [ "APPDATA", settingsFolder.FullName ] }
+            { PlatformEnv.live () with
+                Config = Config.ofData(Data.Object [ "APPDATA", Data.Text settingsFolder.FullName ]) }
             (TimeZoneInfo.FindSystemTimeZoneById "Europe/London")
             Shell.postToDispatcher
             Shell.reportDefect

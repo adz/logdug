@@ -2,8 +2,8 @@ namespace LogDug
 
 open System.IO
 open Axial
+open Axial.Configuration
 open Axial.FileSystem
-open Axial.PlatformService
 open Reified
 open Reified.ConstraintDSL
 open Reified.SchemaDSL
@@ -70,11 +70,16 @@ module Settings =
 
     let serialize (settings: Settings) = Json.serializeIndented codec settings
 
-    let private directory<'env when 'env :> IHasEnvironmentVariables> : Flow<'env, Never, string> =
+    let private directory<'env when 'env :> IHasConfig> : Flow<'env, Never, string> =
         flow {
-            let! appData = EnvironmentVariables.tryGet "APPDATA"
-            let! xdg = EnvironmentVariables.tryGet "XDG_CONFIG_HOME"
-            let! home = EnvironmentVariables.tryGet "HOME"
+            let! config = Flow.envWith _.Config
+
+            let lookup name =
+                Config.tryFind name config |> Result.toOption |> Option.flatten
+
+            let appData = lookup "APPDATA"
+            let xdg = lookup "XDG_CONFIG_HOME"
+            let home = lookup "HOME"
 
             let baseDirectory =
                 appData
@@ -85,7 +90,7 @@ module Settings =
             return Path.Combine(baseDirectory, "LogDug")
         }
 
-    let load<'env when 'env :> IHasEnvironmentVariables and 'env :> IHasFileSystem> : Flow<'env, Never, Settings> =
+    let load<'env when 'env :> IHasConfig and 'env :> IHasFileSystem> : Flow<'env, Never, Settings> =
         flow {
             let! folder = directory
             let path = Path.Combine(folder, "settings.json")
@@ -100,9 +105,9 @@ module Settings =
                 |> Option.defaultValue defaults
         }
 
-    let save (settings: Settings) : Flow<'env, FileSystemError, unit> when 'env :> IHasEnvironmentVariables and 'env :> IHasFileSystem =
+    let save (settings: Settings) : Flow<'env, FileSystemError, unit> when 'env :> IHasConfig and 'env :> IHasFileSystem =
         flow {
             let! folder = directory |> Flow.widenError
             do! FileSystem.createDirectory folder
-            do! FileSystem.writeAllText (Path.Combine(folder, "settings.json")) (serialize settings)
+            do! Axial.Files.Files.writeAllTextAtomic (Path.Combine(folder, "settings.json")) (serialize settings)
         }

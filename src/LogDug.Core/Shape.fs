@@ -27,10 +27,10 @@ type LevelChip =
 /// Pure projections of the model into the shapes the screen shows. The UI layer only binds them.
 module Shape =
     let size (bytes: int64) =
-        if bytes < 1024L then $"{bytes} B"
-        elif bytes < 1024L * 1024L then $"{float bytes / 1024.0:F1} KB"
-        elif bytes < 1024L * 1024L * 1024L then $"{float bytes / 1024.0 / 1024.0:F1} MB"
-        else $"{float bytes / 1024.0 / 1024.0 / 1024.0:F2} GB"
+        if bytes < 1024L then String.Concat(string bytes, " B")
+        elif bytes < 1024L * 1024L then String.Concat((float bytes / 1024.0).ToString("F1"), " KB")
+        elif bytes < 1024L * 1024L * 1024L then String.Concat((float bytes / 1024.0 / 1024.0).ToString("F1"), " MB")
+        else String.Concat((float bytes / 1024.0 / 1024.0 / 1024.0).ToString("F2"), " GB")
 
     /// The tree flattened into the rows currently visible, depth first.
     let treeRows (model: Model) : TreeRow list =
@@ -98,7 +98,7 @@ module Shape =
         search.Results
         |> List.map (fun file ->
             let count =
-                if file.Truncated then $"{file.Hits.Length}+" else string file.Hits.Length
+                if file.Truncated then String.Concat(string file.Hits.Length, "+") else string file.Hits.Length
 
             FileHeader(file.Order, Location.display model.RootPath file.Node.Location, count)
             :: (file.Hits
@@ -121,7 +121,9 @@ module Shape =
         |> List.concat
 
     let searchStatus (model: Model) =
-        let plural count (one: string) (many: string) = if count = 1 then $"{count} {one}" else $"{count:N0} {many}"
+        let plural count (one: string) (many: string) =
+            if count = 1 then String.Concat(string count, " ", one)
+            else String.Concat(count.ToString("N0"), " ", many)
 
         match model.Search.Status with
         | Idle -> ""
@@ -129,27 +131,27 @@ module Shape =
         | Running summary ->
             let matches = plural summary.HitCount "match" "matches"
             let files = plural summary.FilesMatched "file" "files"
-            $"Searching… {matches} in {files} · {summary.FilesScanned} scanned"
+            String.Concat("Searching… ", matches, " in ", files, " · ", string summary.FilesScanned, " scanned")
         | Finished summary when summary.HitCount = 0 ->
             let files = plural summary.FilesScanned "file" "files"
-            $"No matches · {files} scanned"
+            String.Concat("No matches · ", files, " scanned")
         | Finished summary ->
             let more = if summary.Truncated then "+" else ""
             let matches = plural summary.HitCount "match" "matches"
             let files = plural summary.FilesMatched "file" "files"
-            $"{matches}{more} in {files} · {summary.FilesScanned} scanned"
+            String.Concat(matches, more, " in ", files, " · ", string summary.FilesScanned, " scanned")
 
     let cursorText (model: Model) =
         let total = model.Search.Results |> List.sumBy _.Hits.Length
 
         match model.Search.Cursor with
         | _ when total = 0 -> ""
-        | None -> $"– / {total}"
+        | None -> String.Concat("– / ", string total)
         | Some cursor ->
             let before =
                 model.Search.Results |> List.takeWhile (fun file -> file.Order <> cursor.Order) |> List.sumBy _.Hits.Length
 
-            $"{before + cursor.Hit + 1} / {total}"
+            String.Concat(string (before + cursor.Hit + 1), " / ", string total)
 
     let viewerTitle (model: Model) =
         match model.Viewer with
@@ -169,7 +171,7 @@ module Shape =
                 | PlainText -> "Text"
                 | Binary -> "Binary"
 
-            $"{kind} · {document.LineCount:N0} lines · {document.Entries.Length:N0} entries · {size node.Size}"
+            String.Concat(kind, " · ", document.LineCount.ToString("N0"), " lines · ", document.Entries.Length.ToString("N0"), " entries · ", size node.Size)
         | Opening _ -> "Loading…"
         | Unreadable(_, message) -> message
         | NothingOpen -> ""

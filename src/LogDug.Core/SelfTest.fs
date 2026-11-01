@@ -128,7 +128,7 @@ module SelfTest =
             let! results =
                 checks root
                 |> Flow.mapError string
-                |> Flow.fold Flow.succeed (fun cause -> Flow.succeed [ check "self-test ran" false (Cause.prettyPrint id cause) ])
+                |> Flow.foldCause Flow.succeed (fun cause -> Flow.succeed [ check "self-test ran" false (Cause.prettyPrint id cause) ])
 
             do! FileSystem.deleteDirectory root true |> Flow.fold Flow.succeed (fun _ -> Flow.succeed ())
             return results
@@ -140,4 +140,4 @@ module SelfTest =
             |> List.map (fun result -> (if result.Passed then "PASS  " else "FAIL  ") + result.Name + "  (" + result.Detail + ")")
 
         let passed = results |> List.filter _.Passed |> List.length
-        String.Join(Environment.NewLine, lines @ [ $"{passed}/{results.Length} checks passed" ])
+        String.Join(Environment.NewLine, lines @ [ String.Concat(string passed, "/", string results.Length, " checks passed") ])

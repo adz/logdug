@@ -27,7 +27,7 @@ module Time =
     let offsetText (offset: TimeSpan) =
         let sign = if offset < TimeSpan.Zero then "-" else "+"
         let magnitude = offset.Duration()
-        $"UTC{sign}{magnitude.Hours:D2}:{magnitude.Minutes:D2}"
+        String.Concat("UTC", sign, magnitude.Hours.ToString("D2"), ":", magnitude.Minutes.ToString("D2"))
 
     let private option (now: DateTimeOffset) (zone: TimeZoneInfo) =
         let id = zoneId zone
@@ -48,7 +48,7 @@ module Time =
         try
             Some(TimeZoneInfo.FindSystemTimeZoneById id)
         with _ ->
-            None
+            None // axial-note AXG010: an unknown saved zone id falls back to UTC rather than blocking startup.
 
     let context (local: TimeZoneInfo) (now: DateTimeOffset) (display: TimeDisplay) : TimeContext =
         let zone, name =

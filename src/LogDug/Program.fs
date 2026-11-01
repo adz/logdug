@@ -22,16 +22,18 @@ let private selfTest (localZone: TimeZoneInfo) =
 
     match Flow.run runtime.Env (SelfTest.run runtime.Env) with
     | Exit.Success results ->
-        printfn "%s" (SelfTest.render results)
+        Console.WriteLine(SelfTest.render results)
         if results |> List.forall _.Passed then 0 else 1
     | Exit.Failure cause ->
-        printfn "%s" (Cause.prettyPrint id cause)
+        Console.WriteLine(Cause.prettyPrint id cause)
         2
 
 [<EntryPoint; STAThread>]
 let main argv =
-    // axial-allow-effect: environment (host boundary: machine time zone)
-    let localZone = TimeZoneInfo.Local
+    let localZone =
+        match Flow.run () Axial.TimeZone.local with
+        | Exit.Success zone -> TimeZoneInfo.FindSystemTimeZoneById(Axial.TimeZone.id zone)
+        | Exit.Failure _ -> TimeZoneInfo.Utc
     if argv |> Array.contains "--self-test" then
         selfTest localZone
     else

@@ -138,8 +138,8 @@ type ResultRowVm(initial: ResultRow, openHit: HitCursor -> unit) =
 
     static member KeyOf(row: ResultRow) =
         match row with
-        | FileHeader(order, _, _) -> $"f{order}"
-        | HitLine(order, hitIndex, _, _, _, _, _) -> $"h{order}:{hitIndex}"
+        | FileHeader(order, _, _) -> String.Concat("f", string order)
+        | HitLine(order, hitIndex, _, _, _, _, _) -> String.Concat("h", string order, ":", string hitIndex)
 
     member _.Key = ResultRowVm.KeyOf row
     member _.IsHeader = match row with FileHeader _ -> true | HitLine _ -> false
@@ -563,7 +563,7 @@ type MainVm(localZone: TimeZoneInfo) =
                 LogParser.prettyJson entry
                 |> Option.defaultValue (String.Join(Environment.NewLine, entry.Lines))
 
-            this.Change(&detailHeader, $"Line {entry.Line} · {Level.name entry.Level}", "DetailHeader")
+            this.Change(&detailHeader, String.Concat("Line ", string entry.Line, " · ", Level.name entry.Level), "DetailHeader")
             this.Change(&detailTimes, times, "DetailTimes")
             this.Change(&detailText, text, "DetailText")
             this.Change(&hasDetail, true, "HasDetail")
@@ -627,7 +627,7 @@ type MainVm(localZone: TimeZoneInfo) =
             | Some state when state.Matches.Length = 0 -> "No matches"
             | Some state ->
                 let position = match state.Cursor with Some position -> string (position + 1) | None -> "–"
-                $"{position} / {state.Matches.Length:N0}"
+                String.Concat(position, " / ", state.Matches.Length.ToString("N0"))
             | None -> ""
 
         this.Change(&findCaption, caption, "FindCaption")
@@ -723,7 +723,9 @@ type MainVm(localZone: TimeZoneInfo) =
             | Showing file -> file.Document.Entries.Length
             | _ -> 0
 
-        let countText = if entries.Length = total then $"{total:N0} entries" else $"{entries.Length:N0} of {total:N0} entries"
+        let countText =
+            if entries.Length = total then String.Concat(total.ToString("N0"), " entries")
+            else String.Concat(entries.Length.ToString("N0"), " of ", total.ToString("N0"), " entries")
         this.Change(&entryCountText, countText, "EntryCountText")
         this.UpdateDetail model
 

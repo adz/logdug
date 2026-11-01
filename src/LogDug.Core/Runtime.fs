@@ -3,7 +3,7 @@ namespace LogDug
 open System
 open Axial
 open Axial.ElmishFlows
-open Axial.Layers
+open Axial.PlatformService
 open LogDug.Files
 
 
@@ -41,7 +41,7 @@ module Runtime =
                     let found = steps |> List.choose _.Found
                     publish (SearchProgress(request.Id, found, summary)) |> Flow.map (fun () -> summary))
                 |> FlowStream.runFold (fun _ summary -> summary) Search.emptySummary
-                |> Flow.fold (Ok >> Flow.succeed) (fun cause -> Flow.succeed (Error(Cause.prettyPrint string cause)))
+                |> Flow.foldCause (Ok >> Flow.succeed) (fun cause -> Flow.succeed (Error(Cause.prettyPrint string cause)))
 
             match outcome with
             | Ok summary -> do! publish (SearchEnded(request.Id, summary))
@@ -67,6 +67,11 @@ module Runtime =
     /// Starts the application: provisions the services, starts the Elmish runtime over them, and runs the
     /// search pipeline as a long-lived service fiber inside the runtime's scope.
     let start (platform: PlatformEnv) (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) (onDefect: CommandDefect -> unit) : Runtime =
+        let startedAt =
+            match Flow.run () Clock.now with
+            | Exit.Success now -> now
+            | Exit.Failure cause -> failwith (Cause.prettyPrint id cause)
+
         let layer : Layer<PlatformEnv, Never, AppEnv> =
             Layer.fromFlow (flow {
                 let! commands = Queue.sliding 1
@@ -74,21 +79,23 @@ module Runtime =
                 let! files = Files.make platform.FileSystem
                 return
                     { FileSystem = platform.FileSystem
-                      Clock = platform.Clock
-                      EnvironmentVariables = platform.EnvironmentVariables
+                      Config = platform.Config
                       Files = files
                       SearchCommands = commands
                       SearchEvents = events
-                      LocalZone = localZone }
+                      LocalZone = localZone
+                      StartedAt = startedAt }
             })
 
         let runtime =
             ElmishRuntime.startLayer
                 { Post = post
                   OnDefect = onDefect
-                  HistoryCapacity = 128 }
+                  HistoryCapacity = 128
+                  Clock = None
+                  LogSink = Some(LogSink.console LogLevel.Warning) }
                 layer platform
-            // axial-allow-effect: blocking
+            // axial-allow-AXG001: host startup blocks until the Elmish runtime layer is provisioned
             |> Async.RunSynchronously
             |> function
                 | Ok runtime -> runtime

@@ -32,7 +32,6 @@
     <PackageReference Include="Elmish.Avalonia.Glue.Projection" />
     <PackageReference Include="Axial" />
     <PackageReference Include="Axial.FileSystem" />
-    <PackageReference Include="Axial.PlatformService" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LogDug.Core\LogDug.Core.fsproj" />

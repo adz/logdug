@@ -1,0 +1,15 @@
+version = 2
+baseline = "Axial.Guardrails.baseline"
+
+[default]
+role = "domain"
+
+[projects]
+host = ["src/LogDug/LogDug.fsproj"]
+test = ["tests/LogDug.Tests/LogDug.Tests.fsproj"]
+
+[roles.host.rules]
+"effects.ambient" = "allow"
+
+[boundaries]
+files = ["src/LogDug.Core/Env.fs", "src/LogDug.Core/Runtime.fs"]

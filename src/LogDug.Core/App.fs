@@ -212,7 +212,7 @@ module App =
             settings
 
     let init (runtime: ElmishRuntime<AppEnv>) (env: AppEnv) (rootPath: string) () : Model * Cmd<Msg> =
-        let now = env.Clock.UtcNow()
+        let now = env.StartedAt
 
         let root =
             { Location = Disk rootPath

@@ -54,7 +54,7 @@ module LogParser =
 
             match
                 DateTime.TryParseExact(
-                    $"{options.ReferenceYear} {collapsed}",
+                    String.Concat(string options.ReferenceYear, " ", collapsed),
                     "yyyy MMM d HH:mm:ss",
                     CultureInfo.InvariantCulture,
                     DateTimeStyles.AssumeUniversal ||| DateTimeStyles.AdjustToUniversal
@@ -196,7 +196,7 @@ module LogParser =
                 | Data.Object fields -> Some fields
                 | _ -> None
             with _ ->
-                None
+                None // axial-note AXG010: a malformed JSON line is not a JSON entry; the text parser handles it as plain text.
         else
             None
 
@@ -462,7 +462,7 @@ module LogParser =
         let structured label (lines: string array) = parseLog options lines (Some label)
 
         if extension = ".json" && lines.Length = 1 && (lines[0].TrimStart().StartsWith "{" || lines[0].TrimStart().StartsWith "[") then
-            let pretty = try Json.reindent lines[0] with _ -> lines[0]
+            let pretty = try Json.reindent lines[0] with _ -> lines[0] // axial-note AXG010: reindentation is cosmetic; keep the original JSON text when it fails.
             structured "JSON" (splitLines pretty)
         elif extension = ".json" && lines.Length > 1 && (tryJsonEntry lines[0]).IsNone then
             structured "JSON" lines
@@ -557,6 +557,6 @@ module LogParser =
             try
                 Some(Json.reindent entry.Lines[0])
             with _ ->
-                None
+                None // axial-note AXG010: a pretty-print failure means there is no formatted entry to show.
         | PlainEntry
         | TableEntry _ -> None

@@ -27,7 +27,7 @@ module Desktop =
             info.CreateNoWindow <- true
             Process.Start info |> ignore
         with _ ->
-            ()
+            () // axial-note AXG010: launching the OS handler is best-effort; there is no UI path to report it.
 
     let private command (file: string) (arguments: string list) =
         let info = ProcessStartInfo(file)
@@ -64,5 +64,5 @@ module Desktop =
                 | top ->
                     match top.Clipboard with
                     | null -> ()
-                    | clipboard -> clipboard.SetTextAsync text |> ignore
+                    | clipboard -> Async.Start(Async.AwaitTask(clipboard.SetTextAsync text) |> Async.Catch |> Async.Ignore)
             | _ -> ()

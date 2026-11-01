@@ -75,3 +75,14 @@ The app now builds, tests, self-tests and publishes against the released nuget.o
 - `dotnet test --project tests/LogDug.Tests -c Release`: **58/58 passed**.
 - `dotnet run --project src/LogDug -c Release --no-build -- --self-test`: **10/10 passed**.
 - `bash scripts/publish-logdug.sh && artifacts/publish/logdug/logdug --self-test`: NativeAOT publish **passed**; shipped-binary self-test **10/10 passed**.
+
+## Migration to Axial 0.12.0-local.1 (2026-11-01)
+
+- All Axial packages bumped to `0.12.0-local.1` from `~/projects/scratch/axial-coord/feed/axial-0.12.0-local.1`; Reified.Schema is `0.12.1`. The local feed is configured in an uncommitted `NuGet.config`. `Axial.PlatformService` and `Axial.Files` references were removed; `Axial.Configuration` was added.
+- Platform services moved into the runtime: `PlatformEnv` now carries only `FileSystem` and a merged `IConfig` snapshot, and `AppEnv` carries a `StartedAt` value instead of an `IClock` field. `Program.fs` reads the machine zone through `TimeZone.local`, and `Settings` reads environment values through `Axial.Configuration`.
+- `ElmishRuntimeOptions` now sets `Clock = None` and `LogSink = Some (LogSink.console LogLevel.Warning)`. `Layer` comes from `open Axial`; `Axial.Layers` is gone. `Settings.save` uses `Axial.Files.Files.writeAllTextAtomic`.
+- Guardrails uses the v2 policy (`Axial.Guardrails.toml` + lock). `Runtime.fs` and `Env.fs` are declared host boundaries for the startup wait and the one-time environment read. All `printf`-style formatting in AOT projects, token discards and test sleeps were replaced.
+- `dotnet build LogDug.slnx -c Release -m:1`: **passed**; only the pre-existing FS0044 `BitmapEncoder` warnings and the unapproved-policy review notice remain.
+- Tests via the test assembly's xunit in-process runner: **58/58 passed**. `dotnet test` fails before discovery in this environment with an MTP handshake exit code 5; the same assembly runs all 58 tests directly.
+- `dotnet run --project src/LogDug -c Release --no-build -- --self-test`: **10/10 passed**.
+- Test-role Guardrails run with `--exclude-files "**/_content/**"`: **passed**. The packaged `Axial.Guardrails` 0.12 build target crashes on xunit.v3 MTP content sources outside the repository, so the test project sets `AxialGuardrailsEnabled=false` for the packaged build and the test files are checked with the CLI directly.

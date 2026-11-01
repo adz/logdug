@@ -12,7 +12,7 @@ module Shell =
     /// The crash path for defects captured by the Axial Elmish runtime. A desktop app has no crash reporter of its
     /// own, so defects are written to stderr; the runtime's diagnostic sink still isolates a throwing reporter.
     let reportDefect (defect: Axial.ElmishFlows.CommandDefect) =
-        eprintfn "LogDug defect [%s]: %s" defect.Name defect.Rendered
+        Console.Error.WriteLine(String.Concat("LogDug defect [", defect.Name, "]: ", defect.Rendered))
 
     /// The folder to browse: the first command-line argument, else the current directory.
     let rootPath (env: AppEnv) (args: string array) =

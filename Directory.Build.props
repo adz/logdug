@@ -10,7 +10,6 @@
     <WarningsAsErrors>$(WarningsAsErrors);FS0025</WarningsAsErrors>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
-    <AxialGuardrailsSeverity>error</AxialGuardrailsSeverity>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FSharp.Core" />

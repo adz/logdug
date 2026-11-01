@@ -196,7 +196,7 @@ module Files =
         |> FlowStream.localEnv (fun () -> platform)
 
     /// Builds the live service and its archive cache in the owning runtime scope.
-    let make (fileSystem: IFileSystem) : Flow<'env, Never, IFiles> when 'env :> IHasClock = flow {
+    let make (fileSystem: IFileSystem) : Flow<'env, Never, IFiles> = flow {
         let mutable archiveCache = Unchecked.defaultof<Cache<ArchiveKey, FilesError, ArchiveIndex>>
 
         let disk path (operation: unit -> 'value) : Flow<'any, FilesError, 'value> =
@@ -218,7 +218,7 @@ module Files =
             flow {
                 let path = Location.diskPath location
                 let! stamp = disk path (fun () -> fileSystem.GetFileLastWriteTimeUtc path)
-                let key = { Version = $"{path}|{stamp.Ticks}"; Location = location }
+                let key = { Version = String.Concat(path, "|", string stamp.Ticks); Location = location }
                 return! Cache.get key archiveCache
             }
 
@@ -259,7 +259,7 @@ module Files =
                         let size = if isDirectory then 0L else fileSystem.GetFileLength entry
                         Some(Node.ofName (Disk entry) (Location.fileName entry) size isDirectory)
                     with _ ->
-                        None)
+                        None) // axial-note AXG010: an unreadable child is omitted from the listing so the rest of the folder still opens.
                 |> Node.sort)
 
         let archiveChildren (archive: Location) (directory: string) =
