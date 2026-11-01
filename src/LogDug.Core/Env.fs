@@ -36,11 +36,6 @@ type PlatformEnv =
         member this.Config = this.Config
 
 module PlatformEnv =
-    let private noSources =
-        { new IConfig with
-            member _.Data = Reified.Data.Object []
-            member _.Sources = [] }
-
     /// The host boundary: read the process environment once through the configuration source.
     let live () =
         let config =
@@ -48,7 +43,7 @@ module PlatformEnv =
             | Exit.Success config -> config
             | Exit.Failure cause ->
                 Cause.prettyPrint
-                    (List.map (ConfigError.describe noSources) >> String.concat "; ")
+                    (List.map (ConfigError.describe) >> String.concat "; ")
                     cause
                 |> failwith
 
