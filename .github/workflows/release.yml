@@ -38,9 +38,36 @@ jobs:
           echo "value=$version" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
 
+  # Release gate: unreviewed Axial Guardrails policy loosening, or a failing Full Guardrails build, stops the release
+  # before any artifact is built. Runs once rather than on every platform runner.
+  guardrails:
+    needs: version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore LogDug.slnx
+
+      # `check --full` runs `axial policy review --check`, then a Full Guardrails build of LogDug.slnx.
+      - name: Axial Guardrails policy gate
+        run: |
+          dotnet tool restore
+          dotnet axial check --full --configuration Release
+
   # NativeAOT can't cross-compile, so each platform builds on its own runner.
   build:
-    needs: version
+    needs: [version, guardrails]
     strategy:
       fail-fast: true
       matrix:
