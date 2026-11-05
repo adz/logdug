@@ -76,9 +76,9 @@ The app now builds, tests, self-tests and publishes against the released nuget.o
 - `dotnet run --project src/LogDug -c Release --no-build -- --self-test`: **10/10 passed**.
 - `bash scripts/publish-logdug.sh && artifacts/publish/logdug/logdug --self-test`: NativeAOT publish **passed**; shipped-binary self-test **10/10 passed**.
 
-## Migration to Axial 0.12.0-local.2 (2026-11-02)
+## Migration to Axial 0.12.0 (2026-11-02, released 2026-11-05)
 
-- All Axial packages bumped to `0.12.0-local.2` from `~/projects/scratch/axial-coord/feed/axial-0.12.0-local.2`; Reified.Schema is `0.12.1`. The local feed is configured in an uncommitted `NuGet.config` that is not part of the repository. `Axial.PlatformService` and `Axial.Files` references were removed; `Axial.Configuration` was added.
+- All Axial packages are on the released `0.12.0` from nuget.org (migrated through the `0.12.0-local.2` and `local.3` pre-release feeds); Reified.Schema is `0.12.1`. Restore is nuget.org only; no local feed or `NuGet.config` is needed. `Axial.PlatformService` and `Axial.Files` references were removed; `Axial.Configuration` was added.
 - Runtime helpers (`Clock`, `Random`, `Guid`, `Log`, `TestLog`, `TestPlatform`, `TestClock`, `Flow.runTest`) now come from `open Axial`, and the file APIs from `Axial.FileSystem`. `PlatformEnv.live` reads the process environment through `ConfigSource.environment`, and `Program.fs` converts `Axial.TimeZone.local` with `TimeZone.toTimeZoneInfo`.
 - Platform services moved into the runtime: `PlatformEnv` now carries only `FileSystem` and a merged `IConfig` snapshot, and `AppEnv` carries a `StartedAt` value instead of an `IClock` field. `Settings` reads environment values through `Axial.Configuration`.
 - `ElmishRuntimeOptions` sets `Clock = None` and `LogSink = Some (LogSink.console LogLevel.Warning)`. `Layer` comes from `open Axial`; `Axial.Layers` is gone. `Settings.save` uses `Axial.FileSystem.Files.writeAllTextAtomic`.
@@ -88,3 +88,11 @@ The app now builds, tests, self-tests and publishes against the released nuget.o
 - Tests via the test assembly's xunit in-process runner: **58/58 passed**, including the headless Avalonia screenshot scenario on its non-main thread. `dotnet test` still fails before discovery in this environment with an MTP handshake exit code 5; the same assembly runs all 58 tests directly.
 - `dotnet run --project src/LogDug -c Release --no-build -- --self-test`: **10/10 passed**.
 - `axial check`: **passed** (exit 0). The only output is the policy-review warning because the local.1 lock has not been re-approved by a person; `axial policy review --since HEAD` lists the package and role changes for that review.
+
+### Verification (0.12.0 from nuget.org, 2026-11-05)
+
+- Restore from nuget.org only: **passed**.
+- `dotnet build LogDug.slnx -c Release -m:1` (Fast Guardrails): **passed**, 0 errors. Non-Guardrails warnings: FS0044 `BitmapEncoder` deprecation and NU1903 for `Microsoft.DotNet.ILCompiler` 10.0.13. Guardrails: 1x AXG014 Info (`MainWindow.axaml.fs` task bridge) and 16 AXG001 Info in `tests/LogDug.Tests`. The xunit-generated entry point under `obj/` is no longer flagged.
+- `-p:AxialGuardrailsMode=Full`: **passed**, 0 errors; 19 AXG001 warnings in `tests/LogDug.Tests` (Support.fs, Screenshots.fs, FilesTests.fs), the intended 0.12.0 test-role behaviour. They are left for a policy decision; the policy-review notice ("11 changes") still awaits human approval.
+- Tests via the xunit in-process runner: **58/58 passed**.
+- `--self-test`: **10/10 passed**.
