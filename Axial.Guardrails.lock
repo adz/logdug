@@ -1,6 +1,17 @@
 version = 2
 BASELINE_PATH  Axial.Guardrails.baseline
 SHA256  9abe2edc195cbffd1b65dde5c8c73e6ce594360981294e6c31a673071e97e051  Axial.Guardrails.baseline
-SHA256  f9dfc3b1af39e4abb8179a7cf983abf4275c414981407b212a495cce00ff2bc1  Axial.Guardrails.toml
+SHA256  ca7dfe8cef820081f302e9f06b334453de6c722010f5c6bc809880510fbea885  Axial.Guardrails.toml
 SHA256  d1785b7b928c912c14b78b298e89e2eee108fed4bd9237b5cf301a3e21bb74e8  Directory.Build.props
-SHA256  f08d78ddfcc2f113b6336a38e7b7943568b1b7226c07d45e9d8afd39f628e213  Directory.Packages.props
+SHA256  60ee466cadcd20c7d112fd818c24cb3c069a0175d5549fc8efaf2a6a0c84dcb0  Directory.Packages.props
+POLICY  host/effects.ambient	allow
+BOUNDARY  src/LogDug.Core/Env.fs
+BOUNDARY  src/LogDug.Core/Runtime.fs
+SUPPRESSION  src/LogDug.Core/Files/Files.fs	1	// axial-note AXG010:an unreadable child is omitted from the listing so the rest of the folder still opens.
+SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note AXG010:a malformed JSON line is not a JSON entry; the text parser handles it as plain text.
+SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note AXG010:a pretty-print failure means there is no formatted entry to show.
+SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note AXG010:reindentation is cosmetic; keep the original JSON text when it fails.
+SUPPRESSION  src/LogDug.Core/Runtime.fs	1	// axial-allow-AXG001:host startup blocks until the Elmish runtime layer is provisioned
+SUPPRESSION  src/LogDug.Core/Time.fs	1	// axial-note AXG010:an unknown saved zone id falls back to UTC rather than blocking startup.
+SUPPRESSION  src/LogDug/Desktop.fs	1	// axial-note AXG010:launching the OS handler is best-effort; there is no UI path to report it.
+REVIEWED_POINT  3f7e106968b9e94175e84599657a175a97bbf4cd
