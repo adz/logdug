@@ -4,6 +4,7 @@ open System
 open System.Runtime.InteropServices
 open Avalonia
 open Axial
+open Axial.Hosting
 open LogDug
 
 module private Native =
@@ -23,10 +24,12 @@ let private selfTest (localZone: TimeZoneInfo) =
     match Flow.run runtime.Env (SelfTest.run runtime.Env) with
     | Exit.Success results ->
         Console.WriteLine(SelfTest.render results)
-        if results |> List.forall _.Passed then 0 else 1
+        // A failed check is an ordinary failure; a defect in the checks themselves is the defect exit code.
+        if results |> List.forall _.Passed then DotNetApp.exitCode (Exit.Success())
+        else DotNetApp.exitCode (Exit.Failure(Cause.Fail results))
     | Exit.Failure cause ->
         Console.WriteLine(Cause.prettyPrint id cause)
-        2
+        DotNetApp.exitCode (Exit.Failure cause)
 
 [<EntryPoint; STAThread>]
 let main argv =

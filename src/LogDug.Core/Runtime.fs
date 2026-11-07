@@ -66,13 +66,11 @@ module Runtime =
     /// Starts the application: provisions the services, starts the Elmish runtime over them, and runs the
     /// search pipeline as a long-lived service fiber inside the runtime's scope.
     let start (platform: PlatformEnv) (localZone: TimeZoneInfo) (post: (unit -> unit) -> unit) (onDefect: CommandDefect -> unit) : Runtime =
-        let startedAt =
-            match Flow.run () Clock.now with
-            | Exit.Success now -> now
-            | Exit.Failure cause -> failwith (Cause.prettyPrint id cause)
-
         let layer : Layer<PlatformEnv, Never, AppEnv> =
             Layer.fromFlow (flow {
+                // Read the platform's clock inside the runtime's scope, not before it exists: the start time is one
+                // reading of the clock the environment actually runs with.
+                let! startedAt = Clock.now
                 let! commands = Queue.sliding 1
                 let! events = Hub.make ()
                 let! files = Files.make platform.FileSystem
@@ -102,9 +100,14 @@ module Runtime =
 
         let env = runtime.Environment
 
-        // The search pipeline never completes; it runs as a service fiber owned by the runtime's scope.
-        Cmd.OfFlow.perform "search-pipeline" runtime searchPipeline (fun () -> failwith "search pipeline ended")
-        |> List.iter (fun start -> start ignore)
+        // The search pipeline never completes; it runs as a service fiber owned by the runtime's scope, which stops it
+        // when the runtime stops and reports it if it ever ends early.
+        match ElmishRuntime.startService "search-pipeline" searchPipeline runtime with
+        | Ok () -> ()
+        | Error ServiceStartError.DuplicateName ->
+            // Both cases are programming errors at startup, not conditions the user can reach.
+            failwith "The search pipeline did not start: a service with that name is already running."
+        | Error ServiceStartError.RuntimeStopping -> failwith "The search pipeline did not start: the runtime is stopping."
 
         new Runtime(env, runtime)
 
