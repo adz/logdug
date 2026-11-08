@@ -42,6 +42,8 @@ type SearchState =
       /// The pattern of the search whose results are shown; also drives in-file highlighting.
       Pattern: SearchPattern option
       Status: SearchStatus
+      /// Commands the mailbox could not keep because a newer one arrived first, as of the last search event.
+      Coalesced: int64
       /// Files with hits, in tree order.
       Results: FileHits list
       Cursor: HitCursor option }
@@ -171,6 +173,7 @@ module App =
           Pending = None
           Pattern = None
           Status = Idle
+          Coalesced = 0L
           Results = []
           Cursor = None }
 
@@ -312,7 +315,7 @@ module App =
             (fun (error: FilesError) -> FileOpened(key, Error(string error)))
 
     let private send env (command: SearchCommand) : Cmd<Msg> =
-        Cmd.ofEffect (fun _ -> Queue.tryOffer command env.SearchCommands |> ignore)
+        Inbox.offer command env.SearchCommands
 
     /// Hands the current query to the search pipeline, which debounces it and replaces any running search.
     let private requestSearch env model =
@@ -685,7 +688,10 @@ module App =
             let model, cmd = requestSearch env { model with Settings = settings; Search = search }
             model, Cmd.batch [ cmd; saveSettings runtime env settings ]
 
-        | SearchEventReceived event -> receive model event, Cmd.none
+        | SearchEventReceived event ->
+            let model = receive model event
+            // The inbox counts the commands it could not keep, so a coalesced burst is visible next to the status.
+            { model with Search = { model.Search with Coalesced = Inbox.dropped env.SearchCommands } }, Cmd.none
 
         | OpenHit cursor -> openHit runtime env model cursor
         | NextHit -> stepHit runtime env model 1

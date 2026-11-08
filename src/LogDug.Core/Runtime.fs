@@ -7,7 +7,7 @@ open LogDug.Files
 
 
 /// The running Axial application behind the UI. Its Elmish runtime owns the long-lived services: the `Files`
-/// service (and its archive cache), the search command queue, the search event hub, and the search pipeline.
+/// service (and its archive cache), the search command inbox, the search event hub, and the search pipeline.
 /// Disposing it stops the pipeline, interrupts any running search, and closes the runtime.
 [<Sealed>]
 type Runtime internal (env: AppEnv, runtime: ElmishRuntime<AppEnv>) =
@@ -54,8 +54,7 @@ module Runtime =
             let! commands = Flow.envWith _.SearchCommands
 
             return!
-                commands
-                |> FlowStream.fromDequeue
+                Inbox.stream commands
                 |> FlowStream.debounce debounce
                 |> FlowStream.switchMapFlow (function
                     | StartSearch request -> runSearch request
@@ -71,7 +70,9 @@ module Runtime =
                 // Read the platform's clock inside the runtime's scope, not before it exists: the start time is one
                 // reading of the clock the environment actually runs with.
                 let! startedAt = Clock.now
-                let! commands = Queue.sliding 1
+                // A newest-wins mailbox: an offer made while a command is pending evicts that pending command, so a
+                // burst of keystrokes leaves one search to run. The inbox is shut down with the runtime's scope.
+                let! commands = Inbox.scopedSliding 1
                 let! events = Hub.make ()
                 let! files = Files.make platform.FileSystem
                 return

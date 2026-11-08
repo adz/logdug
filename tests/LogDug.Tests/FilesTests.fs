@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.Threading.Tasks
 open Axial
+open Axial.ElmishFlows
 open Xunit
 open LogDug
 open LogDug.Files
@@ -122,9 +123,8 @@ let ``the pipeline runs only the newest of several quick requests`` () =
         flow {
             let! events = Hub.subscribe QueueStrategy.Unbounded env.SearchEvents
             let request id text = StartSearch { Id = id; Pattern = searchPattern text PlainSearch false; Root = root }
-            Queue.tryOffer (request 1 "ECONNRESET") env.SearchCommands |> ignore
-            Queue.tryOffer (request 2 "heap out of memory") env.SearchCommands |> ignore
-
+            Inbox.post (request 1 "ECONNRESET") env.SearchCommands |> ignore
+            Inbox.post (request 2 "heap out of memory") env.SearchCommands |> ignore
             return!
                 FlowStream.fromDequeue events
                 |> FlowStream.takeWhile (function

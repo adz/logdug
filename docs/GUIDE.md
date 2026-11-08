@@ -16,7 +16,7 @@ Four libraries do the heavy lifting:
 
 - **Elmish** owns state. There is one immutable `Model`, one `Msg` union and one `update` function (`App.fs`).
 - **Elmish.Avalonia.Glue** connects that program to Avalonia. The app uses its *projection* style: an F# viewmodel (`MainVm`) receives each new model and copies it into bindable properties, and setters dispatch messages instead of changing state.
-- **Axial** describes every effect as a `Flow<'env, 'error, 'value>` with a typed error channel, and every sequence of effects (walking a tree, reading a file's lines, search results, file changes) as a `FlowStream`. An Axial application root (`Runtime.fs`) owns the long-lived services: the `Files` service with its archive `Cache`, a search command `Queue`, and a search event `Hub`. **Axial.Guardrails** runs at `error` severity on every project, so code that touches `System.IO.File`, `Directory`, the ambient clock, environment variables or `Console` directly fails the build.
+- **Axial** describes every effect as a `Flow<'env, 'error, 'value>` with a typed error channel, and every sequence of effects (walking a tree, reading a file's lines, search results, file changes) as a `FlowStream`. An Axial application root (`Runtime.fs`) owns the long-lived services: the `Files` service with its archive `Cache`, a search command `Inbox`, and a search event `Hub`. **Axial.Guardrails** runs at `error` severity on every project, so code that touches `System.IO.File`, `Directory`, the ambient clock, environment variables or `Console` directly fails the build.
 - **Reified** declares the settings file schema (validation on load, compiled JSON codec on save), refines a raw search query into a `SearchPattern` that is known to be valid, and parses JSON log lines into its `Data` tree.
 
 The look comes from **ShadUI** (a shadcn-style theme for Avalonia) plus `Views/Styles.axaml`. Icons are the Lucide icon font; log text uses JetBrains Mono.
@@ -38,8 +38,8 @@ user action (click, keystroke)
 Searches and live file changes do not use one-shot commands. They are streams that run inside the Axial runtime and reach Elmish through subscriptions:
 
 ```text
-SearchTextChanged -> App.update -> Queue.tryOffer (StartSearch request)       one-slot sliding queue
-Runtime.searchPipeline: fromDequeue -> debounce 200 ms -> switchMapFlow runSearch
+SearchTextChanged -> App.update -> Inbox.offer (StartSearch request)         one-slot sliding inbox
+Runtime.searchPipeline: Inbox.stream -> debounce 200 ms -> switchMapFlow runSearch
 runSearch: Files.walk -> filter searchable -> mapFlowPar 4 (Files.lines per file) -> scan totals -> cap
          -> groupedWithin 64 / 120 ms -> Hub.publish SearchProgress ... SearchEnded
 Elmish subscription "search-events": FlowStream.fromHub -> post -> SearchEventReceived
@@ -72,9 +72,9 @@ Files compile in this order, and each only depends on the files above it.
 | `Search.fs` | `Search.run` is a `FlowStream` of `SearchStep`s: it walks the tree, searches four files at a time by streaming their lines (stopping each file one hit past its cap of 500), keeps running totals with `scan`, and ends after the step that reaches 20,000 hits, which also stops the walk and any in-flight files. Each `FileHits` carries its walk order, so results display in tree order whatever order they finish in. |
 | `Settings.fs` | The persisted settings record and its Reified schema. Loading parses the file through the schema (bad files fall back to defaults); saving uses the compiled codec. |
 | `Env.fs` | The search command and event types, `PlatformEnv` (file system, clock, environment variables; `PlatformEnv.live` names the live implementations), and `AppEnv`, which adds the runtime's services, the local time zone and `Post`. |
-| `Runtime.fs` | Starts the Axial application root (`App.start`) that owns `Files`, the search queue and hub, and the search pipeline, and hands back an `AppEnv`. Disposing it stops the root and closes its scope. `Runtime.follow` runs a stream against the env and delivers each value through `Post`, which is how Elmish subscriptions follow Axial streams. |
+| `Runtime.fs` | Starts the Axial application root (`App.start`) that owns `Files`, the search inbox and hub, and the search pipeline, and hands back an `AppEnv`. Disposing it stops the root and closes its scope. `Runtime.follow` runs a stream against the env and delivers each value through `Post`, which is how Elmish subscriptions follow Axial streams. |
 | `FlowCmd.fs` | Runs a Flow as an Elmish `Cmd` and posts the result message back. |
-| `App.fs` | The Elmish program: `Model`, `Msg`, `init`, `update`, and `subscriptions`. Search requests go to the runtime's queue and results come back as `SearchEventReceived`. Opening a search hit expands every ancestor container (`App.ancestors`) and reveals the entry at the hit's line once the file loads. Follow mode subscribes to `Files.watch` for the open file. Files stay open as `Tabs`, each with its own `FileSearchMode` (highlight, filter, ignore). Each file also keeps its own `FindState` (text, matching entries, cursor). `ChangeRoot` restarts the tree at another folder, and the quick-open state and its lazily loaded file index also live in the model. |
+| `App.fs` | The Elmish program: `Model`, `Msg`, `init`, `update`, and `subscriptions`. Search requests go to the runtime's inbox and results come back as `SearchEventReceived`. Opening a search hit expands every ancestor container (`App.ancestors`) and reveals the entry at the hit's line once the file loads. Follow mode subscribes to `Files.watch` for the open file. Files stay open as `Tabs`, each with its own `FileSearchMode` (highlight, filter, ignore). Each file also keeps its own `FindState` (text, matching entries, cursor). `ChangeRoot` restarts the tree at another folder, and the quick-open state and its lazily loaded file index also live in the model. |
 | `Shape.fs` | Pure projections of the model into what the screen shows: flattened tree rows, result rows, level chips, status text. |
 
 ## UI, file by file
@@ -95,7 +95,7 @@ Files compile in this order, and each only depends on the files above it.
 
 **Support another archive type.** Add a case to `ArchiveKind` and `Location.archiveKind`, write an `Archive.ofX` that returns an `ArchiveIndex`, and add it to `Archive.decode`.
 
-**Add a long-running background feature.** Model it as a `FlowStream`, run it inside the runtime (as `Runtime.searchPipeline` does) or as an Elmish subscription with `Runtime.follow`, and send results to the UI as messages. Use a `Queue` for one consumer, a `Hub` for many, and `switchMapFlow` when only the newest request matters.
+**Add a long-running background feature.** Model it as a `FlowStream`, run it inside the runtime (as `Runtime.searchPipeline` does) or as an Elmish subscription with `Runtime.follow`, and send results to the UI as messages. Use an `Inbox` for one-way input into a stream, a `Hub` for many consumers, and `switchMapFlow` when only the newest request matters.
 
 **Add a setting.** Add the field to `Settings`, its line to `Settings.schema`, a default, and a message that updates it in `App.update` and calls `saveSettings`.
 

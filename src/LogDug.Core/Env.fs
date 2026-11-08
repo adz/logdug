@@ -4,6 +4,7 @@ namespace LogDug
 open System
 open Axial
 open Axial.Configuration
+open Axial.ElmishFlows
 open Axial.FileSystem
 open LogDug.Files
 
@@ -50,13 +51,13 @@ module PlatformEnv =
         { FileSystem = FileSystem.live
           Config = config }
 
-/// Everything the Elmish program's effects run against. The runtime services (`Files`, the search queue and
+/// Everything the Elmish program's effects run against. The runtime services (`Files`, the search inbox and
 /// hub) are owned by the Elmish runtime started by `Runtime.start`; this record only refers to them.
 type AppEnv =
     { FileSystem: IFileSystem
       Config: IConfig
       Files: IFiles
-      SearchCommands: Queue<SearchCommand>
+      SearchCommands: Inbox<SearchCommand>
       SearchEvents: Hub<SearchEvent>
       LocalZone: TimeZoneInfo
       StartedAt: DateTimeOffset }

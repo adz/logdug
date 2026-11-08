@@ -125,21 +125,25 @@ module Shape =
             if count = 1 then String.Concat(string count, " ", one)
             else String.Concat(count.ToString("N0"), " ", many)
 
+        let coalesced =
+            if model.Search.Coalesced <= 0L then ""
+            else String.Concat(" · ", string model.Search.Coalesced, " coalesced")
+
         match model.Search.Status with
         | Idle -> ""
         | Invalid message -> message
         | Running summary ->
             let matches = plural summary.HitCount "match" "matches"
             let files = plural summary.FilesMatched "file" "files"
-            String.Concat("Searching… ", matches, " in ", files, " · ", string summary.FilesScanned, " scanned")
+            String.Concat("Searching… ", matches, " in ", files, " · ", string summary.FilesScanned, " scanned", coalesced)
         | Finished summary when summary.HitCount = 0 ->
             let files = plural summary.FilesScanned "file" "files"
-            String.Concat("No matches · ", files, " scanned")
+            String.Concat("No matches · ", files, " scanned", coalesced)
         | Finished summary ->
             let more = if summary.Truncated then "+" else ""
             let matches = plural summary.HitCount "match" "matches"
             let files = plural summary.FilesMatched "file" "files"
-            String.Concat(matches, more, " in ", files, " · ", string summary.FilesScanned, " scanned")
+            String.Concat(matches, more, " in ", files, " · ", string summary.FilesScanned, " scanned", coalesced)
 
     let cursorText (model: Model) =
         let total = model.Search.Results |> List.sumBy _.Hits.Length
