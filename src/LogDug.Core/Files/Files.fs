@@ -159,7 +159,7 @@ module Files =
                 | [] -> Flow.succeed None
                 | node :: rest when Node.isContainer node && descend node ->
                     children node
-                    |> Flow.fold (fun found -> Flow.succeed (Some(node, found @ rest))) (fun _ -> Flow.succeed (Some(node, rest)))
+                    |> Flow.fold (fun found -> Some(node, found @ rest)) (fun _ -> Some(node, rest))
                 | node :: rest -> Flow.succeed (Some(node, rest)))
             [ root ]
 

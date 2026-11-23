@@ -72,7 +72,7 @@ module Search =
         |> FlowStream.choose (fun (index, line) -> hitOf pattern (index + 1) line)
         |> FlowStream.take (maxHitsPerFile + 1)
         |> FlowStream.runCollect
-        |> Flow.fold Flow.succeed (fun _ -> Flow.succeed [])
+        |> Flow.fold id (fun _ -> [])
         |> Flow.map (fun hits ->
             { Order = order
               Node = node

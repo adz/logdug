@@ -37,7 +37,7 @@ let private capture (window: Window) (name: string) =
     Directory.CreateDirectory folder |> ignore
     use frame = window.CaptureRenderedFrame()
     let path = Path.Combine(folder, name)
-    frame.Save path
+    frame.Save(path, Avalonia.Media.Imaging.PngBitmapEncoderOptions.Default)
     Assert.True(FileInfo(path).Length > 10_000L, $"{name} looks empty")
 
 let private row (vm: MainVm) name =

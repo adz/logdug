@@ -268,7 +268,7 @@ module App =
         model, Cmd.batch [ loadRoot; loadSettings ]
 
     let private saveSettings (runtime: ElmishRuntime<AppEnv>) env (settings: Settings) =
-        Settings.save settings |> Flow.fold (fun () -> Flow.succeed ()) (fun _ -> Flow.succeed ()) |> Cmd.OfFlow.start "save-settings" runtime
+        Settings.save settings |> Flow.fold ignore ignore |> Cmd.OfFlow.start "save-settings" runtime
 
     let private loadChildren (runtime: ElmishRuntime<AppEnv>) env (node: Node) =
         let key = Node.key node

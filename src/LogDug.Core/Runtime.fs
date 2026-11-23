@@ -40,7 +40,7 @@ module Runtime =
                     let found = steps |> List.choose _.Found
                     publish (SearchProgress(request.Id, found, summary)) |> Flow.map (fun () -> summary))
                 |> FlowStream.runFold (fun _ summary -> summary) Search.emptySummary
-                |> Flow.foldCause (Ok >> Flow.succeed) (fun cause -> Flow.succeed (Error(Cause.prettyPrint string cause)))
+                |> Flow.foldCauseFlow (Ok >> Flow.succeed) (fun cause -> Flow.succeed (Error(Cause.prettyPrint string cause)))
 
             match outcome with
             | Ok summary -> do! publish (SearchEnded(request.Id, summary))
@@ -93,7 +93,6 @@ module Runtime =
                   Clock = None
                   LogSink = Some(LogSink.console LogLevel.Warning) }
                 layer platform
-            // axial-allow-AXG001: host startup blocks until the Elmish runtime layer is provisioned
             |> Async.RunSynchronously
             |> function
                 | Ok runtime -> runtime

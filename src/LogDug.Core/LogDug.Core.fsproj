@@ -16,7 +16,7 @@
     <Compile Include="QuickOpen.fs" />
     <Compile Include="Settings.fs" />
     <Compile Include="Env.fs" />
-    <Compile Include="Runtime.fs" />
+    <Compile Include="Runtime.fs" AxialCapability="blocking" />
     <Compile Include="SelfTest.fs" />
     <Compile Include="App.fs" />
     <Compile Include="Shape.fs" />

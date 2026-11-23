@@ -97,7 +97,7 @@ module Settings =
 
             let! text =
                 FileSystem.readAllText path
-                |> Flow.fold (Some >> Flow.succeed) (fun _ -> Flow.succeed None)
+                |> Flow.fold Some (fun _ -> None)
 
             return
                 text

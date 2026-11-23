@@ -128,9 +128,9 @@ module SelfTest =
             let! results =
                 checks root
                 |> Flow.mapError string
-                |> Flow.foldCause Flow.succeed (fun cause -> Flow.succeed [ check "self-test ran" false (Cause.prettyPrint id cause) ])
+                |> Flow.foldCauseFlow Flow.succeed (fun cause -> Flow.succeed [ check "self-test ran" false (Cause.prettyPrint id cause) ])
 
-            do! FileSystem.deleteDirectory root true |> Flow.fold Flow.succeed (fun _ -> Flow.succeed ())
+            do! FileSystem.deleteDirectory root true |> Flow.fold ignore ignore
             return results
         }
 

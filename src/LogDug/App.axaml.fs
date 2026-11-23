@@ -62,7 +62,7 @@ type App() =
                         let size = PixelSize(int window.Bounds.Width, int window.Bounds.Height)
                         use bitmap = new RenderTargetBitmap(size, Vector(96.0, 96.0))
                         bitmap.Render window
-                        bitmap.Save path
+                        bitmap.Save(path, PngBitmapEncoderOptions.Default)
                         desktop.Shutdown()))
             | None -> ()
         | _ -> ()
