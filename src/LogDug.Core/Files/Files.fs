@@ -259,7 +259,7 @@ module Files =
                         let size = if isDirectory then 0L else fileSystem.GetFileLength entry
                         Some(Node.ofName (Disk entry) (Location.fileName entry) size isDirectory)
                     with _ ->
-                        None) // axial-note AXG010: an unreadable child is omitted from the listing so the rest of the folder still opens.
+                        None) // axial-note swallowed-exn: an unreadable child is omitted from the listing so the rest of the folder still opens.
                 |> Node.sort)
 
         let archiveChildren (archive: Location) (directory: string) =

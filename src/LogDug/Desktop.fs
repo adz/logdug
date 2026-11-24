@@ -27,7 +27,7 @@ module Desktop =
             info.CreateNoWindow <- true
             Process.Start info |> ignore
         with _ ->
-            () // axial-note AXG010: launching the OS handler is best-effort; there is no UI path to report it.
+            () // axial-note swallowed-exn: launching the OS handler is best-effort; there is no UI path to report it.
 
     let private command (file: string) (arguments: string list) =
         let info = ProcessStartInfo(file)

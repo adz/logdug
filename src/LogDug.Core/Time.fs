@@ -48,7 +48,7 @@ module Time =
         try
             Some(TimeZoneInfo.FindSystemTimeZoneById id)
         with _ ->
-            None // axial-note AXG010: an unknown saved zone id falls back to UTC rather than blocking startup.
+            None // axial-note swallowed-exn: an unknown saved zone id falls back to UTC rather than blocking startup.
 
     let context (local: TimeZoneInfo) (now: DateTimeOffset) (display: TimeDisplay) : TimeContext =
         let zone, name =

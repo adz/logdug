@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "axial.tool": {
-      "version": "0.16.0-local.1",
+      "version": "0.16.0-local.2",
       "commands": [
         "axial"
       ],
