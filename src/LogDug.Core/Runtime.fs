@@ -93,10 +93,10 @@ module Runtime =
                   Clock = None
                   LogSink = Some(LogSink.console LogLevel.Warning) }
                 layer platform
-            |> Async.RunSynchronously
-            |> function
-                | Ok runtime -> runtime
-                | Error (never: Never) -> Never.absurd never
+            // The host's one synchronous wait: startup returns once the runtime's services are provisioned.
+            |> Flow.fromAsyncResult
+            |> Flow.run ()
+            |> Exit.getOrThrow
 
         let env = runtime.Environment
 
