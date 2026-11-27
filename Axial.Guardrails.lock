@@ -1,17 +1,14 @@
 version = 2
 BASELINE_PATH  Axial.Guardrails.baseline
 SHA256  9abe2edc195cbffd1b65dde5c8c73e6ce594360981294e6c31a673071e97e051  Axial.Guardrails.baseline
-SHA256  ca7dfe8cef820081f302e9f06b334453de6c722010f5c6bc809880510fbea885  Axial.Guardrails.toml
-SHA256  d1785b7b928c912c14b78b298e89e2eee108fed4bd9237b5cf301a3e21bb74e8  Directory.Build.props
-SHA256  260301dfc4a9a54ad709619a60708ecc3c85c8340d04169d8a0bae0c27ce40b5  Directory.Packages.props
+SHA256  767dc25489f9c995e934eaf31b093e0c1a6479ff055db032cfe5309a217c5fcd  Axial.Guardrails.toml
+SHA256  160045c948b5773a1dc7ab62a8a8d46d940914b71e84c336b2fc652349667aa9  Directory.Build.props
+SHA256  03ae2afa3a6da4f1ba43274b1c2c86b043b852fed52b0652a4d4cb5159651ff1  Directory.Packages.props
 POLICY  host/effects.ambient	allow
-BOUNDARY  src/LogDug.Core/Env.fs
-BOUNDARY  src/LogDug.Core/Runtime.fs
-SUPPRESSION  src/LogDug.Core/Files/Files.fs	1	// axial-note AXG010:an unreadable child is omitted from the listing so the rest of the folder still opens.
-SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note AXG010:a malformed JSON line is not a JSON entry; the text parser handles it as plain text.
-SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note AXG010:a pretty-print failure means there is no formatted entry to show.
-SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note AXG010:reindentation is cosmetic; keep the original JSON text when it fails.
-SUPPRESSION  src/LogDug.Core/Runtime.fs	1	// axial-allow-AXG001:host startup blocks until the Elmish runtime layer is provisioned
-SUPPRESSION  src/LogDug.Core/Time.fs	1	// axial-note AXG010:an unknown saved zone id falls back to UTC rather than blocking startup.
-SUPPRESSION  src/LogDug/Desktop.fs	1	// axial-note AXG010:launching the OS handler is best-effort; there is no UI path to report it.
-REVIEWED_POINT  81cfda93570940d3cede8a27d13f9b0a4d112aaf
+SUPPRESSION  src/LogDug.Core/Files/Files.fs	1	// axial-note swallowed-exn:an unreadable child is omitted from the listing so the rest of the folder still opens.
+SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note swallowed-exn:a malformed JSON line is not a JSON entry; the text parser handles it as plain text.
+SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note swallowed-exn:a pretty-print failure means there is no formatted entry to show.
+SUPPRESSION  src/LogDug.Core/LogParser.fs	1	// axial-note swallowed-exn:reindentation is cosmetic; keep the original JSON text when it fails.
+SUPPRESSION  src/LogDug.Core/Time.fs	1	// axial-note swallowed-exn:an unknown saved zone id falls back to UTC rather than blocking startup.
+SUPPRESSION  src/LogDug/Desktop.fs	1	// axial-note swallowed-exn:launching the OS handler is best-effort; there is no UI path to report it.
+REVIEWED_POINT  1ce786e06efd064608b5d8c9efe82bb7fa406598
